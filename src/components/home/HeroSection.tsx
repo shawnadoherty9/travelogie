@@ -4,17 +4,11 @@ import { Input } from "@/components/ui/input";
 import { MapPin, Search, Globe, Calendar, Users } from "lucide-react";
 import heroImage from "@/assets/hero-travel.jpg";
 import worldMapImage from "@/assets/world-map-hero.jpg";
-
 const HeroSection = () => {
-  return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+  return <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
-        <img 
-          src={heroImage} 
-          alt="Cultural travel experiences around the world" 
-          className="w-full h-full object-cover"
-        />
+        <img src={heroImage} alt="Cultural travel experiences around the world" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/50 to-background/80" />
       </div>
 
@@ -25,12 +19,9 @@ const HeroSection = () => {
           <div className="space-y-4">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground">
               Discover the World Through
-              <span className="text-gradient block">Local Eyes</span>
+              <span className="text-gradient block">Travelogie</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Connect with authentic locals for personalized tours, language lessons, 
-              and cultural experiences that transform travelers into storytellers.
-            </p>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">Connect with locals for personalized tours, language lessons, and cultural authentic experiences that transform travelers into storytellers.</p>
           </div>
 
           {/* Search Interface */}
@@ -41,10 +32,7 @@ const HeroSection = () => {
               {/* Search Bar */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                <Input 
-                  placeholder="Search destinations, experiences, or locals..."
-                  className="pl-10 h-12 text-lg border-travel-ocean/30 focus:border-travel-ocean"
-                />
+                <Input placeholder="Search destinations, experiences, or locals..." className="pl-10 h-12 text-lg border-travel-ocean/30 focus:border-travel-ocean" />
               </div>
 
               {/* Quick Actions */}
@@ -67,11 +55,7 @@ const HeroSection = () => {
 
           {/* Interactive World Map Teaser */}
           <div className="relative">
-            <img 
-              src={worldMapImage} 
-              alt="Interactive world map with travel destinations" 
-              className="w-full max-w-3xl mx-auto rounded-lg travel-shadow opacity-90"
-            />
+            <img src={worldMapImage} alt="Interactive world map with travel destinations" className="w-full max-w-3xl mx-auto rounded-lg travel-shadow opacity-90" />
             <div className="absolute inset-0 flex items-center justify-center">
               <Button variant="wanderlust" size="lg" className="animate-pulse">
                 <Globe className="w-6 h-6" />
@@ -97,8 +81,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
