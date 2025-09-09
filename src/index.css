@@ -2,39 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Travelogie Design System - Inspired by global cultures and wanderlust
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base colors - warm travel-inspired palette */
+    --background: 42 15% 97%;
+    --foreground: 220 15% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 42 20% 98%;
+    --card-foreground: 220 15% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 42 20% 98%;
+    --popover-foreground: 220 15% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Travel-inspired primary colors - deep ocean blue */
+    --primary: 220 60% 20%;
+    --primary-foreground: 42 15% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - warm terracotta */
+    --secondary: 15 55% 75%;
+    --secondary-foreground: 220 15% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted - soft sand */
+    --muted: 42 25% 92%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - golden amber */
+    --accent: 45 85% 60%;
+    --accent-foreground: 220 15% 15%;
+
+    /* Travel-specific colors */
+    --travel-ocean: 200 80% 45%;
+    --travel-sunset: 25 85% 60%;
+    --travel-earth: 15 45% 55%;
+    --travel-sky: 205 100% 85%;
+    --travel-sand: 42 35% 85%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 42 15% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 42 20% 88%;
+    --input: 42 20% 90%;
+    --ring: 220 60% 20%;
 
     --radius: 0.5rem;
 
@@ -56,41 +68,78 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark mode - night travel theme */
+    --background: 220 25% 8%;
+    --foreground: 42 15% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 20% 12%;
+    --card-foreground: 42 15% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 20% 12%;
+    --popover-foreground: 42 15% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 45 85% 60%;
+    --primary-foreground: 220 25% 8%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 15 35% 25%;
+    --secondary-foreground: 42 15% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 42 10% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 200 70% 55%;
+    --accent-foreground: 220 25% 8%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    /* Travel colors for dark mode */
+    --travel-ocean: 200 70% 55%;
+    --travel-sunset: 25 75% 65%;
+    --travel-earth: 15 35% 45%;
+    --travel-sky: 205 80% 70%;
+    --travel-sand: 42 25% 75%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --destructive: 0 75% 65%;
+    --destructive-foreground: 220 25% 8%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 18%;
+    --ring: 45 85% 60%;
+
+    --sidebar-background: 220 25% 8%;
+    --sidebar-foreground: 42 15% 95%;
+    --sidebar-primary: 45 85% 60%;
+    --sidebar-primary-foreground: 220 25% 8%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 42 15% 95%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 45 85% 60%;
+  }
+
+  /* Travel-specific utility classes */
+  .gradient-wanderlust {
+    background: linear-gradient(135deg, hsl(var(--travel-ocean)), hsl(var(--travel-sunset)));
+  }
+
+  .gradient-cultural {
+    background: linear-gradient(135deg, hsl(var(--travel-earth)), hsl(var(--accent)));
+  }
+
+  .gradient-journey {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--travel-sky)));
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--travel-ocean)), hsl(var(--travel-sunset)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .travel-shadow {
+    box-shadow: 0 10px 30px -10px hsl(var(--travel-ocean) / 0.3);
+  }
+
+  .cultural-shadow {
+    box-shadow: 0 8px 25px -8px hsl(var(--travel-earth) / 0.4);
   }
 }
 

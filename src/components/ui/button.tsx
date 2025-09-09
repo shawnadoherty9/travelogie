@@ -15,6 +15,11 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        // Travel-specific variants
+        wanderlust: "gradient-wanderlust text-white hover:opacity-90 travel-shadow",
+        cultural: "gradient-cultural text-primary hover:opacity-90 cultural-shadow",
+        journey: "gradient-journey text-white hover:opacity-90 border border-travel-ocean/20",
+        explorer: "bg-travel-earth text-white hover:bg-travel-earth/90 transform hover:scale-105 transition-all duration-200",
       },
       size: {
         default: "h-10 px-4 py-2",

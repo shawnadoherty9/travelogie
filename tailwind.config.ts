@@ -47,6 +47,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Travel-inspired colors
+        travel: {
+          ocean: "hsl(var(--travel-ocean))",
+          sunset: "hsl(var(--travel-sunset))",
+          earth: "hsl(var(--travel-earth))",
+          sky: "hsl(var(--travel-sky))",
+          sand: "hsl(var(--travel-sand))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
