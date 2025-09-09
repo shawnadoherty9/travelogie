@@ -18,28 +18,28 @@ All colors MUST be HSL.
     --popover: 42 20% 98%;
     --popover-foreground: 220 15% 15%;
 
-    /* Travel-inspired primary colors - deep ocean blue */
-    --primary: 220 60% 20%;
+    /* Travel-inspired primary colors - bright ocean blue matching logo */
+    --primary: 205 85% 45%;
     --primary-foreground: 42 15% 97%;
 
-    /* Secondary - warm terracotta */
-    --secondary: 15 55% 75%;
+    /* Secondary - vibrant coral matching balloon colors */
+    --secondary: 15 90% 65%;
     --secondary-foreground: 220 15% 15%;
 
-    /* Muted - soft sand */
-    --muted: 42 25% 92%;
-    --muted-foreground: 220 10% 45%;
+    /* Muted - warm cream matching logo background */
+    --muted: 42 50% 90%;
+    --muted-foreground: 220 25% 30%;
 
-    /* Accent - golden amber */
-    --accent: 45 85% 60%;
+    /* Accent - bright golden sun matching logo */
+    --accent: 45 100% 65%;
     --accent-foreground: 220 15% 15%;
 
-    /* Travel-specific colors */
-    --travel-ocean: 200 80% 45%;
-    --travel-sunset: 25 85% 60%;
-    --travel-earth: 15 45% 55%;
-    --travel-sky: 205 100% 85%;
-    --travel-sand: 42 35% 85%;
+    /* Travel-specific colors - matching logo vibrancy */
+    --travel-ocean: 205 90% 50%;
+    --travel-sunset: 20 100% 65%;
+    --travel-earth: 15 85% 55%;
+    --travel-sky: 200 100% 80%;
+    --travel-sand: 40 60% 85%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 42 15% 97%;
@@ -90,12 +90,12 @@ All colors MUST be HSL.
     --accent: 200 80% 60%;
     --accent-foreground: 220 25% 8%;
 
-    /* Travel colors for dark mode - more vibrant */
-    --travel-ocean: 200 80% 60%;
-    --travel-sunset: 25 85% 70%;
-    --travel-earth: 15 45% 55%;
-    --travel-sky: 205 90% 75%;
-    --travel-sand: 42 35% 80%;
+    /* Travel colors for dark mode - maintaining logo vibrancy */
+    --travel-ocean: 205 85% 55%;
+    --travel-sunset: 20 95% 70%;
+    --travel-earth: 15 70% 60%;
+    --travel-sky: 200 95% 75%;
+    --travel-sand: 40 50% 80%;
 
     --destructive: 0 75% 65%;
     --destructive-foreground: 220 25% 8%;
