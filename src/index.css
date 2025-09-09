@@ -78,24 +78,24 @@ All colors MUST be HSL.
     --popover: 220 20% 12%;
     --popover-foreground: 42 15% 95%;
 
-    --primary: 45 85% 60%;
+    --primary: 45 90% 65%;
     --primary-foreground: 220 25% 8%;
 
-    --secondary: 15 35% 25%;
+    --secondary: 15 45% 35%;
     --secondary-foreground: 42 15% 95%;
 
-    --muted: 220 15% 18%;
-    --muted-foreground: 42 10% 65%;
+    --muted: 220 20% 22%;
+    --muted-foreground: 42 15% 70%;
 
-    --accent: 200 70% 55%;
+    --accent: 200 80% 60%;
     --accent-foreground: 220 25% 8%;
 
-    /* Travel colors for dark mode */
-    --travel-ocean: 200 70% 55%;
-    --travel-sunset: 25 75% 65%;
-    --travel-earth: 15 35% 45%;
-    --travel-sky: 205 80% 70%;
-    --travel-sand: 42 25% 75%;
+    /* Travel colors for dark mode - more vibrant */
+    --travel-ocean: 200 80% 60%;
+    --travel-sunset: 25 85% 70%;
+    --travel-earth: 15 45% 55%;
+    --travel-sky: 205 90% 75%;
+    --travel-sand: 42 35% 80%;
 
     --destructive: 0 75% 65%;
     --destructive-foreground: 220 25% 8%;

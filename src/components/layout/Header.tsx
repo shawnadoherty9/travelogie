@@ -10,9 +10,11 @@ const Header = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full gradient-wanderlust flex items-center justify-center">
-            <Globe className="w-6 h-6 text-white" />
-          </div>
+          <img 
+            src="/lovable-uploads/4f14a223-57a1-4a7d-bf9a-6bc3e17c25b9.png" 
+            alt="Travelogie Logo - Interactive Culture Platform" 
+            className="w-12 h-12 object-contain"
+          />
           <div>
             <h1 className="text-xl font-bold text-gradient">Travelogie</h1>
             <p className="text-xs text-muted-foreground">Learn from Locals</p>
