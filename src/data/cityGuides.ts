@@ -237,7 +237,7 @@ export const cityGuides: Record<string, CityGuideData> = {
     cityName: "Tokyo",
     country: "Japan",
     heroImage: "/src/assets/tokyo-destination.jpg",
-    wallpaperImage: "/src/assets/tokyo-wallpaper.jpg",
+    wallpaperImage: "/src/assets/tokyo-sushi-wallpaper.jpg",
     history: {
       overview: "Tokyo, originally called Edo, has been Japan's capital since 1868. It transformed from a small fishing village to one of the world's largest metropolitan areas, blending ancient traditions with cutting-edge modernity.",
       periods: [
