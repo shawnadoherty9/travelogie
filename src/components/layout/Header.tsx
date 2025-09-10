@@ -53,9 +53,9 @@ const Header = () => {
           <Link to="/experiences" className="text-foreground hover:text-travel-ocean transition-colors">
             Experiences
           </Link>
-          <a href="#tours" className="text-foreground hover:text-travel-ocean transition-colors">
+          <Link to="/tours" className="text-foreground hover:text-travel-ocean transition-colors">
             Tours
-          </a>
+          </Link>
           <a href="#languages" className="text-foreground hover:text-travel-ocean transition-colors">
             Languages
           </a>
@@ -121,9 +121,9 @@ const Header = () => {
             <Link to="/experiences" className="block py-2 text-foreground hover:text-travel-ocean">
               Experiences
             </Link>
-            <a href="#tours" className="block py-2 text-foreground hover:text-travel-ocean">
+            <Link to="/tours" className="block py-2 text-foreground hover:text-travel-ocean">
               Tours
-            </a>
+            </Link>
             <a href="#languages" className="block py-2 text-foreground hover:text-travel-ocean">
               Languages
             </a>

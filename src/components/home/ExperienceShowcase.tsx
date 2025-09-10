@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin, Clock, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 import cultureImage from "@/assets/culture-experiences.jpg";
 import baganImage from "@/assets/bagan-balloons.jpg";
 import montBlancImage from "@/assets/mont-blanc-paragliding.jpg";
@@ -211,8 +212,8 @@ const ExperienceShowcase = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="journey" size="lg">
-            Explore All Experiences
+          <Button variant="journey" size="lg" asChild>
+            <Link to="/tours">Explore All Experiences</Link>
           </Button>
         </div>
       </div>
