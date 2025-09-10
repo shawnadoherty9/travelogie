@@ -1,5 +1,6 @@
-import { Globe, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import travelogieLogo from "@/assets/travelogie-logo.png";
 
 const Footer = () => {
   return (
@@ -9,9 +10,9 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full gradient-wanderlust flex items-center justify-center">
-                <Globe className="w-6 h-6 text-white" />
-              </div>
+            <div className="w-10 h-10 rounded-full overflow-hidden">
+              <img src={travelogieLogo} alt="Travelogie Logo" className="w-full h-full object-cover" />
+            </div>
               <div>
                 <h3 className="text-xl font-bold">Travelogie</h3>
                 <p className="text-sm opacity-80">Learn with Locals</p>
