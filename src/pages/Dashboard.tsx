@@ -27,6 +27,7 @@ import {
 import Header from '@/components/layout/Header';
 import { VisitedPlacesMap } from '@/components/dashboard/VisitedPlacesMap';
 import { UpcomingTrips } from '@/components/dashboard/UpcomingTrips';
+import { PersonalizedRecommendations } from '@/components/dashboard/PersonalizedRecommendations';
 import { FileUpload } from '@/components/ui/file-upload';
 
 interface Profile {
@@ -38,7 +39,10 @@ interface Profile {
   user_type: string;
   bio: string;
   location: string;
+  home_city?: string;
   languages: string[];
+  interests?: string[];
+  custom_interests?: string[];
   profile_image_url: string;
   is_verified: boolean;
 }
@@ -73,7 +77,7 @@ const Dashboard = () => {
         .from('profiles')
         .select('*')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Profile fetch error:', error);
@@ -381,6 +385,14 @@ const Dashboard = () => {
                   </CardContent>
                 </Card>
               </div>
+
+              {/* Personalized Recommendations */}
+              <PersonalizedRecommendations 
+                userInterests={profile?.interests || []}
+                customInterests={profile?.custom_interests || []}
+                userLocation={profile?.home_city}
+                visitedPlaces={visitedPlaces}
+              />
             </TabsContent>
 
             <TabsContent value="trips" className="space-y-6">
