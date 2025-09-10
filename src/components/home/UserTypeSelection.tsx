@@ -103,7 +103,7 @@ const UserTypeSelection = () => {
                     className="w-full mt-4 bg-gradient-to-r from-travel-ocean to-travel-sky text-white border-0 hover:from-travel-ocean/90 hover:to-travel-sky/90"
                     asChild
                   >
-                    <Link to={user ? "/dashboard" : "/auth"}>
+                    <Link to={user ? "/registration" : "/auth"}>
                       Get Started as {userType.title}
                     </Link>
                   </Button>

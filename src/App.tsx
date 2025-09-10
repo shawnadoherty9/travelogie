@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Registration from "./pages/Registration";
 import Experiences from "./pages/Experiences";
 import Tours from "./pages/Tours";
 import Languages from "./pages/Languages";
@@ -27,6 +28,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/registration" element={<Registration />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/experiences" element={<Experiences />} />
             <Route path="/tours" element={<Tours />} />

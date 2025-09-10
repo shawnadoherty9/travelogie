@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Plane, Users, MapPin, GraduationCap, Building, Heart } from 'lucide-react';
-import { RegistrationFormRenderer } from '@/components/auth/RegistrationForms';
+// Removed import of RegistrationFormRenderer as we're using the new registration flow
 
 const Auth = () => {
   const { user, loading, signIn, signUp } = useAuth();
@@ -40,7 +40,7 @@ const Auth = () => {
   }
 
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/registration" replace />;
   }
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -217,14 +217,7 @@ const Auth = () => {
                   />
                 </div>
                 
-                {/* Extended Registration Form */}
-                <div className="mt-6">
-                  <RegistrationFormRenderer
-                    userType={signUpForm.userType}
-                    formData={extendedFormData}
-                    onFormChange={setExtendedFormData}
-                  />
-                </div>
+                {/* User will complete detailed registration on /registration page */}
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
