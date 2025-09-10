@@ -1,17 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Globe, Navigation } from "lucide-react";
 
 const InteractiveMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState('');
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Sample cultural experience locations
   const experiences = [
@@ -23,10 +20,29 @@ const InteractiveMap = () => {
     { name: "Tea Ceremony Master", coordinates: [135.7681, 35.0116], location: "Kyoto, Japan" },
   ];
 
-  const initializeMap = () => {
-    if (!mapContainer.current || !mapboxToken) return;
+  const fetchMapboxToken = async () => {
+    try {
+      const response = await fetch('/api/get-mapbox-token');
+      const data = await response.json();
+      return data.token;
+    } catch (error) {
+      console.error('Failed to fetch MapBox token:', error);
+      return null;
+    }
+  };
 
-    mapboxgl.accessToken = mapboxToken;
+  const initializeMap = async () => {
+    if (!mapContainer.current) return;
+
+    setIsLoading(true);
+    const token = await fetchMapboxToken();
+    
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    mapboxgl.accessToken = token;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -99,6 +115,7 @@ const InteractiveMap = () => {
       });
 
       setIsMapLoaded(true);
+      setIsLoading(false);
     });
 
     // Rotation animation
@@ -135,79 +152,34 @@ const InteractiveMap = () => {
     spinGlobe();
   };
 
-  const handleTokenSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (mapboxToken.trim()) {
-      initializeMap();
-    }
-  };
-
   useEffect(() => {
-    // Try to get token from localStorage
-    const savedToken = localStorage.getItem('mapbox_token');
-    if (savedToken) {
-      setMapboxToken(savedToken);
-      setTimeout(initializeMap, 100);
-    }
+    initializeMap();
 
     return () => {
       map.current?.remove();
     };
   }, []);
 
-  useEffect(() => {
-    if (mapboxToken) {
-      localStorage.setItem('mapbox_token', mapboxToken);
-    }
-  }, [mapboxToken]);
-
-  if (!isMapLoaded && !mapboxToken) {
+  if (isLoading) {
     return (
       <section className="py-16 px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-foreground mb-4">
               Discover Cultural Experiences Worldwide
             </h2>
             <p className="text-lg text-muted-foreground">
-              Connect with locals and explore authentic traditions around the globe
+              Loading interactive map...
             </p>
           </div>
-
-          <Card className="max-w-md mx-auto">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                <MapPin className="w-8 h-8 text-primary" />
-              </div>
-              <CardTitle>Enable Interactive Map</CardTitle>
-              <CardDescription>
-                Enter your MapBox public token to explore cultural experiences
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleTokenSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="mapbox-token">MapBox Public Token</Label>
-                  <Input
-                    id="mapbox-token"
-                    type="password"
-                    placeholder="pk...."
-                    value={mapboxToken}
-                    onChange={(e) => setMapboxToken(e.target.value)}
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Get your free token at{" "}
-                    <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                      mapbox.com
-                    </a>
-                  </p>
+          <Card className="overflow-hidden">
+            <CardContent className="p-0">
+              <div className="w-full h-[600px] flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5">
+                <div className="text-center">
+                  <Globe className="w-16 h-16 mx-auto mb-4 text-primary animate-spin" />
+                  <p className="text-muted-foreground">Initializing interactive globe...</p>
                 </div>
-                <Button type="submit" className="w-full">
-                  <Globe className="w-4 h-4 mr-2" />
-                  Load Interactive Map
-                </Button>
-              </form>
+              </div>
             </CardContent>
           </Card>
         </div>
