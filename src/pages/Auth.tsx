@@ -8,7 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plane, Users, MapPin, GraduationCap } from 'lucide-react';
+import { Loader2, Plane, Users, MapPin, GraduationCap, Building, Heart } from 'lucide-react';
+import { RegistrationFormRenderer } from '@/components/auth/RegistrationForms';
 
 const Auth = () => {
   const { user, loading, signIn, signUp } = useAuth();
@@ -27,6 +28,8 @@ const Auth = () => {
     lastName: '',
     userType: 'traveler'
   });
+
+  const [extendedFormData, setExtendedFormData] = useState({});
 
   if (loading) {
     return (
@@ -88,8 +91,9 @@ const Auth = () => {
   const userTypeOptions = [
     { value: 'traveler', label: 'Traveler', icon: Plane, description: 'Explore authentic local experiences' },
     { value: 'tour_operator', label: 'Tour Operator', icon: Users, description: 'Organize and manage travel experiences' },
-    { value: 'local_expert', label: 'Local Expert', icon: MapPin, description: 'Share your local knowledge and culture' },
-    { value: 'language_tutor', label: 'Language Tutor', icon: GraduationCap, description: 'Teach languages to travelers' }
+    { value: 'language_teacher', label: 'Language Teacher', icon: GraduationCap, description: 'Teach languages to travelers' },
+    { value: 'cultural_experience', label: 'Cultural Experience', icon: Heart, description: 'Share unique cultural workshops' },
+    { value: 'event_venue', label: 'Event Venue', icon: Building, description: 'Host cultural events and gatherings' }
   ];
 
   return (
@@ -212,6 +216,16 @@ const Auth = () => {
                     required
                   />
                 </div>
+                
+                {/* Extended Registration Form */}
+                <div className="mt-6">
+                  <RegistrationFormRenderer
+                    userType={signUpForm.userType}
+                    formData={extendedFormData}
+                    onFormChange={setExtendedFormData}
+                  />
+                </div>
+
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Create Account

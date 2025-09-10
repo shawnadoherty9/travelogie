@@ -14,54 +14,216 @@ export type Database = {
   }
   public: {
     Tables: {
+      favorites: {
+        Row: {
+          created_at: string
+          favorited_id: string
+          favorited_type: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          favorited_id: string
+          favorited_type: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          favorited_id?: string
+          favorited_type?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          content: string | null
+          coordinates: unknown | null
+          created_at: string
+          id: string
+          is_public: boolean | null
+          location_name: string | null
+          media_urls: string[] | null
+          post_type: string
+          tags: string[] | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          coordinates?: unknown | null
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          location_name?: string | null
+          media_urls?: string[] | null
+          post_type: string
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          coordinates?: unknown | null
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          location_name?: string | null
+          media_urls?: string[] | null
+          post_type?: string
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           bio: string | null
+          birthdate: string | null
           created_at: string
+          custom_interests: string[] | null
           email: string
           first_name: string | null
+          geographic_availability: string | null
+          home_city: string | null
           id: string
+          identification_uploaded: boolean | null
+          interests: string[] | null
           is_profile_public: boolean | null
           is_verified: boolean | null
           languages: string[] | null
           last_name: string | null
           location: string | null
           profile_image_url: string | null
+          social_media_links: Json | null
+          travel_dream_list: string[] | null
+          upcoming_travel: string | null
           updated_at: string
           user_id: string
           user_type: Database["public"]["Enums"]["user_type"]
+          verification_status: string | null
         }
         Insert: {
           bio?: string | null
+          birthdate?: string | null
           created_at?: string
+          custom_interests?: string[] | null
           email: string
           first_name?: string | null
+          geographic_availability?: string | null
+          home_city?: string | null
           id?: string
+          identification_uploaded?: boolean | null
+          interests?: string[] | null
           is_profile_public?: boolean | null
           is_verified?: boolean | null
           languages?: string[] | null
           last_name?: string | null
           location?: string | null
           profile_image_url?: string | null
+          social_media_links?: Json | null
+          travel_dream_list?: string[] | null
+          upcoming_travel?: string | null
           updated_at?: string
           user_id: string
           user_type: Database["public"]["Enums"]["user_type"]
+          verification_status?: string | null
         }
         Update: {
           bio?: string | null
+          birthdate?: string | null
           created_at?: string
+          custom_interests?: string[] | null
           email?: string
           first_name?: string | null
+          geographic_availability?: string | null
+          home_city?: string | null
           id?: string
+          identification_uploaded?: boolean | null
+          interests?: string[] | null
           is_profile_public?: boolean | null
           is_verified?: boolean | null
           languages?: string[] | null
           last_name?: string | null
           location?: string | null
           profile_image_url?: string | null
+          social_media_links?: Json | null
+          travel_dream_list?: string[] | null
+          upcoming_travel?: string | null
           updated_at?: string
           user_id?: string
           user_type?: Database["public"]["Enums"]["user_type"]
+          verification_status?: string | null
+        }
+        Relationships: []
+      }
+      user_languages: {
+        Row: {
+          created_at: string
+          fluency_level: string
+          id: string
+          is_primary: boolean | null
+          language_code: string
+          language_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fluency_level: string
+          id?: string
+          is_primary?: boolean | null
+          language_code: string
+          language_name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fluency_level?: string
+          id?: string
+          is_primary?: boolean | null
+          language_code?: string
+          language_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      visited_places: {
+        Row: {
+          coordinates: unknown | null
+          country: string
+          created_at: string
+          id: string
+          notes: string | null
+          place_name: string
+          user_id: string
+          visit_date: string | null
+        }
+        Insert: {
+          coordinates?: unknown | null
+          country: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          place_name: string
+          user_id: string
+          visit_date?: string | null
+        }
+        Update: {
+          coordinates?: unknown | null
+          country?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          place_name?: string
+          user_id?: string
+          visit_date?: string | null
         }
         Relationships: []
       }
@@ -86,8 +248,9 @@ export type Database = {
       user_type:
         | "traveler"
         | "tour_operator"
-        | "local_expert"
-        | "language_tutor"
+        | "language_teacher"
+        | "cultural_experience"
+        | "event_venue"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -218,8 +381,9 @@ export const Constants = {
       user_type: [
         "traveler",
         "tour_operator",
-        "local_expert",
-        "language_tutor",
+        "language_teacher",
+        "cultural_experience",
+        "event_venue",
       ],
     },
   },
