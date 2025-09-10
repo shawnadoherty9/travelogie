@@ -21,6 +21,7 @@ export type Database = {
           email: string
           first_name: string | null
           id: string
+          is_profile_public: boolean | null
           is_verified: boolean | null
           languages: string[] | null
           last_name: string | null
@@ -36,6 +37,7 @@ export type Database = {
           email: string
           first_name?: string | null
           id?: string
+          is_profile_public?: boolean | null
           is_verified?: boolean | null
           languages?: string[] | null
           last_name?: string | null
@@ -51,6 +53,7 @@ export type Database = {
           email?: string
           first_name?: string | null
           id?: string
+          is_profile_public?: boolean | null
           is_verified?: boolean | null
           languages?: string[] | null
           last_name?: string | null
@@ -67,7 +70,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_public_profile: {
+        Args: { profile_user_id: string }
+        Returns: {
+          bio: string
+          first_name: string
+          id: string
+          is_verified: boolean
+          languages: string[]
+          last_name: string
+        }[]
+      }
     }
     Enums: {
       user_type:
