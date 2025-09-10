@@ -50,6 +50,7 @@ const CulturalExperienceForm: React.FC = () => {
     materialsProvided: ''
   });
 
+  const [spokenLanguages, setSpokenLanguages] = useState<Array<{code: string, name: string, fluency: string}>>([]);
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
@@ -154,6 +155,7 @@ const CulturalExperienceForm: React.FC = () => {
       console.log('Cultural Experience form data:', {
         ...formData,
         experiences,
+        spokenLanguages,
         interests: [...interests, ...customInterests]
       });
 
@@ -456,6 +458,86 @@ const CulturalExperienceForm: React.FC = () => {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Languages Spoken */}
+            <div className="space-y-4">
+              <Label className="text-lg">Languages Spoken</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Primary Language</Label>
+                  <Select onValueChange={(value) => {
+                    const [code, name] = value.split('|');
+                    setSpokenLanguages(prev => [
+                      ...prev.filter(l => l.fluency !== 'native'),
+                      { code, name, fluency: 'native' }
+                    ]);
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select primary language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="en|English">English</SelectItem>
+                      <SelectItem value="es|Spanish">Spanish</SelectItem>
+                      <SelectItem value="fr|French">French</SelectItem>
+                      <SelectItem value="de|German">German</SelectItem>
+                      <SelectItem value="it|Italian">Italian</SelectItem>
+                      <SelectItem value="pt|Portuguese">Portuguese</SelectItem>
+                      <SelectItem value="ja|Japanese">Japanese</SelectItem>
+                      <SelectItem value="ko|Korean">Korean</SelectItem>
+                      <SelectItem value="zh|Chinese">Chinese</SelectItem>
+                      <SelectItem value="ar|Arabic">Arabic</SelectItem>
+                      <SelectItem value="hi|Hindi">Hindi</SelectItem>
+                      <SelectItem value="th|Thai">Thai</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Additional Languages</Label>
+                  <div className="flex gap-2">
+                    <Select onValueChange={(value) => {
+                      const [code, name] = value.split('|');
+                      if (!spokenLanguages.find(l => l.code === code)) {
+                        setSpokenLanguages(prev => [...prev, { code, name, fluency: 'conversational' }]);
+                      }
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Add language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="en|English">English</SelectItem>
+                        <SelectItem value="es|Spanish">Spanish</SelectItem>
+                        <SelectItem value="fr|French">French</SelectItem>
+                        <SelectItem value="de|German">German</SelectItem>
+                        <SelectItem value="it|Italian">Italian</SelectItem>
+                        <SelectItem value="pt|Portuguese">Portuguese</SelectItem>
+                        <SelectItem value="ja|Japanese">Japanese</SelectItem>
+                        <SelectItem value="ko|Korean">Korean</SelectItem>
+                        <SelectItem value="zh|Chinese">Chinese</SelectItem>
+                        <SelectItem value="ar|Arabic">Arabic</SelectItem>
+                        <SelectItem value="hi|Hindi">Hindi</SelectItem>
+                        <SelectItem value="th|Thai">Thai</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {spokenLanguages.filter(lang => lang.fluency !== 'native').map((lang, index) => (
+                      <Badge key={index} variant="outline" className="flex items-center gap-1">
+                        {lang.name} ({lang.fluency})
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-0 ml-1"
+                          onClick={() => setSpokenLanguages(prev => prev.filter(l => l.code !== lang.code))}
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Cultural Interests/Specialties */}
