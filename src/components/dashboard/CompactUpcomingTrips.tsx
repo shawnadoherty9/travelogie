@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plane, MapPin, Calendar, Plus } from "lucide-react";
+import { Plane, MapPin, Calendar, Plus, Sparkles } from "lucide-react";
 
 interface Trip {
   id: string;
@@ -11,6 +11,7 @@ interface Trip {
   end_date: string;
   trip_type: 'upcoming' | 'future';
   notes?: string;
+  status?: 'soon' | 'planned';
 }
 
 export const CompactUpcomingTrips: React.FC = () => {
@@ -18,26 +19,20 @@ export const CompactUpcomingTrips: React.FC = () => {
     {
       id: '1',
       destination: 'Tokyo, Japan',
-      start_date: '2024-02-15',
-      end_date: '2024-02-22',
+      start_date: '2024-03-14',
+      end_date: '2024-03-24',
       trip_type: 'upcoming',
-      notes: 'Cherry blossom season exploration'
+      notes: 'Cherry blossom season!',
+      status: 'soon'
     },
     {
       id: '2',
       destination: 'Barcelona, Spain',
-      start_date: '2024-03-10',
-      end_date: '2024-03-17',
-      trip_type: 'upcoming',
-      notes: 'Architecture and gastronomy tour'
-    },
-    {
-      id: '3',
-      destination: 'Bali, Indonesia',
-      start_date: '2024-05-20',
-      end_date: '2024-06-02',
+      start_date: '2024-06-09',
+      end_date: '2024-06-19',
       trip_type: 'future',
-      notes: 'Yoga retreat and cultural immersion'
+      notes: 'Architecture tour with locals',
+      status: 'planned'
     }
   ];
 
@@ -49,7 +44,7 @@ export const CompactUpcomingTrips: React.FC = () => {
     const today = new Date();
     const diffTime = tripDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+    return diffDays > 0 ? diffDays : 0;
   };
 
   const formatDateRange = (start: string, end: string) => {
@@ -63,98 +58,105 @@ export const CompactUpcomingTrips: React.FC = () => {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Plane className="w-5 h-5" />
-            My Trips
+            <Sparkles className="w-5 h-5 text-green-600" />
+            Trip Planning
           </CardTitle>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <Plus className="w-4 h-4" />
+          <Button variant="default" size="sm" className="h-8 px-3 bg-blue-600 hover:bg-blue-700">
+            <Plus className="w-4 h-4 mr-1" />
+            Plan New Trip
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Next Trip Highlight */}
-        {upcomingTrips[0] && (
-          <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="font-medium text-sm">Next Trip</h4>
-              <Badge variant="default" className="text-xs">
-                {getDaysUntil(upcomingTrips[0].start_date)} days
-              </Badge>
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-primary" />
-                <span className="font-medium">{upcomingTrips[0].destination}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="w-3 h-3" />
-                <span>{formatDateRange(upcomingTrips[0].start_date, upcomingTrips[0].end_date)}</span>
-              </div>
-              {upcomingTrips[0].notes && (
-                <p className="text-xs text-muted-foreground mt-1">{upcomingTrips[0].notes}</p>
-              )}
-            </div>
+        {/* Upcoming Trips Section */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-green-600" />
+            <h4 className="font-semibold text-sm">Upcoming Trips</h4>
           </div>
-        )}
-
-        {/* Upcoming Trips */}
-        {upcomingTrips.length > 1 && (
-          <div>
-            <h4 className="font-medium text-sm mb-2">Upcoming</h4>
-            <div className="space-y-2">
-              {upcomingTrips.slice(1, 3).map(trip => (
-                <div key={trip.id} className="flex items-center justify-between p-2 border rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                      <MapPin className="w-4 h-4 text-primary" />
+          
+          {upcomingTrips.length > 0 ? (
+            <div className="space-y-3">
+              {upcomingTrips.map(trip => (
+                <div key={trip.id} className="p-3 bg-green-50 border border-green-200 rounded-lg dark:bg-green-950/20 dark:border-green-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-green-600" />
+                      <span className="font-semibold text-sm">{trip.destination}</span>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium">{trip.destination}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDateRange(trip.start_date, trip.end_date)}
-                      </p>
-                    </div>
+                    <Badge variant="default" className="text-xs bg-green-600 hover:bg-green-700">
+                      Soon!
+                    </Badge>
                   </div>
-                  <Badge variant="outline" className="text-xs">
-                    {getDaysUntil(trip.start_date)} days
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Future Plans */}
-        {futureTrips.length > 0 && (
-          <div>
-            <h4 className="font-medium text-sm mb-2">Future Plans</h4>
-            <div className="space-y-2">
-              {futureTrips.slice(0, 2).map(trip => (
-                <div key={trip.id} className="flex items-center justify-between p-2 border-dashed border rounded-lg opacity-75">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                      <Plane className="w-4 h-4 text-muted-foreground" />
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="w-3 h-3" />
+                      <span>{formatDateRange(trip.start_date, trip.end_date)}</span>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium">{trip.destination}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(trip.start_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                      </p>
-                    </div>
+                    {trip.notes && (
+                      <p className="text-xs text-green-700 dark:text-green-300">{trip.notes}</p>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="text-center py-3 text-muted-foreground">
+              <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">No upcoming trips</p>
+            </div>
+          )}
+        </div>
 
+        {/* Future Plans Section */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Calendar className="w-4 h-4 text-blue-600" />
+            <h4 className="font-semibold text-sm">Future Plans</h4>
+          </div>
+          
+          {futureTrips.length > 0 ? (
+            <div className="space-y-3">
+              {futureTrips.map(trip => (
+                <div key={trip.id} className="p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-950/20 dark:border-blue-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-blue-600" />
+                      <span className="font-semibold text-sm">{trip.destination}</span>
+                    </div>
+                    <Badge variant="outline" className="text-xs border-blue-600 text-blue-600">
+                      Planned
+                    </Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="w-3 h-3" />
+                      <span>{formatDateRange(trip.start_date, trip.end_date)}</span>
+                    </div>
+                    {trip.notes && (
+                      <p className="text-xs text-blue-700 dark:text-blue-300">{trip.notes}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-3 text-muted-foreground">
+              <Plane className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">No future plans yet</p>
+            </div>
+          )}
+        </div>
+
+        {/* Empty State */}
         {mockTrips.length === 0 && (
-          <div className="text-center py-4 text-muted-foreground">
-            <Plane className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">No trips planned yet</p>
-            <Button variant="outline" size="sm" className="mt-2">
+          <div className="text-center py-6 text-muted-foreground">
+            <Plane className="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <p className="font-medium">No trips planned yet</p>
+            <p className="text-sm mb-3">Start planning your next adventure!</p>
+            <Button variant="outline" size="sm">
               <Plus className="w-4 h-4 mr-1" />
-              Plan Trip
+              Plan Your First Trip
             </Button>
           </div>
         )}
