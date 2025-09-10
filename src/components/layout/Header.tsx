@@ -47,9 +47,9 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#destinations" className="text-foreground hover:text-travel-ocean transition-colors">
+          <Link to="/destinations" className="text-foreground hover:text-travel-ocean transition-colors">
             Destinations
-          </a>
+          </Link>
           <Link to="/experiences" className="text-foreground hover:text-travel-ocean transition-colors">
             Experiences
           </Link>
@@ -115,9 +115,9 @@ const Header = () => {
       {/* Mobile Menu */}
       {isMenuOpen && <div className="md:hidden bg-background border-b border-border">
           <nav className="container mx-auto px-4 py-4 space-y-3">
-            <a href="#destinations" className="block py-2 text-foreground hover:text-travel-ocean">
+            <Link to="/destinations" className="block py-2 text-foreground hover:text-travel-ocean">
               Destinations
-            </a>
+            </Link>
             <Link to="/experiences" className="block py-2 text-foreground hover:text-travel-ocean">
               Experiences
             </Link>
