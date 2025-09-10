@@ -3,47 +3,98 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin, Clock, Users } from "lucide-react";
 import cultureImage from "@/assets/culture-experiences.jpg";
+import baganImage from "@/assets/bagan-balloons.jpg";
+import montBlancImage from "@/assets/mont-blanc-paragliding.jpg";
+import baliImage from "@/assets/bali-monkey-forest.jpg";
+import varanasiImage from "@/assets/varanasi-temples.jpg";
+import laplandImage from "@/assets/lapland-northern-lights.jpg";
+import whaleSharkImage from "@/assets/whale-shark-swimming.jpg";
 
 const ExperienceShowcase = () => {
   const experiences = [
     {
       id: 1,
-      title: "Traditional Cooking with Nonna Maria",
-      location: "Tuscany, Italy",
-      host: "Maria Rossi",
-      rating: 4.9,
-      reviews: 127,
+      title: "Hot Air Ballooning Above Ancient Bagan",
+      location: "Bagan, Myanmar",
+      host: "Thant Zin",
+      rating: 5.0,
+      reviews: 342,
       duration: "3 hours",
-      groupSize: "2-6 people",
-      price: "$89",
-      tags: ["Cooking", "Traditional", "Family Recipe"],
-      description: "Learn authentic Italian recipes passed down through generations in Maria's family kitchen."
+      groupSize: "2-8 people",
+      price: "$295",
+      tags: ["Adventure", "Sunrise", "Ancient Temples"],
+      description: "Float above thousands of ancient pagodas at sunrise in one of the world's most magical hot air balloon experiences.",
+      image: baganImage
     },
     {
       id: 2,
-      title: "Sunrise Fishing with Local Fishermen",
-      location: "Gili Islands, Indonesia",
-      host: "Wayan Surya",
-      rating: 5.0,
-      reviews: 89,
-      duration: "4 hours",
-      groupSize: "1-4 people",
-      price: "$65",
-      tags: ["Fishing", "Sunrise", "Traditional"],
-      description: "Experience traditional Indonesian fishing methods and enjoy fresh catch for breakfast."
+      title: "Paragliding Above Mont Blanc",
+      location: "Chamonix, France",
+      host: "Pierre Dubois",
+      rating: 4.9,
+      reviews: 178,
+      duration: "2 hours",
+      groupSize: "1-2 people",
+      price: "$385",
+      tags: ["Extreme Sports", "Alps", "Adventure"],
+      description: "Soar through the clouds above Europe's highest peak with breathtaking alpine views that will leave you speechless.",
+      image: montBlancImage
     },
     {
       id: 3,
-      title: "Calligraphy Art Workshop",
-      location: "Kyoto, Japan",
-      host: "Hiroshi Tanaka",
+      title: "Sacred Monkey Forest Temple Trek",
+      location: "Ubud, Bali",
+      host: "Kadek Sari",
       rating: 4.8,
-      reviews: 203,
-      duration: "2 hours",
-      groupSize: "1-8 people",
-      price: "$75",
-      tags: ["Art", "Traditional", "Mindfulness"],
-      description: "Master the ancient art of Japanese calligraphy in a traditional tea house setting."
+      reviews: 267,
+      duration: "2.5 hours",
+      groupSize: "2-10 people",
+      price: "$45",
+      tags: ["Wildlife", "Temples", "Spiritual"],
+      description: "Journey through mystical temples inhabited by playful macaques while learning about Balinese Hindu traditions.",
+      image: baliImage
+    },
+    {
+      id: 4,
+      title: "Sacred Temple Tours at Sunrise",
+      location: "Varanasi, India",
+      host: "Raj Sharma",
+      rating: 5.0,
+      reviews: 421,
+      duration: "4 hours",
+      groupSize: "2-12 people",
+      price: "$35",
+      tags: ["Spiritual", "Ancient", "Culture"],
+      description: "Experience the spiritual heart of India with guided tours of ancient temples along the sacred Ganges River.",
+      image: varanasiImage
+    },
+    {
+      id: 5,
+      title: "Northern Lights Reindeer Adventure",
+      location: "Lapland, Finland",
+      host: "Aino Virtanen",
+      rating: 4.9,
+      reviews: 156,
+      duration: "6 hours",
+      groupSize: "2-6 people",
+      price: "$425",
+      tags: ["Aurora", "Arctic", "Wildlife"],
+      description: "Chase the magical Northern Lights while learning traditional Sami reindeer herding in the pristine Arctic wilderness.",
+      image: laplandImage
+    },
+    {
+      id: 6,
+      title: "Swimming with Whale Sharks",
+      location: "Palawan, Philippines",
+      host: "Miguel Santos",
+      rating: 5.0,
+      reviews: 298,
+      duration: "5 hours",
+      groupSize: "2-8 people",
+      price: "$195",
+      tags: ["Marine Life", "Underwater", "Conservation"],
+      description: "Dive into crystal clear waters for an unforgettable encounter with the gentle giants of the ocean.",
+      image: whaleSharkImage
     }
   ];
 
@@ -102,14 +153,18 @@ const ExperienceShowcase = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {experiences.map((experience) => (
             <Card key={experience.id} className="group hover:transform hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden border-border hover:border-travel-ocean/50">
-              <div className="aspect-video bg-gradient-to-br from-travel-sky to-travel-ocean relative">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-white text-center p-4">
-                    <h4 className="font-semibold text-lg mb-2">{experience.title}</h4>
-                    <div className="flex items-center justify-center space-x-1 text-sm">
-                      <MapPin className="w-4 h-4" />
-                      <span>{experience.location}</span>
-                    </div>
+              <div className="aspect-video relative overflow-hidden">
+                <img 
+                  src={experience.image} 
+                  alt={experience.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <h4 className="font-semibold text-lg mb-2">{experience.title}</h4>
+                  <div className="flex items-center space-x-1 text-sm">
+                    <MapPin className="w-4 h-4" />
+                    <span>{experience.location}</span>
                   </div>
                 </div>
               </div>
