@@ -44,6 +44,7 @@ export interface CityGuideData {
   cityName: string;
   country: string;
   heroImage: string;
+  wallpaperImage: string;
   history: {
     overview: string;
     periods: { era: string; description: string }[];
@@ -84,6 +85,7 @@ export const cityGuides: Record<string, CityGuideData> = {
     cityName: "Varanasi",
     country: "India",
     heroImage: "/src/assets/varanasi-destination.jpg",
+    wallpaperImage: "/src/assets/varanasi-wallpaper.jpg",
     history: {
       overview: "Varanasi, also known as Benares or Kashi, is one of the oldest continuously inhabited cities in the world, dating back to around 1800 BCE. It holds immense religious significance for Hindus, Buddhists, and Jains.",
       periods: [
@@ -235,6 +237,7 @@ export const cityGuides: Record<string, CityGuideData> = {
     cityName: "Tokyo",
     country: "Japan",
     heroImage: "/src/assets/tokyo-destination.jpg",
+    wallpaperImage: "/src/assets/tokyo-wallpaper.jpg",
     history: {
       overview: "Tokyo, originally called Edo, has been Japan's capital since 1868. It transformed from a small fishing village to one of the world's largest metropolitan areas, blending ancient traditions with cutting-edge modernity.",
       periods: [
@@ -387,6 +390,7 @@ export const cityGuides: Record<string, CityGuideData> = {
     cityName: "Mumbai",
     country: "India",
     heroImage: "/src/assets/mumbai-destination.jpg",
+    wallpaperImage: "/src/assets/mumbai-wallpaper.jpg",
     history: {
       overview: "Mumbai, formerly known as Bombay, is India's financial capital and the largest city in the country. Originally a collection of seven islands, it has grown into a bustling metropolis that blends colonial heritage with modern Bollywood glamour.",
       periods: [
@@ -538,6 +542,7 @@ export const cityGuides: Record<string, CityGuideData> = {
     cityName: "Paris",
     country: "France",
     heroImage: "/src/assets/paris-destination.jpg",
+    wallpaperImage: "/src/assets/paris-wallpaper.jpg",
     history: {
       overview: "Paris, the 'City of Light,' has been France's capital for over 1,000 years. From medieval Lutetia to a center of art, fashion, and culture, Paris has shaped world civilization through revolution, artistic movements, and architectural marvels.",
       periods: [
@@ -690,6 +695,7 @@ export const cityGuides: Record<string, CityGuideData> = {
     cityName: "Bangkok",
     country: "Thailand",
     heroImage: "/src/assets/bangkok-destination.jpg",
+    wallpaperImage: "/src/assets/bangkok-wallpaper.jpg",
     history: {
       overview: "Bangkok, known locally as Krung Thep, has been Thailand's capital since 1782. Built on a network of canals, it transformed from a small trading post into Southeast Asia's most vibrant metropolis, blending ancient Thai culture with modern urban energy.",
       periods: [
@@ -841,6 +847,7 @@ export const cityGuides: Record<string, CityGuideData> = {
     cityName: "Barcelona",
     country: "Spain",
     heroImage: "/src/assets/barcelona-destination.jpg",
+    wallpaperImage: "/src/assets/barcelona-wallpaper.jpg",
     history: {
       overview: "Barcelona, the capital of Catalonia, has over 2,000 years of history. From Roman Barcino to a medieval trading powerhouse to a modern cultural capital, it beautifully preserves its past while embracing innovation.",
       periods: [

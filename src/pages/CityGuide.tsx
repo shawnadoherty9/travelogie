@@ -35,15 +35,27 @@ const CityGuide = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-gradient-to-br from-travel-sand via-background to-travel-sage/10 w-full flex">
+      <div 
+        className="min-h-screen w-full flex relative"
+        style={{
+          backgroundImage: `url(${cityData.wallpaperImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Overlay for better readability */}
+        <div className="absolute inset-0 bg-background/90 backdrop-blur-sm" />
         {/* Sidebar Navigation */}
-        <CityGuideNavigation 
-          onSectionClick={scrollToSection}
-          activeSection={activeSection}
-        />
+        <div className="relative z-10">
+          <CityGuideNavigation 
+            onSectionClick={scrollToSection}
+            activeSection={activeSection}
+          />
+        </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col relative z-10">
           {/* Header with Sidebar Trigger */}
           <div className="relative h-96 overflow-hidden">
             <img 
@@ -73,10 +85,12 @@ const CityGuide = () => {
 
           <main className="container mx-auto px-4 py-8">
             <div className="space-y-8">
+              {/* Add subtle background to content areas for better readability */}
               {/* Local Scenes Section - Moved to top center */}
               <div id="localscenes">
-                <CityGuideSection 
-                  title="Local Scenes" 
+                <div className="bg-background/95 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
+                  <CityGuideSection 
+                    title="Local Scenes"
                   icon={<Palette className="w-6 h-6" />}
                 >
                   <div className="space-y-6">
@@ -166,11 +180,13 @@ const CityGuide = () => {
                       })}
                     </div>
                   </div>
-                </CityGuideSection>
+                  </CityGuideSection>
+                </div>
               </div>
 
               {/* History Section */}
               <div id="history">
+                <div className="bg-background/95 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
                 <CityGuideSection 
                   title="City History" 
                   icon={<Building className="w-6 h-6" />}
@@ -188,11 +204,13 @@ const CityGuide = () => {
                       ))}
                     </div>
                   </div>
-                </CityGuideSection>
+                  </CityGuideSection>
+                </div>
               </div>
 
               {/* Attractions Section */}
               <div id="attractions">
+                <div className="bg-background/95 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
                 <CityGuideSection 
                   title="Top 10 Attractions" 
                   icon={<Camera className="w-6 h-6" />}
@@ -229,11 +247,13 @@ const CityGuide = () => {
                       </Card>
                     ))}
                   </div>
-                </CityGuideSection>
+                  </CityGuideSection>
+                </div>
               </div>
 
               {/* Day Trips Section */}
               <div id="daytrips">
+                <div className="bg-background/95 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
                 <CityGuideSection 
                   title="Top 5 Day Trips" 
                   icon={<MapPin className="w-6 h-6" />}
@@ -271,11 +291,13 @@ const CityGuide = () => {
                       </Card>
                     ))}
                   </div>
-                </CityGuideSection>
+                  </CityGuideSection>
+                </div>
               </div>
 
               {/* Transportation Section */}
               <div id="transportation">
+                <div className="bg-background/95 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
                 <CityGuideSection 
                   title="Local Transportation" 
                   icon={<Car className="w-6 h-6" />}
@@ -297,11 +319,13 @@ const CityGuide = () => {
                       </Card>
                     ))}
                   </div>
-                </CityGuideSection>
+                  </CityGuideSection>
+                </div>
               </div>
 
               {/* Airport Section */}
               <div id="airport">
+                <div className="bg-background/95 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
                 <CityGuideSection 
                   title="Airport & Transportation" 
                   icon={<Plane className="w-6 h-6" />}
@@ -323,11 +347,13 @@ const CityGuide = () => {
                       </ul>
                     </div>
                   </Card>
-                </CityGuideSection>
+                  </CityGuideSection>
+                </div>
               </div>
 
               {/* Currency Section */}
               <div id="currency">
+                <div className="bg-background/95 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
                 <CityGuideSection 
                   title="Currency & Money" 
                   icon={<DollarSign className="w-6 h-6" />}
@@ -355,11 +381,13 @@ const CityGuide = () => {
                       </div>
                     </div>
                   </Card>
-                </CityGuideSection>
+                  </CityGuideSection>
+                </div>
               </div>
 
               {/* Climate Section */}
               <div id="climate">
+                <div className="bg-background/95 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
                 <CityGuideSection 
                   title="Climate & Weather" 
                   icon={<Cloud className="w-6 h-6" />}
@@ -393,11 +421,13 @@ const CityGuide = () => {
                       </ul>
                     </Card>
                   </div>
-                </CityGuideSection>
+                  </CityGuideSection>
+                </div>
               </div>
 
               {/* Festivals Section */}
               <div id="festivals">
+                <div className="bg-background/95 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
                 <CityGuideSection 
                   title="Festivals & Celebrations" 
                   icon={<Calendar className="w-6 h-6" />}
@@ -418,7 +448,8 @@ const CityGuide = () => {
                       </Card>
                     ))}
                   </div>
-                </CityGuideSection>
+                  </CityGuideSection>
+                </div>
               </div>
             </div>
           </main>
