@@ -11,6 +11,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, MapPin, Calendar, Users, Heart, Camera, Mountain, Utensils, Building, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+// Import tour images
+import tokyoFoodTour from "@/assets/tokyo-food-tour.jpg";
+import barcelonaArchitectureTour from "@/assets/barcelona-architecture-tour.jpg";
+import mumbaiPhotographyTour from "@/assets/mumbai-photography-tour.jpg";
+
+// Import profile images
+import mayaPatelProfile from "@/assets/maya-patel-profile.jpg";
+import carlosRodriguezProfile from "@/assets/carlos-rodriguez-profile.jpg";
+import yukiTanakaProfile from "@/assets/yuki-tanaka-profile.jpg";
+import amaraOkaforProfile from "@/assets/amara-okafor-profile.jpg";
+
 const Tours = () => {
   const [selectedMode, setSelectedMode] = useState<'personalized' | 'preorganized' | null>(null);
   const [location, setLocation] = useState("");
@@ -22,7 +33,7 @@ const Tours = () => {
     {
       id: 1,
       name: "Maya Patel",
-      avatar: "/placeholder.svg",
+      avatar: mayaPatelProfile,
       rating: 4.9,
       reviews: 156,
       location: "Mumbai, India",
@@ -36,7 +47,7 @@ const Tours = () => {
     {
       id: 2,
       name: "Carlos Rodriguez",
-      avatar: "/placeholder.svg",
+      avatar: carlosRodriguezProfile,
       rating: 4.8,
       reviews: 203,
       location: "Barcelona, Spain",
@@ -50,7 +61,7 @@ const Tours = () => {
     {
       id: 3,
       name: "Yuki Tanaka",
-      avatar: "/placeholder.svg",
+      avatar: yukiTanakaProfile,
       rating: 5.0,
       reviews: 89,
       location: "Kyoto, Japan",
@@ -64,7 +75,7 @@ const Tours = () => {
     {
       id: 4,
       name: "Amara Okafor",
-      avatar: "/placeholder.svg",
+      avatar: amaraOkaforProfile,
       rating: 4.9,
       reviews: 127,
       location: "Lagos, Nigeria",
@@ -276,7 +287,7 @@ Day 3: Personal Connection
                     duration: "6 hours",
                     price: "$120",
                     rating: 4.9,
-                    image: "/placeholder.svg"
+                    image: tokyoFoodTour
                   },
                   {
                     title: "Barcelona Architecture & History",
@@ -284,7 +295,7 @@ Day 3: Personal Connection
                     duration: "4 hours",
                     price: "$85",
                     rating: 4.8,
-                    image: "/placeholder.svg"
+                    image: barcelonaArchitectureTour
                   },
                   {
                     title: "Mumbai Street Photography Tour",
@@ -292,11 +303,17 @@ Day 3: Personal Connection
                     duration: "5 hours", 
                     price: "$65",
                     rating: 4.9,
-                    image: "/placeholder.svg"
+                    image: mumbaiPhotographyTour
                   }
                 ].map((tour, index) => (
                   <Card key={index} className="hover:travel-shadow transition-all duration-300">
-                    <div className="aspect-video bg-muted rounded-t-lg"></div>
+                    <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
+                      <img 
+                        src={tour.image} 
+                        alt={tour.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <CardContent className="p-4">
                       <h4 className="font-semibold mb-2">{tour.title}</h4>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
