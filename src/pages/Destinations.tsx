@@ -234,10 +234,8 @@ const Destinations = () => {
               Explore authentic cultural experiences around the world with local guides
             </p>
             <div className="bg-gradient-to-r from-orange-400/90 to-sky-400/90 backdrop-blur-sm rounded-lg p-6 max-w-2xl mx-auto">
-              <p className="text-lg mb-2 font-semibold">
-                🇮🇳 Proud Partner of the Indian Government
-              </p>
-              <p className="text-base opacity-90">Pending cultural exchange partner for Kumbh Mela Festival via MIT Nanda Project</p>
+              <p className="text-lg mb-2 font-semibold">🇮🇳 Proud Partner of the Indian Government*</p>
+              <p className="text-base opacity-90">*Pending cultural exchange partner for Kumbh Mela Festival via MIT Nanda Project</p>
             </div>
           </div>
         </section>
