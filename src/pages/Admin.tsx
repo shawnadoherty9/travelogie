@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { DataImporter } from "@/components/admin/DataImporter";
 import { Shield, Key, Lock, MapPin, Mic, Workflow, LogIn } from "lucide-react";
 
 const Admin = () => {
@@ -201,7 +202,7 @@ const Admin = () => {
         </Alert>
 
         <Tabs defaultValue="elevenlabs" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="elevenlabs">
               <Mic className="w-4 h-4 mr-2" />
               Eleven Labs
@@ -213,6 +214,10 @@ const Admin = () => {
             <TabsTrigger value="mapbox">
               <MapPin className="w-4 h-4 mr-2" />
               MapBox
+            </TabsTrigger>
+            <TabsTrigger value="import">
+              <Key className="w-4 h-4 mr-2" />
+              Data Import
             </TabsTrigger>
           </TabsList>
 
@@ -319,6 +324,10 @@ const Admin = () => {
                 </Button>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="import">
+            <DataImporter />
           </TabsContent>
         </Tabs>
       </div>
