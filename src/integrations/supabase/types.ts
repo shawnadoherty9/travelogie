@@ -107,7 +107,7 @@ export type Database = {
           upcoming_travel: string | null
           updated_at: string
           user_id: string
-          user_type: Database["public"]["Enums"]["user_type"]
+          user_type: Database["public"]["Enums"]["user_type"] | null
           verification_status: string | null
         }
         Insert: {
@@ -133,7 +133,7 @@ export type Database = {
           upcoming_travel?: string | null
           updated_at?: string
           user_id: string
-          user_type: Database["public"]["Enums"]["user_type"]
+          user_type?: Database["public"]["Enums"]["user_type"] | null
           verification_status?: string | null
         }
         Update: {
@@ -159,7 +159,7 @@ export type Database = {
           upcoming_travel?: string | null
           updated_at?: string
           user_id?: string
-          user_type?: Database["public"]["Enums"]["user_type"]
+          user_type?: Database["public"]["Enums"]["user_type"] | null
           verification_status?: string | null
         }
         Relationships: []
