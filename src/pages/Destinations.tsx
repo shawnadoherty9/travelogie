@@ -24,6 +24,8 @@ import bangkokDestination from "@/assets/bangkok-destination.jpg";
 const Destinations = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<typeof popularDestinations>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [mapboxToken, setMapboxToken] = useState("");
   const [isLoadingToken, setIsLoadingToken] = useState(true);
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -198,8 +200,25 @@ const Destinations = () => {
   };
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would implement geocoding to search for locations
-    console.log("Searching for:", searchQuery);
+    if (!searchQuery.trim()) return;
+    
+    setIsSearching(true);
+    
+    // Filter destinations based on search query
+    const filteredResults = popularDestinations.filter(destination =>
+      destination.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      destination.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      destination.name.split(',')[1]?.trim().toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    
+    setSearchResults(filteredResults);
+    setIsSearching(false);
+    
+    // Scroll to results section
+    const resultsSection = document.getElementById('search-results');
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
   return <div className="min-h-screen bg-background">
       <Header />
@@ -239,8 +258,8 @@ const Destinations = () => {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <Input placeholder="Search destinations, countries, or cities..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 py-3 text-lg" />
                 </div>
-                <Button type="submit" size="lg" className="bg-gradient-wanderlust hover:opacity-90 text-slate-50 bg-sky-500 hover:bg-sky-400">
-                  Explore
+                <Button type="submit" size="lg" className="bg-gradient-wanderlust hover:opacity-90 text-slate-50 bg-sky-500 hover:bg-sky-400" disabled={isSearching}>
+                  {isSearching ? "Searching..." : "Explore"}
                 </Button>
               </form>
             </div>
@@ -271,6 +290,69 @@ const Destinations = () => {
             </div>
           </section>}
 
+        {/* Search Results */}
+        {searchResults.length > 0 && (
+          <section id="search-results" className="py-16 bg-muted/30">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-4">
+                Search Results for "{searchQuery}"
+              </h2>
+              <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+                Found {searchResults.length} destination{searchResults.length !== 1 ? 's' : ''} matching your search
+              </p>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {searchResults.map((destination, index) => (
+                  <Card key={index} className="hover:travel-shadow transition-all duration-300 cursor-pointer" onClick={() => handleDestinationClick(destination)}>
+                    <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
+                      <img src={destination.image} alt={destination.name} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
+                    </div>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="font-bold text-lg mb-1">{destination.name}</h3>
+                          <p className="text-sm text-muted-foreground">{destination.description}</p>
+                        </div>
+                        <MapPin className="w-5 h-5 text-travel-sunset mt-1" />
+                      </div>
+                      
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="flex items-center gap-1 text-sm">
+                          <Calendar className="w-4 h-4" />
+                          <span>{destination.experiences} experiences</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm">
+                          <Users className="w-4 h-4" />
+                          <span>{destination.guides} guides</span>
+                        </div>
+                      </div>
+                      
+                      <Button className="w-full bg-gradient-wanderlust hover:opacity-90" onClick={(e) => {
+                        e.stopPropagation();
+                        handleDestinationClick(destination);
+                      }}>
+                        Explore Destination
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              
+              {searchQuery && searchResults.length === 0 && !isSearching && (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground mb-4">No destinations found matching "{searchQuery}"</p>
+                  <Button variant="outline" onClick={() => {
+                    setSearchQuery("");
+                    setSearchResults([]);
+                  }}>
+                    Clear Search
+                  </Button>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         {/* Popular Destinations */}
         <section className="py-16 bg-muted/30">
           <div className="container mx-auto px-4">
@@ -280,7 +362,8 @@ const Destinations = () => {
             </p>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {popularDestinations.map((destination, index) => <Card key={index} className="hover:travel-shadow transition-all duration-300 cursor-pointer" onClick={() => handleDestinationClick(destination)}>
+              {popularDestinations.map((destination, index) => (
+                <Card key={index} className="hover:travel-shadow transition-all duration-300 cursor-pointer" onClick={() => handleDestinationClick(destination)}>
                   <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
                     <img src={destination.image} alt={destination.name} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
                   </div>
@@ -304,14 +387,15 @@ const Destinations = () => {
                       </div>
                     </div>
                     
-                    <Button className="w-full bg-gradient-wanderlust hover:opacity-90" onClick={e => {
-                  e.stopPropagation();
-                  handleDestinationClick(destination);
-                }}>
+                    <Button className="w-full bg-gradient-wanderlust hover:opacity-90" onClick={(e) => {
+                      e.stopPropagation();
+                      handleDestinationClick(destination);
+                    }}>
                       Explore Destination
                     </Button>
                   </CardContent>
-                </Card>)}
+                </Card>
+              ))}
             </div>
           </div>
         </section>
