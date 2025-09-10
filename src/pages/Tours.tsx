@@ -8,8 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, MapPin, Calendar, Users, Heart, Camera, Mountain, Utensils, Building, Globe } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Star, MapPin, Calendar, Users, Heart, Camera, Mountain, Utensils, Building, Globe, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { TourCard } from "@/components/tours/TourCard";
+import { AttractionsGrid } from "@/components/tours/AttractionsGrid";
+import { ActivitiesGrid } from "@/components/tours/ActivitiesGrid";
+import { useTours } from "@/hooks/useTours";
 
 // Import tour images
 import tokyoFoodTour from "@/assets/tokyo-food-tour.jpg";
@@ -40,9 +45,8 @@ const Tours = () => {
   const [personalizedTour, setPersonalizedTour] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [showLanguageSection, setShowLanguageSection] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const { tours, attractions, activities, loading, bookTour, bookAttraction, bookActivity } = useTours();
   const languageInstructors = [{
     id: 1,
     name: "Sarah Johnson",
@@ -387,52 +391,82 @@ Day 3: Personal Connection
             </div>
           </section>}
 
-        {/* Pre-organized Tours Section */}
+        {/* Tours, Attractions & Activities Section */}
         {selectedMode === 'preorganized' && <section className="py-12">
             <div className="container mx-auto px-4">
-              <h3 className="text-2xl font-bold text-center mb-8">Popular Curated Experiences</h3>
-              <div className="grid md:grid-cols-3 gap-6 mb-12">
-                {[{
-              title: "Tokyo Food & Culture Walking Tour",
-              location: "Tokyo, Japan",
-              duration: "6 hours",
-              price: "$120",
-              rating: 4.9,
-              image: tokyoFoodTour
-            }, {
-              title: "Barcelona Architecture & History",
-              location: "Barcelona, Spain",
-              duration: "4 hours",
-              price: "$85",
-              rating: 4.8,
-              image: barcelonaArchitectureTour
-            }, {
-              title: "Mumbai Street Photography Tour",
-              location: "Mumbai, India",
-              duration: "5 hours",
-              price: "$65",
-              rating: 4.9,
-              image: mumbaiPhotographyTour
-            }].map((tour, index) => <Card key={index} className="hover:travel-shadow transition-all duration-300">
-                    <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                      <img src={tour.image} alt={tour.title} className="w-full h-full object-cover" />
+              <h3 className="text-2xl font-bold text-center mb-8">Discover Amazing Experiences</h3>
+              
+              <Tabs defaultValue="tours" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 mb-8">
+                  <TabsTrigger value="tours" className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    Tours
+                  </TabsTrigger>
+                  <TabsTrigger value="attractions" className="flex items-center gap-2">
+                    <Camera className="w-4 h-4" />
+                    Attractions
+                  </TabsTrigger>
+                  <TabsTrigger value="activities" className="flex items-center gap-2">
+                    <Activity className="w-4 h-4" />
+                    Activities
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="tours" className="space-y-6">
+                  {loading ? (
+                    <div className="text-center py-8">Loading tours...</div>
+                  ) : tours.length > 0 ? (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {tours.map((tour) => (
+                        <TourCard
+                          key={tour.id}
+                          tour={{
+                            ...tour,
+                            city: "City", // TODO: Join with cities table
+                            attractions: [],
+                            activities: [],
+                          }}
+                          onBookTour={bookTour}
+                        />
+                      ))}
                     </div>
-                    <CardContent className="p-4">
-                      <h4 className="font-semibold mb-2">{tour.title}</h4>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                        <MapPin className="w-4 h-4" />
-                        {tour.location}
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-bold text-travel-ocean">{tour.price}</span>
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm">{tour.rating}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>)}
-              </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No tours available at the moment.
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="attractions" className="space-y-6">
+                  {loading ? (
+                    <div className="text-center py-8">Loading attractions...</div>
+                  ) : attractions.length > 0 ? (
+                    <AttractionsGrid 
+                      attractions={attractions}
+                      onBookAttraction={bookAttraction}
+                    />
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No attractions available at the moment.
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="activities" className="space-y-6">
+                  {loading ? (
+                    <div className="text-center py-8">Loading activities...</div>
+                  ) : activities.length > 0 ? (
+                    <ActivitiesGrid 
+                      activities={activities}
+                      onBookActivity={bookActivity}
+                    />
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No activities available at the moment.
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
             </div>
           </section>}
 
