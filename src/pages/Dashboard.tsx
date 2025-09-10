@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { 
   Calendar, 
   MapPin, 
@@ -17,9 +18,16 @@ import {
   Heart,
   MessageSquare,
   Settings,
-  Plus
+  Plus,
+  Camera,
+  Map,
+  CalendarDays,
+  Plane
 } from 'lucide-react';
 import Header from '@/components/layout/Header';
+import { VisitedPlacesMap } from '@/components/dashboard/VisitedPlacesMap';
+import { UpcomingTrips } from '@/components/dashboard/UpcomingTrips';
+import { FileUpload } from '@/components/ui/file-upload';
 
 interface Profile {
   id: string;
@@ -35,14 +43,26 @@ interface Profile {
   is_verified: boolean;
 }
 
+interface VisitedPlace {
+  id: string;
+  place_name: string;
+  country: string;
+  coordinates: [number, number];
+  visit_date: string;
+  notes?: string;
+}
+
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [visitedPlaces, setVisitedPlaces] = useState<VisitedPlace[]>([]);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
     if (user) {
       fetchProfile();
+      fetchVisitedPlaces();
     }
   }, [user]);
 
@@ -65,6 +85,45 @@ const Dashboard = () => {
       console.error('Error fetching profile:', error);
     } finally {
       setProfileLoading(false);
+    }
+  };
+
+  const fetchVisitedPlaces = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('visited_places')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('visit_date', { ascending: false });
+
+      if (error) throw error;
+      
+      const placesWithCoords = data?.map(place => ({
+        ...place,
+        coordinates: place.coordinates && typeof place.coordinates === 'string' ? 
+          [parseFloat(place.coordinates.split(',')[0]), parseFloat(place.coordinates.split(',')[1])] as [number, number] :
+          [0, 0] as [number, number]
+      })) || [];
+      
+      setVisitedPlaces(placesWithCoords);
+    } catch (error) {
+      console.error('Error fetching visited places:', error);
+    }
+  };
+
+  const handleProfileImageUpload = async (imageUrl: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ profile_image_url: imageUrl })
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+      
+      setProfile(prev => prev ? { ...prev, profile_image_url: imageUrl } : null);
+      setShowUploadModal(false);
+    } catch (error) {
+      console.error('Error updating profile image:', error);
     }
   };
 
@@ -176,11 +235,29 @@ const Dashboard = () => {
           {/* Welcome Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">
-                  Welcome back, {profile?.first_name || 'User'}! 👋
-                </h1>
-                <p className="text-muted-foreground mt-2">{dashboardContent.description}</p>
+              <div className="flex items-center gap-6">
+                <div className="relative">
+                  <Avatar className="w-20 h-20">
+                    <AvatarImage src={profile?.profile_image_url} />
+                    <AvatarFallback className="bg-primary/10 text-2xl">
+                      {profile?.first_name?.[0]}{profile?.last_name?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full p-0"
+                    onClick={() => setShowUploadModal(true)}
+                  >
+                    <Camera className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-foreground">
+                    Welcome back, {profile?.first_name || 'User'}! 👋
+                  </h1>
+                  <p className="text-muted-foreground mt-2">{dashboardContent.description}</p>
+                </div>
               </div>
               <div className="flex items-center gap-4">
                 <Badge variant="secondary" className="capitalize">
@@ -218,7 +295,9 @@ const Dashboard = () => {
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="activity">Recent Activity</TabsTrigger>
+              <TabsTrigger value="trips">My Trips</TabsTrigger>
+              <TabsTrigger value="map">Places Visited</TabsTrigger>
+              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
               <TabsTrigger value="profile">Profile</TabsTrigger>
             </TabsList>
 
@@ -304,30 +383,75 @@ const Dashboard = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="activity">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Activity Feed</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4 p-4 border rounded-lg">
-                      <Calendar className="w-5 h-5 text-primary" />
-                      <div>
-                        <p className="font-medium">Booking confirmed</p>
-                        <p className="text-sm text-muted-foreground">Traditional Cooking in Tuscany - 2 hours ago</p>
-                      </div>
+            <TabsContent value="trips" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <Card className="lg:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Plane className="w-5 h-5" />
+                      Trip History
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {visitedPlaces.slice(0, 5).map((place) => (
+                        <div key={place.id} className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                              <MapPin className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-medium">{place.place_name}</p>
+                              <p className="text-sm text-muted-foreground">{place.country}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-muted-foreground">
+                              {place.visit_date ? new Date(place.visit_date).toLocaleDateString() : 'No date'}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      {visitedPlaces.length === 0 && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <MapPin className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                          <p>No places visited yet. Start exploring!</p>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-4 p-4 border rounded-lg">
-                      <Star className="w-5 h-5 text-yellow-500" />
-                      <div>
-                        <p className="font-medium">Review received</p>
-                        <p className="text-sm text-muted-foreground">5 stars from John D. - 1 day ago</p>
-                      </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Travel Stats</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-center p-4 bg-primary/5 rounded-lg">
+                      <p className="text-2xl font-bold text-primary">{visitedPlaces.length}</p>
+                      <p className="text-sm text-muted-foreground">Places Visited</p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="text-center p-4 bg-secondary/5 rounded-lg">
+                      <p className="text-2xl font-bold text-secondary-foreground">
+                        {new Set(visitedPlaces.map(p => p.country)).size}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Countries Explored</p>
+                    </div>
+                    <Button className="w-full">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add New Place
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="map">
+              <VisitedPlacesMap visitedPlaces={visitedPlaces} />
+            </TabsContent>
+
+            <TabsContent value="upcoming">
+              <UpcomingTrips />
             </TabsContent>
 
             <TabsContent value="profile">
@@ -359,6 +483,32 @@ const Dashboard = () => {
               </Card>
             </TabsContent>
           </Tabs>
+          
+          {/* Profile Photo Upload Modal */}
+          {showUploadModal && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <Card className="w-full max-w-md m-4">
+                <CardHeader>
+                  <CardTitle>Update Profile Photo</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FileUpload
+                    onUpload={handleProfileImageUpload}
+                    currentImageUrl={profile?.profile_image_url}
+                    bucket="avatars"
+                    variant="avatar"
+                  />
+                  <Button 
+                    variant="outline" 
+                    className="w-full mt-4"
+                    onClick={() => setShowUploadModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </main>
     </div>
