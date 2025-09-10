@@ -48,13 +48,18 @@ const Dashboard = () => {
 
   const fetchProfile = async () => {
     try {
+      console.log('Fetching profile for user:', user?.id);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', user?.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Profile fetch error:', error);
+        throw error;
+      }
+      console.log('Profile data:', data);
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
