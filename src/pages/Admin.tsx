@@ -7,11 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Key, Lock, MapPin, Mic, Workflow } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { Shield, Key, Lock, MapPin, Mic, Workflow, LogIn } from "lucide-react";
 
 const Admin = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [adminPassword, setAdminPassword] = useState("");
+  const [isAdminVerified, setIsAdminVerified] = useState(false);
+  const [verifying, setVerifying] = useState(true);
   const [secrets, setSecrets] = useState({
     elevenLabs: "",
     n8n: "",
@@ -19,53 +21,102 @@ const Admin = () => {
   });
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, session, loading } = useAuth();
 
   useEffect(() => {
-    // Check if admin is already authenticated
-    const adminAuth = localStorage.getItem("admin_authenticated");
-    if (adminAuth === "true") {
-      setIsAuthenticated(true);
-      loadSecrets();
-    }
-  }, []);
+    const verifyAdminAccess = async () => {
+      if (loading) return;
+      
+      if (!user || !session) {
+        setVerifying(false);
+        return;
+      }
 
-  const handleAdminLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+      try {
+        const { data, error } = await supabase.functions.invoke('admin-auth', {
+          body: { action: 'verify_admin' },
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (error) throw error;
+
+        if (data.isAdmin) {
+          setIsAdminVerified(true);
+          loadSecrets();
+        }
+      } catch (error) {
+        console.error('Admin verification error:', error);
+        toast({
+          title: "Access Denied",
+          description: "You don't have admin privileges.",
+          variant: "destructive",
+        });
+      } finally {
+        setVerifying(false);
+      }
+    };
+
+    verifyAdminAccess();
+  }, [user, session, loading]);
+
+  const handleSignIn = () => {
+    navigate('/auth');
+  };
+
+  const loadSecrets = async () => {
+    if (!session) return;
     
-    // Simple admin auth - in production, use proper authentication
-    if (adminPassword === "travelogie_admin_2024") {
-      setIsAuthenticated(true);
-      localStorage.setItem("admin_authenticated", "true");
-      loadSecrets();
-      toast({
-        title: "Authentication Successful",
-        description: "Welcome to the admin panel.",
+    try {
+      const { data, error } = await supabase.functions.invoke('manage-secrets', {
+        body: { action: 'get' },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
-    } else {
+
+      if (error) throw error;
+
+      if (data.secrets) {
+        setSecrets(data.secrets);
+      }
+    } catch (error) {
+      console.error('Error loading secrets:', error);
       toast({
-        title: "Authentication Failed",
-        description: "Invalid admin password.",
+        title: "Error",
+        description: "Failed to load secrets.",
         variant: "destructive",
       });
     }
   };
 
-  const loadSecrets = async () => {
-    // TODO: Load secrets from Supabase Edge Functions
-    // This would call your Supabase function to retrieve encrypted secrets
-    console.log("Loading secrets from Supabase...");
-  };
-
   const updateSecret = async (service: string, apiKey: string) => {
+    if (!session) return;
+    
     try {
-      // TODO: Call Supabase Edge Function to securely store the secret
-      console.log(`Updating ${service} secret...`);
+      const { data, error } = await supabase.functions.invoke('manage-secrets', {
+        body: { 
+          action: 'update',
+          secretName: service,
+          secretValue: apiKey
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
       
       toast({
         title: "Secret Updated",
         description: `${service} API key has been securely stored.`,
       });
+      
+      // Reload secrets to show updated masked values
+      loadSecrets();
     } catch (error) {
+      console.error('Error updating secret:', error);
       toast({
         title: "Error",
         description: `Failed to update ${service} secret.`,
@@ -78,15 +129,29 @@ const Admin = () => {
     updateSecret(service, secrets[service]);
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("admin_authenticated");
-    setAdminPassword("");
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsAdminVerified(false);
     setSecrets({ elevenLabs: "", n8n: "", mapbox: "" });
     navigate("/");
   };
 
-  if (!isAuthenticated) {
+  if (loading || verifying) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex items-center justify-center p-8">
+            <div className="text-center">
+              <Shield className="w-8 h-8 mx-auto mb-4 text-primary animate-pulse" />
+              <p>Verifying admin access...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!user || !isAdminVerified) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
@@ -100,23 +165,15 @@ const Admin = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleAdminLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="password">Admin Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter admin password"
-                  value={adminPassword}
-                  onChange={(e) => setAdminPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                <Lock className="w-4 h-4 mr-2" />
-                Access Admin Panel
+            <div className="space-y-4">
+              <p className="text-center text-muted-foreground">
+                You need to sign in with an admin account to access this panel.
+              </p>
+              <Button onClick={handleSignIn} className="w-full">
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign In to Continue
               </Button>
-            </form>
+            </div>
           </CardContent>
         </Card>
       </div>
