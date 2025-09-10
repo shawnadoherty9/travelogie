@@ -1,6 +1,5 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import travelogieLogo from "@/assets/travelogie-logo.png";
 
 const Footer = () => {
   return (
@@ -11,7 +10,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full overflow-hidden">
-              <img src={travelogieLogo} alt="Travelogie Logo" className="w-full h-full object-cover" />
+              <img src="/lovable-uploads/25f8f091-7b7d-4b9a-aa2c-bffc8e9b3b68.png" alt="Travelogie Logo" className="w-full h-full object-cover" />
             </div>
               <div>
                 <h3 className="text-xl font-bold">Travelogie</h3>
