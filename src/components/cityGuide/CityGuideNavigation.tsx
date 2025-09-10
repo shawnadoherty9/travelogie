@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Camera, Calendar, Plane, DollarSign, Cloud, Car, Building } from 'lucide-react';
+import { MapPin, Camera, Calendar, Plane, DollarSign, Cloud, Car, Building, Palette } from 'lucide-react';
 
 interface NavigationItem {
   id: string;
@@ -16,6 +16,7 @@ interface CityGuideNavigationProps {
 const navigationItems: NavigationItem[] = [
   { id: 'history', title: 'City History', icon: <Building className="w-5 h-5" /> },
   { id: 'attractions', title: 'Top City Attractions', icon: <Camera className="w-5 h-5" /> },
+  { id: 'localscenes', title: 'Local Scenes', icon: <Palette className="w-5 h-5" /> },
   { id: 'daytrips', title: 'Day Trips', icon: <MapPin className="w-5 h-5" /> },
   { id: 'transportation', title: 'Local Transportation', icon: <Car className="w-5 h-5" /> },
   { id: 'airport', title: 'Airport', icon: <Plane className="w-5 h-5" /> },

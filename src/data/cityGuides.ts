@@ -30,6 +30,16 @@ export interface Festival {
   duration: string;
 }
 
+export interface LocalScene {
+  category: string;
+  name: string;
+  description: string;
+  location: string;
+  highlights: string[];
+  bestTime: string;
+  cost: string;
+}
+
 export interface CityGuideData {
   cityName: string;
   country: string;
@@ -62,6 +72,11 @@ export interface CityGuideData {
     clothing: string[];
   };
   festivals: Festival[];
+  localScenes: {
+    overview: string;
+    backgroundImage: string;
+    scenes: LocalScene[];
+  };
 }
 
 export const cityGuides: Record<string, CityGuideData> = {
@@ -172,7 +187,49 @@ export const cityGuides: Record<string, CityGuideData> = {
       { name: "Mahashivratri", month: "February/March", description: "Major festival dedicated to Lord Shiva", duration: "1 day" },
       { name: "Ganga Aarti", month: "Daily", description: "Evening prayer ceremony at Dashashwamedh Ghat", duration: "Daily at 7 PM" },
       { name: "Buddha Purnima", month: "May", description: "Celebration of Buddha's birth at Sarnath", duration: "1 day" }
-    ]
+    ],
+    localScenes: {
+      overview: "Varanasi's cultural scene is deeply rooted in ancient traditions, featuring classical music, traditional arts, spiritual practices, and artisan crafts that have been passed down through generations.",
+      backgroundImage: "/src/assets/varanasi-art-scene.jpg",
+      scenes: [
+        {
+          category: "Music",
+          name: "Classical Indian Music Tradition",
+          description: "Home to legendary musicians and the birthplace of many ragas, Varanasi hosts intimate concerts and learning sessions",
+          location: "Benaras Hindu University, Private ashrams",
+          highlights: ["Sitar and tabla performances", "Classical vocal training", "Evening ragas at ghats", "Music festivals"],
+          bestTime: "Evening concerts during winter months",
+          cost: "₹500-2000 for concerts, ₹1000-5000 for lessons"
+        },
+        {
+          category: "Arts & Crafts",
+          name: "Traditional Weaving & Silk Arts",
+          description: "Famous Banarasi silk sarees and intricate weaving techniques practiced by local artisans",
+          location: "Peethambari, Chaukaghat weaving clusters",
+          highlights: ["Banarasi silk sarees", "Handloom demonstrations", "Traditional dyeing", "Artisan workshops"],
+          bestTime: "Morning hours when artisans are most active",
+          cost: "₹200-1000 for workshops, ₹5000+ for authentic sarees"
+        },
+        {
+          category: "Spirituality & Philosophy",
+          name: "Spiritual Learning Centers",
+          description: "Ancient centers of learning offering courses in philosophy, meditation, and spiritual practices",
+          location: "Various ashrams and universities",
+          highlights: ["Yoga and meditation", "Sanskrit studies", "Philosophy discussions", "Spiritual retreats"],
+          bestTime: "Early morning sessions and evening discussions",
+          cost: "₹500-3000 for courses, donations for ashram stays"
+        },
+        {
+          category: "Theater & Performance",
+          name: "Ram Lila & Folk Theater",
+          description: "Traditional dramatic performances depicting ancient epics and local folklore",
+          location: "Ramnagar Fort, various venues during festivals",
+          highlights: ["Epic Ram Lila performances", "Folk dance", "Street theater", "Puppet shows"],
+          bestTime: "During Dussehra festival (September/October)",
+          cost: "Free to ₹500 depending on venue and performance"
+        }
+      ]
+    }
   },
   tokyo: {
     cityName: "Tokyo",
@@ -282,7 +339,49 @@ export const cityGuides: Record<string, CityGuideData> = {
       { name: "Kanda Festival", month: "May (odd years)", description: "One of Tokyo's three great festivals", duration: "3 days" },
       { name: "Tanabata Festival", month: "July", description: "Star festival with colorful decorations", duration: "1 week" },
       { name: "Autumn Leaves Festival", month: "November", description: "Momiji viewing in parks and temples", duration: "1 month" }
-    ]
+    ],
+    localScenes: {
+      overview: "Tokyo's cultural scene seamlessly blends cutting-edge technology with traditional arts, creating a unique ecosystem of innovation, creativity, and cultural preservation.",
+      backgroundImage: "/src/assets/tokyo-tech-scene.jpg",
+      scenes: [
+        {
+          category: "Technology & Innovation",
+          name: "Tech Hub Districts",
+          description: "Leading technology centers featuring startups, robotics, and digital innovation",
+          location: "Shibuya, Akihabara, Roppongi Hills",
+          highlights: ["Robot cafes", "VR experiences", "Tech meetups", "Innovation labs"],
+          bestTime: "Weekday evenings for tech events",
+          cost: "¥1000-5000 for experiences, free for many meetups"
+        },
+        {
+          category: "Arts & Design",
+          name: "Contemporary Art Scene",
+          description: "Modern galleries, street art, and avant-garde installations throughout the city",
+          location: "Omotesando, Ginza, teamLab museums",
+          highlights: ["Digital art installations", "Gallery exhibitions", "Street art tours", "Design studios"],
+          bestTime: "Weekends for gallery openings",
+          cost: "¥1500-3000 for museum entries"
+        },
+        {
+          category: "Pop Culture",
+          name: "Anime & Manga Culture",
+          description: "Epicenter of Japanese pop culture with anime studios, manga cafes, and otaku districts",
+          location: "Akihabara, Harajuku, Ikebukuro",
+          highlights: ["Anime studios tours", "Cosplay events", "Manga cafes", "Character goods"],
+          bestTime: "Weekends for events and cosplay",
+          cost: "¥500-2000 for cafes and experiences"
+        },
+        {
+          category: "Traditional Arts",
+          name: "Classical Japanese Arts",
+          description: "Traditional kabuki, noh theater, tea ceremony, and calligraphy preservation",
+          location: "Kabuki-za Theatre, traditional districts",
+          highlights: ["Kabuki performances", "Tea ceremony", "Calligraphy workshops", "Traditional crafts"],
+          bestTime: "Evening performances, morning tea ceremonies",
+          cost: "¥3000-15000 for theater, ¥2000-5000 for workshops"
+        }
+      ]
+    }
   },
   mumbai: {
     cityName: "Mumbai",
@@ -391,7 +490,49 @@ export const cityGuides: Record<string, CityGuideData> = {
       { name: "Navratri", month: "September/October", description: "Nine nights of dance and celebration", duration: "9 days" },
       { name: "Mumbai Festival", month: "January", description: "Cultural festival showcasing Mumbai's arts", duration: "1 week" },
       { name: "Kala Ghoda Arts Festival", month: "February", description: "Major arts and culture festival", duration: "10 days" }
-    ]
+    ],
+    localScenes: {
+      overview: "Mumbai's cultural scene is the beating heart of India's entertainment industry, blending Bollywood glamour with street art, independent cinema, and vibrant nightlife.",
+      backgroundImage: "/src/assets/mumbai-film-scene.jpg",
+      scenes: [
+        {
+          category: "Film & Cinema",
+          name: "Bollywood Industry Hub",
+          description: "The center of Indian cinema with film studios, celebrity culture, and movie-making heritage",
+          location: "Film City, Bandra, Juhu",
+          highlights: ["Studio tours", "Film screenings", "Celebrity spotting", "Industry events"],
+          bestTime: "Weekdays for studio visits, evenings for premieres",
+          cost: "₹500-2000 for studio tours, ₹200-800 for cinema"
+        },
+        {
+          category: "Music & Dance",
+          name: "Classical & Contemporary Music Scene",
+          description: "Rich tradition of Indian classical music mixed with modern fusion and indie scenes",
+          location: "NCPA, Blue Frog, various venues",
+          highlights: ["Classical concerts", "Indie music venues", "Dance performances", "Music festivals"],
+          bestTime: "Evening concerts, weekend festivals",
+          cost: "₹500-3000 for concerts, ₹1000-5000 for festivals"
+        },
+        {
+          category: "Street Art & Culture",
+          name: "Urban Art Movement",
+          description: "Vibrant street art scene reflecting social issues and urban life",
+          location: "Bandra, Lower Parel, Worli",
+          highlights: ["Graffiti tours", "Art galleries", "Street festivals", "Community murals"],
+          bestTime: "Morning walks for street art viewing",
+          cost: "Free for street viewing, ₹300-1000 for guided tours"
+        },
+        {
+          category: "Sports Culture",
+          name: "Cricket & Recreation",
+          description: "Cricket-obsessed city with numerous grounds and sports culture",
+          location: "Oval Maidan, Marine Drive, local clubs",
+          highlights: ["Cricket matches", "Sports clubs", "Marathon events", "Beach sports"],
+          bestTime: "Early morning or evening for outdoor activities",
+          cost: "₹200-1000 for matches, free for beach activities"
+        }
+      ]
+    }
   },
   paris: {
     cityName: "Paris",
@@ -501,7 +642,49 @@ export const cityGuides: Record<string, CityGuideData> = {
       { name: "Nuit Blanche", month: "October", description: "All-night cultural festival with free events", duration: "1 night" },
       { name: "Paris Fashion Week", month: "March & September", description: "World's premier fashion event", duration: "1 week each" },
       { name: "Fête de la Musique", month: "June", description: "Free concerts throughout the city", duration: "1 day" }
-    ]
+    ],
+    localScenes: {
+      overview: "Paris remains the global capital of art, fashion, and culture, offering unparalleled access to world-class museums, avant-garde galleries, haute couture, and sophisticated entertainment.",
+      backgroundImage: "/src/assets/paris-culture-scene.jpg",
+      scenes: [
+        {
+          category: "Arts & Museums",
+          name: "World-Class Art Scene",
+          description: "Home to legendary museums and cutting-edge contemporary galleries",
+          location: "Louvre, Montmartre, Le Marais",
+          highlights: ["Museum exhibitions", "Gallery openings", "Artist studios", "Art markets"],
+          bestTime: "Weekdays for museums, weekends for gallery openings",
+          cost: "€10-17 for museums, free for many galleries"
+        },
+        {
+          category: "Fashion & Design",
+          name: "Global Fashion Capital",
+          description: "Epicenter of haute couture, luxury fashion, and design innovation",
+          location: "Champs-Élysées, Saint-Germain, Le Marais",
+          highlights: ["Fashion shows", "Designer boutiques", "Vintage markets", "Fashion museums"],
+          bestTime: "Fashion weeks, weekend markets",
+          cost: "€15-30 for fashion museums, varies for shopping"
+        },
+        {
+          category: "Music & Theater",
+          name: "Classical & Contemporary Performance",
+          description: "Rich tradition of opera, theater, and diverse musical performances",
+          location: "Opéra de Paris, various theaters and venues",
+          highlights: ["Opera performances", "Classical concerts", "Jazz clubs", "Theater shows"],
+          bestTime: "Evening performances year-round",
+          cost: "€25-200 for performances depending on venue"
+        },
+        {
+          category: "Culinary Arts",
+          name: "Gastronomic Excellence",
+          description: "World-renowned culinary scene from street food to Michelin-starred restaurants",
+          location: "Throughout the city, special focus on foodie districts",
+          highlights: ["Cooking classes", "Wine tastings", "Food markets", "Restaurant culture"],
+          bestTime: "Morning markets, evening dining",
+          cost: "€50-150 for cooking classes, €30-300 for dining"
+        }
+      ]
+    }
   },
   bangkok: {
     cityName: "Bangkok",
@@ -610,7 +793,49 @@ export const cityGuides: Record<string, CityGuideData> = {
       { name: "Loy Krathong", month: "November", description: "Festival of floating lanterns and banana leaf boats", duration: "1 day" },
       { name: "Royal Ploughing Ceremony", month: "May", description: "Ancient ceremony marking start of rice planting season", duration: "1 day" },
       { name: "Golden Mount Fair", month: "November", description: "Temple fair at Wat Saket with traditional performances", duration: "1 week" }
-    ]
+    ],
+    localScenes: {
+      overview: "Bangkok's cultural scene combines ancient Thai traditions with modern creativity, featuring temple arts, street food culture, contemporary galleries, and vibrant nightlife entertainment.",
+      backgroundImage: "/src/assets/bangkok-arts-scene.jpg",
+      scenes: [
+        {
+          category: "Traditional Arts",
+          name: "Thai Cultural Heritage",
+          description: "Ancient arts including traditional dance, music, and temple crafts",
+          location: "Grand Palace, Wat Pho, Cultural Center",
+          highlights: ["Classical Thai dance", "Traditional music", "Temple art", "Handicraft workshops"],
+          bestTime: "Evening cultural shows, morning temple visits",
+          cost: "฿200-800 for shows, ฿100-500 for workshops"
+        },
+        {
+          category: "Street Food & Markets",
+          name: "Culinary Culture Scene",
+          description: "World-famous street food culture and vibrant markets",
+          location: "Chatuchak, Floating markets, Street food districts",
+          highlights: ["Street food tours", "Cooking classes", "Market visits", "Food festivals"],
+          bestTime: "Early morning markets, evening food tours",
+          cost: "฿50-200 per meal, ฿1500-3000 for cooking classes"
+        },
+        {
+          category: "Contemporary Arts",
+          name: "Modern Art & Gallery Scene",
+          description: "Growing contemporary art scene with galleries and creative spaces",
+          location: "Silom, Thonglor, Chatuchak Creative District",
+          highlights: ["Art galleries", "Creative markets", "Art festivals", "Designer shops"],
+          bestTime: "Weekend gallery openings and markets",
+          cost: "Free to ฿300 for galleries, varies for purchases"
+        },
+        {
+          category: "Entertainment & Nightlife",
+          name: "Diverse Entertainment Scene",
+          description: "From traditional performances to modern entertainment districts",
+          location: "Khao San Road, Sukhumvit, Silom",
+          highlights: ["Cabaret shows", "Live music venues", "Rooftop bars", "Night markets"],
+          bestTime: "Evening and nighttime activities",
+          cost: "฿300-1500 for shows, ฿200-800 for drinks"
+        }
+      ]
+    }
   },
   barcelona: {
     cityName: "Barcelona",
@@ -720,6 +945,48 @@ export const cityGuides: Record<string, CityGuideData> = {
       { name: "La Mercè", month: "September", description: "Barcelona's biggest festival with concerts and human towers", duration: "5 days" },
       { name: "Festa Major de Gràcia", month: "August", description: "Neighborhood festival with decorated streets", duration: "1 week" },
       { name: "Primavera Sound", month: "May/June", description: "International music festival", duration: "3 days" }
-    ]
+    ],
+    localScenes: {
+      overview: "Barcelona's cultural scene reflects its Mediterranean spirit and Catalan identity, featuring innovative architecture, vibrant street art, passionate flamenco, and cutting-edge design.",
+      backgroundImage: "/src/assets/barcelona-arts-scene.jpg",
+      scenes: [
+        {
+          category: "Architecture & Design",
+          name: "Modernist & Contemporary Architecture",
+          description: "From Gaudí's masterpieces to modern architectural innovations",
+          location: "Eixample, Gothic Quarter, Poblenou",
+          highlights: ["Gaudí buildings", "Design museums", "Architecture tours", "Modern studios"],
+          bestTime: "Morning tours, late afternoon golden hour",
+          cost: "€15-25 for attractions, €20-40 for guided tours"
+        },
+        {
+          category: "Music & Dance",
+          name: "Flamenco & Live Music Scene",
+          description: "Passionate flamenco performances and diverse live music venues",
+          location: "Tablao venues, Gràcia, El Born",
+          highlights: ["Flamenco shows", "Live music venues", "Street performances", "Music festivals"],
+          bestTime: "Evening shows and weekend performances",
+          cost: "€25-60 for flamenco shows, €10-30 for concerts"
+        },
+        {
+          category: "Street Art & Culture",
+          name: "Urban Art Movement",
+          description: "Vibrant street art scene in neighborhoods like El Raval and Poblenou",
+          location: "El Raval, Poblenou, Gràcia",
+          highlights: ["Street art tours", "Graffiti workshops", "Art galleries", "Creative markets"],
+          bestTime: "Afternoon walks, weekend markets",
+          cost: "Free for street viewing, €15-25 for guided tours"
+        },
+        {
+          category: "Sports Culture",
+          name: "Football & Beach Sports",
+          description: "Home to FC Barcelona and vibrant beach sports culture",
+          location: "Camp Nou, Barceloneta Beach, various venues",
+          highlights: ["FC Barcelona matches", "Beach volleyball", "Cycling culture", "Sports museums"],
+          bestTime: "Match days, beach activities in warmer months",
+          cost: "€40-200 for football matches, free for beach activities"
+        }
+      ]
+    }
   }
 };

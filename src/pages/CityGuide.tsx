@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Camera, Calendar, Plane, DollarSign, Cloud, Car, Building, Clock, Star } from 'lucide-react';
+import { ArrowLeft, MapPin, Camera, Calendar, Plane, DollarSign, Cloud, Car, Building, Clock, Star, Palette, Music, Brush, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CityGuideSection } from '@/components/cityGuide/CityGuideSection';
 import { CityGuideNavigation } from '@/components/cityGuide/CityGuideNavigation';
@@ -129,6 +129,102 @@ const CityGuide = () => {
                       </div>
                     </Card>
                   ))}
+                </div>
+              </CityGuideSection>
+            </div>
+
+            {/* Local Scenes Section */}
+            <div id="localscenes">
+              <CityGuideSection 
+                title="Local Scenes" 
+                icon={<Palette className="w-6 h-6" />}
+              >
+                <div className="space-y-6">
+                  {/* Header with background image */}
+                  <div className="relative h-64 rounded-lg overflow-hidden">
+                    <img 
+                      src={cityData.localScenes.backgroundImage} 
+                      alt={`${cityData.cityName} local culture scene`}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <p className="text-white text-lg leading-relaxed">{cityData.localScenes.overview}</p>
+                    </div>
+                  </div>
+
+                  {/* Scene Cards */}
+                  <div className="grid gap-6">
+                    {cityData.localScenes.scenes.map((scene, index) => {
+                      const getCategoryIcon = (category: string) => {
+                        switch (category.toLowerCase()) {
+                          case 'music': return <Music className="w-5 h-5" />;
+                          case 'arts & crafts':
+                          case 'arts & museums': 
+                          case 'art':
+                          case 'traditional arts':
+                          case 'architecture & design':
+                          case 'contemporary arts': return <Brush className="w-5 h-5" />;
+                          case 'technology & innovation':
+                          case 'tech': return <Gamepad2 className="w-5 h-5" />;
+                          default: return <Palette className="w-5 h-5" />;
+                        }
+                      };
+
+                      return (
+                        <Card key={index} className="p-6">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-travel-ocean/10 text-travel-ocean">
+                              {getCategoryIcon(scene.category)}
+                            </div>
+                            <div>
+                              <span className="text-sm font-medium text-travel-sunset bg-travel-sand px-2 py-1 rounded-full">
+                                {scene.category}
+                              </span>
+                              <h4 className="text-xl font-semibold text-travel-ocean mt-1">{scene.name}</h4>
+                            </div>
+                          </div>
+                          <p className="text-muted-foreground mb-4">{scene.description}</p>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                            <div>
+                              <strong className="text-travel-ocean">Location:</strong>
+                              <p className="text-sm">{scene.location}</p>
+                            </div>
+                            <div>
+                              <strong className="text-travel-ocean">Best Time:</strong>
+                              <p className="text-sm">{scene.bestTime}</p>
+                            </div>
+                            <div>
+                              <strong className="text-travel-ocean">Cost:</strong>
+                              <p className="text-sm">{scene.cost}</p>
+                            </div>
+                            <div>
+                              <strong className="text-travel-ocean">Highlights:</strong>
+                              <ul className="list-disc list-inside text-sm space-y-1">
+                                {scene.highlights.slice(0, 2).map((highlight, idx) => (
+                                  <li key={idx} className="text-muted-foreground">{highlight}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                          
+                          {scene.highlights.length > 2 && (
+                            <div>
+                              <strong className="text-travel-ocean">More Highlights:</strong>
+                              <div className="flex flex-wrap gap-2 mt-2">
+                                {scene.highlights.slice(2).map((highlight, idx) => (
+                                  <span key={idx} className="text-xs bg-travel-sage/20 text-travel-ocean px-2 py-1 rounded-full">
+                                    {highlight}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </Card>
+                      );
+                    })}
+                  </div>
                 </div>
               </CityGuideSection>
             </div>
