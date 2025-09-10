@@ -1,4 +1,4 @@
-import ExperienceShowcase from "@/components/home/ExperienceShowcase";
+import FilterableExperienceShowcase from "@/components/experiences/FilterableExperienceShowcase";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/home/Footer";
 
@@ -17,7 +17,7 @@ const Experiences = () => {
             </p>
           </div>
         </div>
-        <ExperienceShowcase />
+        <FilterableExperienceShowcase />
       </main>
       <Footer />
     </div>
