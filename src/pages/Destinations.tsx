@@ -21,7 +21,6 @@ import barcelonaDestination from "@/assets/barcelona-destination.jpg";
 import mumbaiDestination from "@/assets/mumbai-destination.jpg";
 import parisDestination from "@/assets/paris-destination.jpg";
 import bangkokDestination from "@/assets/bangkok-destination.jpg";
-
 const Destinations = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,63 +28,58 @@ const Destinations = () => {
   const [isLoadingToken, setIsLoadingToken] = useState(true);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-
-  const popularDestinations = [
-    {
-      name: "Varanasi, India",
-      description: "Spiritual capital of India",
-      coordinates: [83.0047, 25.3176] as [number, number],
-      experiences: 45,
-      guides: 23,
-      image: varanasiDestination
-    },
-    {
-      name: "Tokyo, Japan", 
-      description: "Modern culture meets tradition",
-      coordinates: [139.6917, 35.6895] as [number, number],
-      experiences: 78,
-      guides: 34,
-      image: tokyoDestination
-    },
-    {
-      name: "Barcelona, Spain",
-      description: "Architecture and Mediterranean culture",
-      coordinates: [2.1734, 41.3851] as [number, number],
-      experiences: 56,
-      guides: 28,
-      image: barcelonaDestination
-    },
-    {
-      name: "Mumbai, India",
-      description: "Bollywood and street culture",
-      coordinates: [72.8777, 19.0760] as [number, number],
-      experiences: 67,
-      guides: 31,
-      image: mumbaiDestination
-    },
-    {
-      name: "Paris, France",
-      description: "City of lights and culture",
-      coordinates: [2.3522, 48.8566] as [number, number],
-      experiences: 89,
-      guides: 42,
-      image: parisDestination
-    },
-    {
-      name: "Bangkok, Thailand",
-      description: "Temples and vibrant markets",
-      coordinates: [100.5018, 13.7563] as [number, number],
-      experiences: 52,
-      guides: 26,
-      image: bangkokDestination
-    }
-  ];
+  const popularDestinations = [{
+    name: "Varanasi, India",
+    description: "Spiritual capital of India",
+    coordinates: [83.0047, 25.3176] as [number, number],
+    experiences: 45,
+    guides: 23,
+    image: varanasiDestination
+  }, {
+    name: "Tokyo, Japan",
+    description: "Modern culture meets tradition",
+    coordinates: [139.6917, 35.6895] as [number, number],
+    experiences: 78,
+    guides: 34,
+    image: tokyoDestination
+  }, {
+    name: "Barcelona, Spain",
+    description: "Architecture and Mediterranean culture",
+    coordinates: [2.1734, 41.3851] as [number, number],
+    experiences: 56,
+    guides: 28,
+    image: barcelonaDestination
+  }, {
+    name: "Mumbai, India",
+    description: "Bollywood and street culture",
+    coordinates: [72.8777, 19.0760] as [number, number],
+    experiences: 67,
+    guides: 31,
+    image: mumbaiDestination
+  }, {
+    name: "Paris, France",
+    description: "City of lights and culture",
+    coordinates: [2.3522, 48.8566] as [number, number],
+    experiences: 89,
+    guides: 42,
+    image: parisDestination
+  }, {
+    name: "Bangkok, Thailand",
+    description: "Temples and vibrant markets",
+    coordinates: [100.5018, 13.7563] as [number, number],
+    experiences: 52,
+    guides: 26,
+    image: bangkokDestination
+  }];
 
   // Fetch Mapbox token from edge function
   useEffect(() => {
     const fetchMapboxToken = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke('get-mapbox-token');
+        const {
+          data,
+          error
+        } = await supabase.functions.invoke('get-mapbox-token');
         if (error) throw error;
         if (data?.token) {
           setMapboxToken(data.token);
@@ -96,52 +90,43 @@ const Destinations = () => {
         setIsLoadingToken(false);
       }
     };
-
     fetchMapboxToken();
   }, []);
-
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken) return;
 
     // Initialize map
     mapboxgl.accessToken = mapboxToken;
-    
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v11',
       projection: 'globe',
       zoom: 1.5,
       center: [30, 15],
-      pitch: 45,
+      pitch: 45
     });
 
     // Add navigation controls
-    map.current.addControl(
-      new mapboxgl.NavigationControl({
-        visualizePitch: true,
-      }),
-      'top-right'
-    );
+    map.current.addControl(new mapboxgl.NavigationControl({
+      visualizePitch: true
+    }), 'top-right');
 
     // Add atmosphere and fog effects
     map.current.on('style.load', () => {
       map.current?.setFog({
         color: 'rgb(255, 255, 255)',
         'high-color': 'rgb(200, 200, 225)',
-        'horizon-blend': 0.2,
+        'horizon-blend': 0.2
       });
     });
 
     // Add markers for popular destinations
-    popularDestinations.forEach((destination) => {
+    popularDestinations.forEach(destination => {
       const el = document.createElement('div');
       el.className = 'w-4 h-4 bg-travel-sunset rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-110 transition-transform';
-      
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat(destination.coordinates)
-        .setPopup(
-          new mapboxgl.Popup({ offset: 25 })
-            .setHTML(`
+      const marker = new mapboxgl.Marker(el).setLngLat(destination.coordinates).setPopup(new mapboxgl.Popup({
+        offset: 25
+      }).setHTML(`
               <div class="p-2">
                 <h3 class="font-bold text-sm">${destination.name}</h3>
                 <p class="text-xs text-muted-foreground">${destination.description}</p>
@@ -150,9 +135,7 @@ const Destinations = () => {
                   <span>${destination.guides} guides</span>
                 </div>
               </div>
-            `)
-        )
-        .addTo(map.current!);
+            `)).addTo(map.current!);
     });
 
     // Rotation animation settings
@@ -165,7 +148,6 @@ const Destinations = () => {
     // Spin globe function
     function spinGlobe() {
       if (!map.current) return;
-      
       const zoom = map.current.getZoom();
       if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
         let distancePerSecond = 360 / secondsPerRevolution;
@@ -175,7 +157,11 @@ const Destinations = () => {
         }
         const center = map.current.getCenter();
         center.lng -= distancePerSecond;
-        map.current.easeTo({ center, duration: 1000, easing: (n) => n });
+        map.current.easeTo({
+          center,
+          duration: 1000,
+          easing: n => n
+        });
       }
     }
 
@@ -183,21 +169,17 @@ const Destinations = () => {
     map.current.on('mousedown', () => {
       userInteracting = true;
     });
-    
     map.current.on('dragstart', () => {
       userInteracting = true;
     });
-    
     map.current.on('mouseup', () => {
       userInteracting = false;
       spinGlobe();
     });
-    
     map.current.on('touchend', () => {
       userInteracting = false;
       spinGlobe();
     });
-
     map.current.on('moveend', () => {
       spinGlobe();
     });
@@ -210,32 +192,25 @@ const Destinations = () => {
       map.current?.remove();
     };
   }, [mapboxToken]);
-
   const handleDestinationClick = (destination: typeof popularDestinations[0]) => {
     const cityId = destination.name.toLowerCase().split(',')[0].replace(/\s+/g, '');
     navigate(`/destinations/${cityId}`);
   };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Here you would implement geocoding to search for locations
     console.log("Searching for:", searchQuery);
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-16">
         {/* Hero Section with Kumbh Mela Background */}
-        <section 
-          className="py-20 bg-gradient-wanderlust text-white relative overflow-hidden"
-          style={{
-            backgroundImage: `linear-gradient(rgba(32, 130, 180, 0.8), rgba(220, 95, 75, 0.8)), url(${kumbhMelaBackground})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        >
+        <section className="py-20 bg-gradient-wanderlust text-white relative overflow-hidden" style={{
+        backgroundImage: `linear-gradient(rgba(32, 130, 180, 0.8), rgba(220, 95, 75, 0.8)), url(${kumbhMelaBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}>
           <div className="container mx-auto px-4 text-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Discover Your Next Adventure
@@ -262,12 +237,7 @@ const Destinations = () => {
               <form onSubmit={handleSearch} className="flex gap-2">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                  <Input
-                    placeholder="Search destinations, countries, or cities..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 py-3 text-lg"
-                  />
+                  <Input placeholder="Search destinations, countries, or cities..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 py-3 text-lg" />
                 </div>
                 <Button type="submit" size="lg" className="bg-gradient-wanderlust hover:opacity-90">
                   Explore
@@ -278,18 +248,15 @@ const Destinations = () => {
         </section>
 
         {/* Loading State */}
-        {isLoadingToken && (
-          <section className="py-16">
+        {isLoadingToken && <section className="py-16">
             <div className="container mx-auto px-4 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-travel-ocean mx-auto mb-4"></div>
               <p className="text-muted-foreground">Loading interactive map...</p>
             </div>
-          </section>
-        )}
+          </section>}
 
         {/* Interactive Map */}
-        {!isLoadingToken && mapboxToken && (
-          <section className="py-8">
+        {!isLoadingToken && mapboxToken && <section className="py-8">
             <div className="container mx-auto px-4">
               <h2 className="text-2xl font-bold text-center mb-8">Explore Destinations Worldwide</h2>
               <div className="relative w-full h-[600px] rounded-xl overflow-hidden shadow-2xl">
@@ -302,8 +269,7 @@ const Destinations = () => {
                 </div>
               </div>
             </div>
-          </section>
-        )}
+          </section>}
 
         {/* Popular Destinations */}
         <section className="py-16 bg-muted/30">
@@ -314,18 +280,9 @@ const Destinations = () => {
             </p>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {popularDestinations.map((destination, index) => (
-                <Card 
-                  key={index} 
-                  className="hover:travel-shadow transition-all duration-300 cursor-pointer"
-                  onClick={() => handleDestinationClick(destination)}
-                >
+              {popularDestinations.map((destination, index) => <Card key={index} className="hover:travel-shadow transition-all duration-300 cursor-pointer" onClick={() => handleDestinationClick(destination)}>
                   <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                    <img 
-                      src={destination.image} 
-                      alt={destination.name}
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                    />
+                    <img src={destination.image} alt={destination.name} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
                   </div>
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-3">
@@ -347,24 +304,20 @@ const Destinations = () => {
                       </div>
                     </div>
                     
-                    <Button 
-                      className="w-full bg-gradient-wanderlust hover:opacity-90"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDestinationClick(destination);
-                      }}
-                    >
+                    <Button className="w-full bg-gradient-wanderlust hover:opacity-90" onClick={e => {
+                  e.stopPropagation();
+                  handleDestinationClick(destination);
+                }}>
                       Explore Destination
                     </Button>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="py-16">
+        <section className="py-16 bg-sky-200">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Why Choose Travelogie Destinations?</h2>
             
@@ -404,8 +357,6 @@ const Destinations = () => {
 
         <Footer />
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default Destinations;
