@@ -16,6 +16,13 @@ import hindiKumbhMelaLesson from "@/assets/hindi-kumbh-mela-lesson.jpg";
 import japaneseStreetFoodLesson from "@/assets/japanese-street-food-lesson.jpg";
 import frenchCafeLesson from "@/assets/french-cafe-lesson.jpg";
 import spanishDanceLesson from "@/assets/spanish-dance-lesson.jpg";
+import thaiMarketLesson from "@/assets/thai-market-lesson.jpg";
+import khmerTempleLesson from "@/assets/khmer-temple-lesson.jpg";
+import chineseTeaLesson from "@/assets/chinese-tea-lesson.jpg";
+import arabicSoukLesson from "@/assets/arabic-souk-lesson.jpg";
+import hebrewMarketLesson from "@/assets/hebrew-market-lesson.jpg";
+import italianPiazzaLesson from "@/assets/italian-piazza-lesson.jpg";
+import portugueseCafeLesson from "@/assets/portuguese-cafe-lesson.jpg";
 
 // Import instructor profile images
 import mayaPatelProfile from "@/assets/maya-patel-profile.jpg";
@@ -26,9 +33,10 @@ import amaraOkaforProfile from "@/assets/amara-okafor-profile.jpg";
 const Languages = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
 
-  const languages = ["English", "Hindi", "Japanese", "French", "Spanish"];
+  const languages = ["English", "Spanish", "French", "Italian", "Portuguese", "Japanese", "Chinese", "Thai", "Khmer", "Hindi", "Arabic", "Hebrew"];
 
   const languageInstructors = [
+    // English Instructors
     {
       id: 1,
       name: "Sarah Johnson",
@@ -49,24 +57,178 @@ const Languages = () => {
     },
     {
       id: 2,
-      name: "Priya Sharma",
+      name: "James Wilson",
       avatar: carlosRodriguezProfile,
-      rating: 5.0,
-      reviews: 178,
-      location: "Varanasi, India",
-      languages: ["Hindi", "English"],
-      expertise: "Cultural Hindi & Traditions",
-      specializations: ["Festival Traditions", "Spiritual Practices", "Cultural Customs"],
-      interests: ["Spirituality", "Traditional Arts", "History"],
-      hourlyRate: "$15-30",
-      experience: "12 years",
+      rating: 4.8,
+      reviews: 298,
+      location: "New York, USA",
+      languages: ["English"],
+      expertise: "American English & Culture",
+      specializations: ["Conversational English", "American Idioms", "Business English"],
+      interests: ["Sports", "Music", "Technology"],
+      hourlyRate: "$30-50",
+      experience: "6 years",
       verified: true,
-      about: "Cultural historian and Hindi teacher specializing in Indian festivals and spiritual traditions.",
-      studentsCount: 890,
+      about: "American English teacher focusing on practical conversation and cultural nuances.",
+      studentsCount: 967,
       availability: "Available next 2 hours"
     },
+    
+    // Spanish Instructors
     {
       id: 3,
+      name: "Carlos Mendez",
+      avatar: yukiTanakaProfile,
+      rating: 4.7,
+      reviews: 189,
+      location: "Barcelona, Spain",
+      languages: ["Spanish", "Catalan", "English"],
+      expertise: "Spanish Dance & Culture",
+      specializations: ["Flamenco Culture", "Dance Vocabulary", "Cultural Expressions"],
+      interests: ["Dance", "Music", "History"],
+      hourlyRate: "$20-40",
+      experience: "7 years",
+      verified: true,
+      about: "Professional dancer and Spanish teacher integrating language learning with cultural movement.",
+      studentsCount: 934,
+      availability: "Available next 3 hours"
+    },
+    {
+      id: 4,
+      name: "Isabella Garcia",
+      avatar: amaraOkaforProfile,
+      rating: 4.9,
+      reviews: 234,
+      location: "Mexico City, Mexico",
+      languages: ["Spanish", "English"],
+      expertise: "Mexican Spanish & Traditions",
+      specializations: ["Mexican Culture", "Street Spanish", "Cooking Vocabulary"],
+      interests: ["Cooking", "Art", "Traditions"],
+      hourlyRate: "$18-35",
+      experience: "9 years",
+      verified: true,
+      about: "Mexican Spanish teacher sharing authentic culture through language and culinary traditions.",
+      studentsCount: 1456,
+      availability: "Available tomorrow"
+    },
+
+    // French Instructors
+    {
+      id: 5,
+      name: "Marie Dubois",
+      avatar: mayaPatelProfile,
+      rating: 4.9,
+      reviews: 203,
+      location: "Paris, France",
+      languages: ["French", "English"],
+      expertise: "French Culture & Cuisine",
+      specializations: ["Café Culture", "French Cuisine", "Travel French"],
+      interests: ["Cooking", "Art", "Literature"],
+      hourlyRate: "$35-55",
+      experience: "10 years",
+      verified: true,
+      about: "Parisian chef and language teacher combining French language with culinary traditions.",
+      studentsCount: 723,
+      availability: "Available tomorrow"
+    },
+    {
+      id: 6,
+      name: "Jean-Pierre Laurent",
+      avatar: carlosRodriguezProfile,
+      rating: 4.8,
+      reviews: 167,
+      location: "Lyon, France",
+      languages: ["French", "English"],
+      expertise: "Business French",
+      specializations: ["Professional French", "Wine Culture", "French Etiquette"],
+      interests: ["Wine", "Business", "Travel"],
+      hourlyRate: "$40-60",
+      experience: "12 years",
+      verified: true,
+      about: "Business French specialist with expertise in professional communication and French culture.",
+      studentsCount: 589,
+      availability: "Available in 4 hours"
+    },
+
+    // Italian Instructors
+    {
+      id: 7,
+      name: "Marco Rossi",
+      avatar: yukiTanakaProfile,
+      rating: 4.8,
+      reviews: 156,
+      location: "Rome, Italy",
+      languages: ["Italian", "English"],
+      expertise: "Italian Culture & Cuisine",
+      specializations: ["Food Culture", "Travel Italian", "Art History"],
+      interests: ["Cooking", "History", "Art"],
+      hourlyRate: "$28-45",
+      experience: "8 years",
+      verified: true,
+      about: "Roman chef and cultural guide teaching Italian through food and ancient history.",
+      studentsCount: 812,
+      availability: "Available today"
+    },
+    {
+      id: 8,
+      name: "Giulia Ferrari",
+      avatar: amaraOkaforProfile,
+      rating: 4.9,
+      reviews: 198,
+      location: "Florence, Italy",
+      languages: ["Italian", "English"],
+      expertise: "Renaissance Art & Italian",
+      specializations: ["Art Vocabulary", "Cultural Italian", "Travel Phrases"],
+      interests: ["Art", "Museums", "Culture"],
+      hourlyRate: "$32-48",
+      experience: "11 years",
+      verified: true,
+      about: "Art historian teaching Italian through Renaissance culture and artistic heritage.",
+      studentsCount: 675,
+      availability: "Available next 1 hour"
+    },
+
+    // Portuguese Instructors
+    {
+      id: 9,
+      name: "Ana Santos",
+      avatar: mayaPatelProfile,
+      rating: 4.7,
+      reviews: 143,
+      location: "Lisbon, Portugal",
+      languages: ["Portuguese", "English", "Spanish"],
+      expertise: "European Portuguese",
+      specializations: ["Portuguese Culture", "Fado Music", "Travel Portuguese"],
+      interests: ["Music", "History", "Travel"],
+      hourlyRate: "$22-38",
+      experience: "7 years",
+      verified: true,
+      about: "Lisbon native teaching Portuguese through traditional music and coastal culture.",
+      studentsCount: 534,
+      availability: "Available in 2 hours"
+    },
+    {
+      id: 10,
+      name: "Bruno Silva",
+      avatar: carlosRodriguezProfile,
+      rating: 4.8,
+      reviews: 176,
+      location: "Rio de Janeiro, Brazil",
+      languages: ["Portuguese", "English"],
+      expertise: "Brazilian Portuguese",
+      specializations: ["Brazilian Culture", "Carnival Traditions", "Beach Culture"],
+      interests: ["Dance", "Football", "Music"],
+      hourlyRate: "$20-35",
+      experience: "9 years",
+      verified: true,
+      about: "Carioca teacher sharing Brazilian culture through language, music, and traditions.",
+      studentsCount: 987,
+      availability: "Available today"
+    },
+
+    // Japanese Instructors
+    {
+      id: 11,
       name: "Takeshi Yamamoto",
       avatar: yukiTanakaProfile,
       rating: 4.8,
@@ -84,44 +246,255 @@ const Languages = () => {
       availability: "Available in 1 hour"
     },
     {
-      id: 4,
-      name: "Marie Dubois",
+      id: 12,
+      name: "Sakura Tanaka",
       avatar: amaraOkaforProfile,
       rating: 4.9,
-      reviews: 203,
-      location: "Paris, France",
-      languages: ["French", "English"],
-      expertise: "French Culture & Cuisine",
-      specializations: ["Café Culture", "French Cuisine", "Travel French"],
-      interests: ["Cooking", "Art", "Literature"],
+      reviews: 189,
+      location: "Kyoto, Japan",
+      languages: ["Japanese", "English"],
+      expertise: "Traditional Japanese Culture",
+      specializations: ["Tea Ceremony", "Traditional Arts", "Keigo (Honorific Japanese)"],
+      interests: ["Tea Ceremony", "Calligraphy", "Traditional Music"],
       hourlyRate: "$35-55",
-      experience: "10 years",
+      experience: "13 years",
       verified: true,
-      about: "Parisian chef and language teacher combining French language with culinary traditions.",
-      studentsCount: 723,
+      about: "Kyoto tea ceremony master teaching Japanese through traditional cultural practices.",
+      studentsCount: 743,
       availability: "Available tomorrow"
     },
+
+    // Chinese Instructors
     {
-      id: 5,
-      name: "Carlos Mendez",
+      id: 13,
+      name: "Li Wei",
+      avatar: mayaPatelProfile,
+      rating: 4.8,
+      reviews: 234,
+      location: "Beijing, China",
+      languages: ["Chinese", "English"],
+      expertise: "Mandarin & Chinese Culture",
+      specializations: ["Business Chinese", "Tea Culture", "Traditional Medicine"],
+      interests: ["Tea", "Philosophy", "Traditional Medicine"],
+      hourlyRate: "$25-42",
+      experience: "10 years",
+      verified: true,
+      about: "Beijing language teacher specializing in Mandarin through traditional Chinese culture.",
+      studentsCount: 1123,
+      availability: "Available in 3 hours"
+    },
+    {
+      id: 14,
+      name: "Zhang Mei",
+      avatar: carlosRodriguezProfile,
+      rating: 4.9,
+      reviews: 167,
+      location: "Shanghai, China",
+      languages: ["Chinese", "English"],
+      expertise: "Modern Chinese & Business",
+      specializations: ["Business Chinese", "Technology Vocabulary", "Modern Culture"],
+      interests: ["Technology", "Business", "Modern Art"],
+      hourlyRate: "$28-45",
+      experience: "8 years",
+      verified: true,
+      about: "Shanghai business professional teaching modern Chinese for contemporary communication.",
+      studentsCount: 892,
+      availability: "Available today"
+    },
+
+    // Thai Instructors
+    {
+      id: 15,
+      name: "Ploy Siriwan",
+      avatar: yukiTanakaProfile,
+      rating: 4.7,
+      reviews: 145,
+      location: "Bangkok, Thailand",
+      languages: ["Thai", "English"],
+      expertise: "Thai Culture & Traditions",
+      specializations: ["Market Thai", "Buddhist Culture", "Street Food Vocabulary"],
+      interests: ["Buddhism", "Cooking", "Traditional Dance"],
+      hourlyRate: "$18-30",
+      experience: "6 years",
+      verified: true,
+      about: "Bangkok native sharing Thai culture through market experiences and Buddhist traditions.",
+      studentsCount: 678,
+      availability: "Available next 2 hours"
+    },
+    {
+      id: 16,
+      name: "Somchai Pongpat",
+      avatar: amaraOkaforProfile,
+      rating: 4.8,
+      reviews: 198,
+      location: "Chiang Mai, Thailand",
+      languages: ["Thai", "English"],
+      expertise: "Northern Thai Culture",
+      specializations: ["Hill Tribe Culture", "Traditional Crafts", "Rural Thai"],
+      interests: ["Handicrafts", "Nature", "Meditation"],
+      hourlyRate: "$16-28",
+      experience: "9 years",
+      verified: true,
+      about: "Chiang Mai cultural guide teaching Thai through traditional crafts and hill tribe culture.",
+      studentsCount: 456,
+      availability: "Available in 1 hour"
+    },
+
+    // Khmer Instructors
+    {
+      id: 17,
+      name: "Sophea Chann",
+      avatar: mayaPatelProfile,
+      rating: 4.6,
+      reviews: 87,
+      location: "Siem Reap, Cambodia",
+      languages: ["Khmer", "English"],
+      expertise: "Khmer History & Culture",
+      specializations: ["Angkor History", "Traditional Dance", "Buddhist Teachings"],
+      interests: ["History", "Dance", "Archaeology"],
+      hourlyRate: "$15-25",
+      experience: "5 years",
+      verified: true,
+      about: "Siem Reap guide teaching Khmer through ancient Angkor history and traditional culture.",
+      studentsCount: 234,
+      availability: "Available today"
+    },
+    {
+      id: 18,
+      name: "Dara Vicheka",
       avatar: carlosRodriguezProfile,
       rating: 4.7,
-      reviews: 189,
-      location: "Barcelona, Spain",
-      languages: ["Spanish", "Catalan", "English"],
-      expertise: "Spanish Dance & Culture",
-      specializations: ["Flamenco Culture", "Dance Vocabulary", "Cultural Expressions"],
-      interests: ["Dance", "Music", "History"],
-      hourlyRate: "$20-40",
+      reviews: 112,
+      location: "Phnom Penh, Cambodia",
+      languages: ["Khmer", "French", "English"],
+      expertise: "Modern Khmer & Urban Life",
+      specializations: ["Urban Khmer", "Modern Culture", "Business Phrases"],
+      interests: ["Urban Culture", "Business", "French Culture"],
+      hourlyRate: "$18-32",
       experience: "7 years",
       verified: true,
-      about: "Professional dancer and Spanish teacher integrating language learning with cultural movement.",
-      studentsCount: 934,
+      about: "Phnom Penh professional teaching modern Khmer for urban communication and business.",
+      studentsCount: 345,
+      availability: "Available tomorrow"
+    },
+
+    // Hindi Instructors
+    {
+      id: 19,
+      name: "Priya Sharma",
+      avatar: yukiTanakaProfile,
+      rating: 5.0,
+      reviews: 178,
+      location: "Varanasi, India",
+      languages: ["Hindi", "English"],
+      expertise: "Cultural Hindi & Traditions",
+      specializations: ["Festival Traditions", "Spiritual Practices", "Cultural Customs"],
+      interests: ["Spirituality", "Traditional Arts", "History"],
+      hourlyRate: "$15-30",
+      experience: "12 years",
+      verified: true,
+      about: "Cultural historian and Hindi teacher specializing in Indian festivals and spiritual traditions.",
+      studentsCount: 890,
+      availability: "Available next 2 hours"
+    },
+    {
+      id: 20,
+      name: "Raj Patel",
+      avatar: amaraOkaforProfile,
+      rating: 4.8,
+      reviews: 234,
+      location: "Mumbai, India",
+      languages: ["Hindi", "English", "Gujarati"],
+      expertise: "Bollywood Hindi",
+      specializations: ["Film Culture", "Modern Hindi", "Mumbai Street Language"],
+      interests: ["Cinema", "Music", "Street Culture"],
+      hourlyRate: "$18-35",
+      experience: "8 years",
+      verified: true,
+      about: "Mumbai film industry professional teaching Hindi through Bollywood culture and street language.",
+      studentsCount: 1234,
+      availability: "Available in 4 hours"
+    },
+
+    // Arabic Instructors
+    {
+      id: 21,
+      name: "Omar Al-Rashid",
+      avatar: mayaPatelProfile,
+      rating: 4.8,
+      reviews: 156,
+      location: "Cairo, Egypt",
+      languages: ["Arabic", "English"],
+      expertise: "Egyptian Arabic & Culture",
+      specializations: ["Egyptian Dialect", "Middle Eastern Culture", "Islamic Heritage"],
+      interests: ["History", "Islamic Art", "Literature"],
+      hourlyRate: "$22-38",
+      experience: "9 years",
+      verified: true,
+      about: "Cairo historian teaching Egyptian Arabic through ancient culture and Islamic heritage.",
+      studentsCount: 567,
       availability: "Available next 3 hours"
+    },
+    {
+      id: 22,
+      name: "Fatima Al-Zahra",
+      avatar: carlosRodriguezProfile,
+      rating: 4.9,
+      reviews: 198,
+      location: "Dubai, UAE",
+      languages: ["Arabic", "English"],
+      expertise: "Gulf Arabic & Business",
+      specializations: ["Business Arabic", "Gulf Culture", "Modern Arabic"],
+      interests: ["Business", "Modern Culture", "Technology"],
+      hourlyRate: "$30-50",
+      experience: "7 years",
+      verified: true,
+      about: "Dubai business professional teaching Gulf Arabic for modern communication and business.",
+      studentsCount: 789,
+      availability: "Available today"
+    },
+
+    // Hebrew Instructors
+    {
+      id: 23,
+      name: "David Cohen",
+      avatar: yukiTanakaProfile,
+      rating: 4.7,
+      reviews: 134,
+      location: "Tel Aviv, Israel",
+      languages: ["Hebrew", "English"],
+      expertise: "Modern Hebrew & Israeli Culture",
+      specializations: ["Tech Hebrew", "Israeli Slang", "Modern Culture"],
+      interests: ["Technology", "Startup Culture", "Mediterranean Life"],
+      hourlyRate: "$28-45",
+      experience: "6 years",
+      verified: true,
+      about: "Tel Aviv tech professional teaching modern Hebrew through startup culture and Mediterranean lifestyle.",
+      studentsCount: 445,
+      availability: "Available in 2 hours"
+    },
+    {
+      id: 24,
+      name: "Sarah Goldberg",
+      avatar: amaraOkaforProfile,
+      rating: 4.8,
+      reviews: 167,
+      location: "Jerusalem, Israel",
+      languages: ["Hebrew", "English"],
+      expertise: "Biblical Hebrew & History",
+      specializations: ["Religious Hebrew", "Historical Context", "Traditional Culture"],
+      interests: ["History", "Religion", "Archaeology"],
+      hourlyRate: "$25-40",
+      experience: "11 years",
+      verified: true,
+      about: "Jerusalem scholar teaching Hebrew through biblical history and traditional Jewish culture.",
+      studentsCount: 623,
+      availability: "Available tomorrow"
     }
   ];
 
   const sampleLessons = [
+    // English Lessons
     {
       id: 1,
       title: "Hotel Check-in in English",
@@ -141,45 +514,31 @@ const Languages = () => {
       ],
       culturalNotes: "In English-speaking countries, it's polite to say 'please' and 'thank you' frequently during hotel interactions."
     },
+
+    // Spanish Lessons
     {
       id: 2,
-      title: "Kumbh Mela Festival Traditions",
-      language: "Hindi",
+      title: "Spanish Dance Expressions",
+      language: "Spanish",
       level: "Intermediate",
-      duration: "45 minutes",
-      instructor: "Priya Sharma",
-      image: hindiKumbhMelaLesson,
-      students: 1234,
-      vocabulary: ["स्नान (snaan)", "पूजा (pooja)", "साधु (sadhu)", "मेला (mela)", "तीर्थ (teerth)"],
+      duration: "40 minutes",
+      instructor: "Carlos Mendez",
+      image: spanishDanceLesson,
+      students: 967,
+      vocabulary: ["baile", "flamenco", "compás", "palmas", "zapateado"],
       phrases: [
-        "कुंभ मेला कब है? (Kumbh mela kab hai?)",
-        "स्नान का समय क्या है? (Snaan ka samay kya hai?)",
-        "यह बहुत पवित्र है (Yah bahut pavitra hai)",
-        "गंगा आरती देखना है (Ganga aarti dekhna hai)"
+        "¿Sabes bailar flamenco?",
+        "El ritmo es muy importante",
+        "Siente la música",
+        "¡Qué arte tienes!",
+        "Vamos a practicar juntos"
       ],
-      culturalNotes: "Kumbh Mela is the world's largest peaceful gathering. Respect for elders and spiritual leaders is paramount."
+      culturalNotes: "Flamenco is deeply emotional. Each movement tells a story, and improvisation is valued over perfection."
     },
+
+    // French Lessons
     {
       id: 3,
-      title: "Ordering Street Food in Japanese",
-      language: "Japanese",
-      level: "Beginner",
-      duration: "25 minutes",
-      instructor: "Takeshi Yamamoto",
-      image: japaneseStreetFoodLesson,
-      students: 3456,
-      vocabulary: ["ラーメン (raamen)", "やきとり (yakitori)", "おいしい (oishii)", "ください (kudasai)", "いくら (ikura)"],
-      phrases: [
-        "ラーメンをください (Raamen wo kudasai)",
-        "辛くないですか？ (Karakunai desu ka?)",
-        "おいしいです (Oishii desu)",
-        "いくらですか？ (Ikura desu ka?)",
-        "ありがとうございます (Arigatou gozaimasu)"
-      ],
-      culturalNotes: "Bowing slightly when ordering and saying 'itadakimasu' before eating shows respect for the food and chef."
-    },
-    {
-      id: 4,
       title: "French Café Conversations",
       language: "French",
       level: "Beginner",
@@ -197,34 +556,203 @@ const Languages = () => {
       ],
       culturalNotes: "French café culture values taking time to enjoy your drink. It's common to sit for hours with just one coffee."
     },
+
+    // Italian Lessons
+    {
+      id: 4,
+      title: "Ordering Gelato in Italian",
+      language: "Italian",
+      level: "Beginner",
+      duration: "25 minutes",
+      instructor: "Marco Rossi",
+      image: italianPiazzaLesson,
+      students: 1456,
+      vocabulary: ["gelato", "gusto", "cono", "coppa", "piccolo"],
+      phrases: [
+        "Vorrei un gelato, per favore",
+        "Che gusti avete?",
+        "Posso assaggiare?",
+        "Quanto costa?",
+        "È delizioso!"
+      ],
+      culturalNotes: "Gelato is an art form in Italy. It's normal to ask for a taste before choosing your flavor."
+    },
+
+    // Portuguese Lessons
     {
       id: 5,
-      title: "Spanish Dance Expressions",
-      language: "Spanish",
+      title: "Portuguese Beach Culture",
+      language: "Portuguese",
       level: "Intermediate",
       duration: "40 minutes",
-      instructor: "Carlos Mendez",
-      image: spanishDanceLesson,
-      students: 967,
-      vocabulary: ["baile", "flamenco", "compás", "palmas", "zapateado"],
+      instructor: "Ana Santos",
+      image: portugueseCafeLesson,
+      students: 734,
+      vocabulary: ["praia", "sol", "mar", "areia", "onda"],
       phrases: [
-        "¿Sabes bailar flamenco?",
-        "El ritmo es muy importante",
-        "Siente la música",
-        "¡Qué arte tienes!",
-        "Vamos a practicar juntos"
+        "Vamos à praia?",
+        "O sol está muito forte",
+        "A água está perfeita",
+        "Onde posso alugar uma prancha?",
+        "Que vista maravilhosa!"
       ],
-      culturalNotes: "Flamenco is deeply emotional. Each movement tells a story, and improvisation is valued over perfection."
+      culturalNotes: "Portuguese beach culture is relaxed and social. Sharing food and drinks with new friends is common."
+    },
+
+    // Japanese Lessons
+    {
+      id: 6,
+      title: "Ordering Street Food in Japanese",
+      language: "Japanese",
+      level: "Beginner",
+      duration: "25 minutes",
+      instructor: "Takeshi Yamamoto",
+      image: japaneseStreetFoodLesson,
+      students: 3456,
+      vocabulary: ["ラーメン (raamen)", "やきとり (yakitori)", "おいしい (oishii)", "ください (kudasai)", "いくら (ikura)"],
+      phrases: [
+        "ラーメンをください (Raamen wo kudasai)",
+        "辛くないですか？ (Karakunai desu ka?)",
+        "おいしいです (Oishii desu)",
+        "いくらですか？ (Ikura desu ka?)",
+        "ありがとうございます (Arigatou gozaimasu)"
+      ],
+      culturalNotes: "Bowing slightly when ordering and saying 'itadakimasu' before eating shows respect for the food and chef."
+    },
+
+    // Chinese Lessons
+    {
+      id: 7,
+      title: "Chinese Tea Ceremony",
+      language: "Chinese",
+      level: "Intermediate",
+      duration: "45 minutes",
+      instructor: "Li Wei",
+      image: chineseTeaLesson,
+      students: 1234,
+      vocabulary: ["茶 (chá)", "功夫茶 (gōngfū chá)", "茶杯 (chábēi)", "茶壶 (cháhú)", "品茶 (pǐn chá)"],
+      phrases: [
+        "请喝茶 (Qǐng hē chá)",
+        "这茶很香 (Zhè chá hěn xiāng)",
+        "茶艺很美 (Cháyì hěn měi)",
+        "谢谢您的招待 (Xièxie nín de zhāodài)",
+        "我很喜欢中国茶 (Wǒ hěn xǐhuān Zhōngguó chá)"
+      ],
+      culturalNotes: "Chinese tea ceremony is about respect, mindfulness, and harmony. Each movement has meaning and purpose."
+    },
+
+    // Thai Lessons
+    {
+      id: 8,
+      title: "Thai Market Bargaining",
+      language: "Thai",
+      level: "Beginner",
+      duration: "30 minutes",
+      instructor: "Ploy Siriwan",
+      image: thaiMarketLesson,
+      students: 892,
+      vocabulary: ["ตลาด (dtàlàat)", "ราคา (raa-khaa)", "ถูก (thùuk)", "แพง (phaeng)", "ลด (lót)"],
+      phrases: [
+        "ราคาเท่าไร (Raa-khaa thâo-rai?)",
+        "แพงไป (Phaeng pai)",
+        "ลดราคาได้ไหม (Lót raa-khaa dâai mái?)",
+        "เอาอันนี้ (Ao an níi)",
+        "ขอบคุณครับ/ค่ะ (Khòp-khun khráp/khâ)"
+      ],
+      culturalNotes: "Bargaining in Thai markets is expected and fun! Smile and be friendly - it's part of the social interaction."
+    },
+
+    // Khmer Lessons
+    {
+      id: 9,
+      title: "Angkor Temple History in Khmer",
+      language: "Khmer",
+      level: "Intermediate",
+      duration: "50 minutes",
+      instructor: "Sophea Chann",
+      image: khmerTempleLesson,
+      students: 456,
+      vocabulary: ["ប្រាសាទ (brasat)", "អង្គរ (angkor)", "ប្រវត្តិ (bravoattei)", "ខ្មែរ (khmer)", "វប្បធម៌ (voppothoam)"],
+      phrases: [
+        "ប្រាសាទនេះចាស់ណាស់ (Brasat nih jas nas)",
+        "សង់នៅសតវត្សទី១២ (Sang nov satavatsa tii 12)",
+        "វាស្អាតណាស់ (Vea saat nas)",
+        "ស្ថាបត្យកម្មខ្មែរ (Sthabatyakam khmer)",
+        "ខ្ញុំចង់រៀនបន្ថែម (Khnom jong rien bantheam)"
+      ],
+      culturalNotes: "Angkor represents the height of Khmer civilization. Show respect when visiting and learning about these sacred sites."
+    },
+
+    // Hindi Lessons
+    {
+      id: 10,
+      title: "Kumbh Mela Festival Traditions",
+      language: "Hindi",
+      level: "Intermediate",
+      duration: "45 minutes",
+      instructor: "Priya Sharma",
+      image: hindiKumbhMelaLesson,
+      students: 1234,
+      vocabulary: ["स्नान (snaan)", "पूजा (pooja)", "साधु (sadhu)", "मेला (mela)", "तीर्थ (teerth)"],
+      phrases: [
+        "कुंभ मेला कब है? (Kumbh mela kab hai?)",
+        "स्नान का समय क्या है? (Snaan ka samay kya hai?)",
+        "यह बहुत पवित्र है (Yah bahut pavitra hai)",
+        "गंगा आरती देखना है (Ganga aarti dekhna hai)"
+      ],
+      culturalNotes: "Kumbh Mela is the world's largest peaceful gathering. Respect for elders and spiritual leaders is paramount."
+    },
+
+    // Arabic Lessons
+    {
+      id: 11,
+      title: "Arabic Souk Shopping",
+      language: "Arabic",
+      level: "Beginner",
+      duration: "35 minutes",
+      instructor: "Omar Al-Rashid",
+      image: arabicSoukLesson,
+      students: 678,
+      vocabulary: ["سوق (souq)", "سعر (si'r)", "غالي (ghali)", "رخيص (rakhees)", "شكراً (shukran)"],
+      phrases: [
+        "كم السعر؟ (Kam as-si'r?)",
+        "هذا غالي جداً (Hadha ghali jiddan)",
+        "هل يمكن تخفيض السعر؟ (Hal yumkin takhfeed as-si'r?)",
+        "سآخذ هذا (Sa-akhudh hadha)",
+        "شكراً لك (Shukran lak)"
+      ],
+      culturalNotes: "Bargaining in Arab markets is an art form and social interaction. Building relationships is as important as the transaction."
+    },
+
+    // Hebrew Lessons
+    {
+      id: 12,
+      title: "Hebrew Market Conversations",
+      language: "Hebrew",
+      level: "Beginner",
+      duration: "30 minutes",
+      instructor: "David Cohen",
+      image: hebrewMarketLesson,
+      students: 543,
+      vocabulary: ["שוק (shuk)", "מחיר (mechir)", "יקר (yakar)", "זול (zol)", "תודה (toda)"],
+      phrases: [
+        "כמה זה עולה? (Kama ze ole?)",
+        "זה יקר מדי (Ze yakar midai)",
+        "אפשר הנחה? (Efshar hanakha?)",
+        "אני אקח את זה (Ani ekach et ze)",
+        "תודה רבה (Toda raba)"
+      ],
+      culturalNotes: "Israeli markets are lively and social. Direct communication is appreciated, and haggling is expected in traditional markets."
     }
   ];
 
   const filteredInstructors = selectedLanguage 
     ? languageInstructors.filter(instructor => instructor.languages.includes(selectedLanguage))
-    : languageInstructors;
+    : languageInstructors.slice(0, 8); // Show first 8 if no language selected
 
   const filteredLessons = selectedLanguage 
     ? sampleLessons.filter(lesson => lesson.language === selectedLanguage)
-    : sampleLessons;
+    : sampleLessons.slice(0, 6); // Show first 6 if no language selected
 
   return (
     <div className="min-h-screen bg-background">
@@ -249,7 +777,7 @@ const Languages = () => {
             </p>
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               <Badge variant="secondary" className="text-lg px-4 py-2">5,000+ Students</Badge>
-              <Badge variant="secondary" className="text-lg px-4 py-2">20+ Languages</Badge>
+              <Badge variant="secondary" className="text-lg px-4 py-2">12+ Languages</Badge>
               <Badge variant="secondary" className="text-lg px-4 py-2">Native Speakers</Badge>
             </div>
           </div>
