@@ -14,6 +14,119 @@ export type Database = {
   }
   public: {
     Tables: {
+      availability: {
+        Row: {
+          created_at: string
+          currency: string | null
+          date: string
+          end_time: string
+          id: string
+          is_available: boolean
+          price_per_hour: number | null
+          start_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string | null
+          date: string
+          end_time: string
+          id?: string
+          is_available?: boolean
+          price_per_hour?: number | null
+          start_time: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string | null
+          date?: string
+          end_time?: string
+          id?: string
+          is_available?: boolean
+          price_per_hour?: number | null
+          start_time?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          availability_id: string
+          booking_date: string
+          created_at: string
+          currency: string | null
+          customer_id: string
+          end_time: string
+          id: string
+          notes: string | null
+          payment_status: string
+          provider_id: string
+          service_description: string | null
+          service_title: string
+          service_type: string
+          start_time: string
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          availability_id: string
+          booking_date: string
+          created_at?: string
+          currency?: string | null
+          customer_id: string
+          end_time: string
+          id?: string
+          notes?: string | null
+          payment_status?: string
+          provider_id: string
+          service_description?: string | null
+          service_title: string
+          service_type: string
+          start_time: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount: number
+          updated_at?: string
+        }
+        Update: {
+          availability_id?: string
+          booking_date?: string
+          created_at?: string
+          currency?: string | null
+          customer_id?: string
+          end_time?: string
+          id?: string
+          notes?: string | null
+          payment_status?: string
+          provider_id?: string
+          service_description?: string | null
+          service_title?: string
+          service_type?: string
+          start_time?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_availability_id_fkey"
+            columns: ["availability_id"]
+            isOneToOne: false
+            referencedRelation: "availability"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       favorites: {
         Row: {
           created_at: string
@@ -37,6 +150,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      lesson_recordings: {
+        Row: {
+          booking_id: string
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          lesson_notes: string | null
+          recording_url: string | null
+          student_id: string
+          teacher_id: string
+          transcription: string | null
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          lesson_notes?: string | null
+          recording_url?: string | null
+          student_id: string
+          teacher_id: string
+          transcription?: string | null
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          lesson_notes?: string | null
+          recording_url?: string | null
+          student_id?: string
+          teacher_id?: string
+          transcription?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_recordings_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       posts: {
         Row: {
@@ -161,6 +318,72 @@ export type Database = {
           user_id?: string
           user_type?: Database["public"]["Enums"]["user_type"] | null
           verification_status?: string | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          cancellation_policy: string | null
+          created_at: string
+          currency: string | null
+          description: string | null
+          duration_hours: number
+          equipment_needed: string | null
+          id: string
+          is_active: boolean
+          is_in_person: boolean | null
+          is_online: boolean | null
+          max_participants: number | null
+          media_urls: string[] | null
+          price_per_hour: number
+          requirements: string | null
+          service_type: string
+          skill_level: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancellation_policy?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          duration_hours?: number
+          equipment_needed?: string | null
+          id?: string
+          is_active?: boolean
+          is_in_person?: boolean | null
+          is_online?: boolean | null
+          max_participants?: number | null
+          media_urls?: string[] | null
+          price_per_hour: number
+          requirements?: string | null
+          service_type: string
+          skill_level?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancellation_policy?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          duration_hours?: number
+          equipment_needed?: string | null
+          id?: string
+          is_active?: boolean
+          is_in_person?: boolean | null
+          is_online?: boolean | null
+          max_participants?: number | null
+          media_urls?: string[] | null
+          price_per_hour?: number
+          requirements?: string | null
+          service_type?: string
+          skill_level?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
