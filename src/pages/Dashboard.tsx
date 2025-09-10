@@ -30,6 +30,9 @@ import { UpcomingTrips } from '@/components/dashboard/UpcomingTrips';
 import { PersonalizedRecommendations } from '@/components/dashboard/PersonalizedRecommendations';
 import { PassportRewards } from '@/components/dashboard/PassportRewards';
 import { DashboardCalendar } from '@/components/dashboard/DashboardCalendar';
+import { CompactPassportRewards } from '@/components/dashboard/CompactPassportRewards';
+import { CompactCalendar } from '@/components/dashboard/CompactCalendar';
+import { CompactUpcomingTrips } from '@/components/dashboard/CompactUpcomingTrips';
 import { FileUpload } from '@/components/ui/file-upload';
 
 interface Profile {
@@ -388,6 +391,13 @@ const Dashboard = () => {
                     </div>
                   </CardContent>
                 </Card>
+              </div>
+
+              {/* Compact Dashboard Features */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <CompactCalendar />
+                <CompactUpcomingTrips />
+                <CompactPassportRewards />
               </div>
 
               {/* Personalized Recommendations */}
