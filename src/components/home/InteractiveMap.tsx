@@ -218,7 +218,7 @@ const InteractiveMap = () => {
             <div 
               ref={mapContainer} 
               className="w-full h-[600px] relative"
-              style={{ background: 'linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--secondary) / 0.1))' }}
+              style={{ background: 'linear-gradient(135deg, rgb(251 191 36 / 0.2), rgb(252 176 64 / 0.3))' }}
             />
           </CardContent>
         </Card>

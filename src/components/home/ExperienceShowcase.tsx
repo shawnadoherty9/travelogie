@@ -66,7 +66,7 @@ const ExperienceShowcase = () => {
             alt="Cultural experiences collage" 
             className="w-full h-80 md:h-96 object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-100/90 via-yellow-50/70 to-transparent" />
           <div className="absolute inset-0 flex items-center">
             <div className="container mx-auto px-4">
               <div className="max-w-lg space-y-6">
