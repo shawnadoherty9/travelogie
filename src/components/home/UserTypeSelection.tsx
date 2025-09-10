@@ -69,13 +69,13 @@ const UserTypeSelection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 max-w-7xl mx-auto items-stretch">
           {userTypes.map((userType) => {
             const IconComponent = userType.icon;
             return (
               <Card 
                 key={userType.type} 
-                className="group hover:transform hover:scale-105 transition-all duration-300 cursor-pointer border-border hover:border-travel-ocean/50 cultural-shadow"
+                className="group hover:transform hover:scale-105 transition-all duration-300 cursor-pointer border-border hover:border-travel-ocean/50 cultural-shadow h-full flex flex-col"
               >
                 <CardHeader className="text-center">
                   <div className={`w-16 h-16 mx-auto rounded-full bg-${userType.color}/10 flex items-center justify-center mb-4 group-hover:bg-${userType.color}/20 transition-colors`}>
@@ -89,7 +89,7 @@ const UserTypeSelection = () => {
                   </CardDescription>
                 </CardHeader>
                 
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 flex-grow flex flex-col justify-between">
                   <ul className="space-y-2">
                     {userType.features.map((feature, index) => (
                       <li key={index} className="flex items-center text-sm text-muted-foreground">
@@ -100,8 +100,7 @@ const UserTypeSelection = () => {
                   </ul>
                   
                   <Button 
-                    variant="cultural" 
-                    className="w-full mt-4"
+                    className="w-full mt-4 bg-gradient-to-r from-travel-ocean to-travel-sky text-white border-0 hover:from-travel-ocean/90 hover:to-travel-sky/90"
                     asChild
                   >
                     <Link to={user ? "/dashboard" : "/auth"}>
