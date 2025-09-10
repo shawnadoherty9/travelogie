@@ -527,8 +527,72 @@ Day 3: Personal Connection
           </section>}
 
         {/* Language Learning Section */}
-        <section className="py-16 bg-gradient-to-r from-blue-50 to-purple-50">
-          
+        {/* Local Tour Operators Section */}
+        <section className="py-16 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h3 className="text-3xl font-bold mb-4">Meet Your Local Guides</h3>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Connect with passionate locals who will share their culture, stories, and hidden gems
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {tourOperators.map((operator) => (
+                <Card key={operator.id} className="overflow-hidden hover:travel-shadow transition-all duration-300">
+                  <CardContent className="p-0">
+                    <div className="relative">
+                      <Avatar className="w-full h-48 rounded-none">
+                        <AvatarImage src={operator.avatar} alt={operator.name} className="object-cover" />
+                        <AvatarFallback className="w-full h-48 rounded-none">
+                          {operator.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      {operator.verified && (
+                        <Badge className="absolute top-2 right-2 bg-emerald-500">Verified</Badge>
+                      )}
+                    </div>
+                    
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold text-lg">{operator.name}</h4>
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-sm font-medium">{operator.rating}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-1 text-muted-foreground mb-2">
+                        <MapPin className="w-4 h-4" />
+                        <span className="text-sm">{operator.location}</span>
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground mb-3">{operator.about}</p>
+                      
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {operator.specialties.slice(0, 2).map((specialty) => {
+                          const IconComponent = interestIcons[specialty as keyof typeof interestIcons] || Heart;
+                          return (
+                            <Badge key={specialty} variant="outline" className="text-xs">
+                              <IconComponent className="w-3 h-3 mr-1" />
+                              {specialty}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-travel-ocean">{operator.priceRange}</span>
+                        <Button size="sm" className="bg-gradient-wanderlust hover:opacity-90">
+                          Book Now
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
         </section>
       </main>
       <Footer />
