@@ -25,10 +25,30 @@ import italianPiazzaLesson from "@/assets/italian-piazza-lesson.jpg";
 import portugueseCafeLesson from "@/assets/portuguese-cafe-lesson.jpg";
 
 // Import instructor profile images
-import mayaPatelProfile from "@/assets/maya-patel-profile.jpg";
-import carlosRodriguezProfile from "@/assets/carlos-rodriguez-profile.jpg";
-import yukiTanakaProfile from "@/assets/yuki-tanaka-profile.jpg";
-import amaraOkaforProfile from "@/assets/amara-okafor-profile.jpg";
+import sarahJohnsonProfile from "@/assets/sarah-johnson-profile.jpg";
+import jamesWilsonProfile from "@/assets/james-wilson-profile.jpg";
+import carlosMendezProfile from "@/assets/carlos-mendez-profile.jpg";
+import isabellaGarciaProfile from "@/assets/isabella-garcia-profile.jpg";
+import marieDuboisProfile from "@/assets/marie-dubois-profile.jpg";
+import jeanPierreLaurentProfile from "@/assets/jean-pierre-laurent-profile.jpg";
+import marcoRossiProfile from "@/assets/marco-rossi-profile.jpg";
+import giuliaFerrariProfile from "@/assets/giulia-ferrari-profile.jpg";
+import anaSantosProfile from "@/assets/ana-santos-profile.jpg";
+import brunoSilvaProfile from "@/assets/bruno-silva-profile.jpg";
+import takeshiYamamotoProfile from "@/assets/takeshi-yamamoto-profile.jpg";
+import sakuraTanakaProfile from "@/assets/sakura-tanaka-profile.jpg";
+import liWeiProfile from "@/assets/li-wei-profile.jpg";
+import zhangMeiProfile from "@/assets/zhang-mei-profile.jpg";
+import ploySiriwanProfile from "@/assets/ploy-siriwan-profile.jpg";
+import somchaiPongpatProfile from "@/assets/somchai-pongpat-profile.jpg";
+import sopheaChannProfile from "@/assets/sophea-chann-profile.jpg";
+import daraVichekaProfile from "@/assets/dara-vicheka-profile.jpg";
+import priyaSharmaProfile from "@/assets/priya-sharma-profile.jpg";
+import rajPatelProfile from "@/assets/raj-patel-profile.jpg";
+import omarAlRashidProfile from "@/assets/omar-al-rashid-profile.jpg";
+import fatimaAlZahraProfile from "@/assets/fatima-al-zahra-profile.jpg";
+import davidCohenProfile from "@/assets/david-cohen-profile.jpg";
+import sarahGoldbergProfile from "@/assets/sarah-goldberg-profile.jpg";
 
 const Languages = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
@@ -40,7 +60,7 @@ const Languages = () => {
     {
       id: 1,
       name: "Sarah Johnson",
-      avatar: mayaPatelProfile,
+      avatar: sarahJohnsonProfile,
       rating: 4.9,
       reviews: 342,
       location: "London, UK",
@@ -58,7 +78,7 @@ const Languages = () => {
     {
       id: 2,
       name: "James Wilson",
-      avatar: carlosRodriguezProfile,
+      avatar: jamesWilsonProfile,
       rating: 4.8,
       reviews: 298,
       location: "New York, USA",
@@ -78,7 +98,7 @@ const Languages = () => {
     {
       id: 3,
       name: "Carlos Mendez",
-      avatar: yukiTanakaProfile,
+      avatar: carlosMendezProfile,
       rating: 4.7,
       reviews: 189,
       location: "Barcelona, Spain",
@@ -96,7 +116,7 @@ const Languages = () => {
     {
       id: 4,
       name: "Isabella Garcia",
-      avatar: amaraOkaforProfile,
+      avatar: isabellaGarciaProfile,
       rating: 4.9,
       reviews: 234,
       location: "Mexico City, Mexico",
@@ -116,7 +136,7 @@ const Languages = () => {
     {
       id: 5,
       name: "Marie Dubois",
-      avatar: mayaPatelProfile,
+      avatar: marieDuboisProfile,
       rating: 4.9,
       reviews: 203,
       location: "Paris, France",
@@ -134,7 +154,7 @@ const Languages = () => {
     {
       id: 6,
       name: "Jean-Pierre Laurent",
-      avatar: carlosRodriguezProfile,
+      avatar: jeanPierreLaurentProfile,
       rating: 4.8,
       reviews: 167,
       location: "Lyon, France",
@@ -154,7 +174,7 @@ const Languages = () => {
     {
       id: 7,
       name: "Marco Rossi",
-      avatar: yukiTanakaProfile,
+      avatar: marcoRossiProfile,
       rating: 4.8,
       reviews: 156,
       location: "Rome, Italy",
@@ -172,7 +192,7 @@ const Languages = () => {
     {
       id: 8,
       name: "Giulia Ferrari",
-      avatar: amaraOkaforProfile,
+      avatar: giuliaFerrariProfile,
       rating: 4.9,
       reviews: 198,
       location: "Florence, Italy",
@@ -192,7 +212,7 @@ const Languages = () => {
     {
       id: 9,
       name: "Ana Santos",
-      avatar: mayaPatelProfile,
+      avatar: anaSantosProfile,
       rating: 4.7,
       reviews: 143,
       location: "Lisbon, Portugal",
@@ -210,7 +230,7 @@ const Languages = () => {
     {
       id: 10,
       name: "Bruno Silva",
-      avatar: carlosRodriguezProfile,
+      avatar: brunoSilvaProfile,
       rating: 4.8,
       reviews: 176,
       location: "Rio de Janeiro, Brazil",
@@ -230,7 +250,7 @@ const Languages = () => {
     {
       id: 11,
       name: "Takeshi Yamamoto",
-      avatar: yukiTanakaProfile,
+      avatar: takeshiYamamotoProfile,
       rating: 4.8,
       reviews: 256,
       location: "Tokyo, Japan",
@@ -248,7 +268,7 @@ const Languages = () => {
     {
       id: 12,
       name: "Sakura Tanaka",
-      avatar: amaraOkaforProfile,
+      avatar: sakuraTanakaProfile,
       rating: 4.9,
       reviews: 189,
       location: "Kyoto, Japan",
@@ -268,7 +288,7 @@ const Languages = () => {
     {
       id: 13,
       name: "Li Wei",
-      avatar: mayaPatelProfile,
+      avatar: liWeiProfile,
       rating: 4.8,
       reviews: 234,
       location: "Beijing, China",
@@ -286,7 +306,7 @@ const Languages = () => {
     {
       id: 14,
       name: "Zhang Mei",
-      avatar: carlosRodriguezProfile,
+      avatar: zhangMeiProfile,
       rating: 4.9,
       reviews: 167,
       location: "Shanghai, China",
@@ -306,7 +326,7 @@ const Languages = () => {
     {
       id: 15,
       name: "Ploy Siriwan",
-      avatar: yukiTanakaProfile,
+      avatar: ploySiriwanProfile,
       rating: 4.7,
       reviews: 145,
       location: "Bangkok, Thailand",
@@ -324,7 +344,7 @@ const Languages = () => {
     {
       id: 16,
       name: "Somchai Pongpat",
-      avatar: amaraOkaforProfile,
+      avatar: somchaiPongpatProfile,
       rating: 4.8,
       reviews: 198,
       location: "Chiang Mai, Thailand",
@@ -344,7 +364,7 @@ const Languages = () => {
     {
       id: 17,
       name: "Sophea Chann",
-      avatar: mayaPatelProfile,
+      avatar: sopheaChannProfile,
       rating: 4.6,
       reviews: 87,
       location: "Siem Reap, Cambodia",
@@ -362,7 +382,7 @@ const Languages = () => {
     {
       id: 18,
       name: "Dara Vicheka",
-      avatar: carlosRodriguezProfile,
+      avatar: daraVichekaProfile,
       rating: 4.7,
       reviews: 112,
       location: "Phnom Penh, Cambodia",
@@ -382,7 +402,7 @@ const Languages = () => {
     {
       id: 19,
       name: "Priya Sharma",
-      avatar: yukiTanakaProfile,
+      avatar: priyaSharmaProfile,
       rating: 5.0,
       reviews: 178,
       location: "Varanasi, India",
@@ -400,7 +420,7 @@ const Languages = () => {
     {
       id: 20,
       name: "Raj Patel",
-      avatar: amaraOkaforProfile,
+      avatar: rajPatelProfile,
       rating: 4.8,
       reviews: 234,
       location: "Mumbai, India",
@@ -420,7 +440,7 @@ const Languages = () => {
     {
       id: 21,
       name: "Omar Al-Rashid",
-      avatar: mayaPatelProfile,
+      avatar: omarAlRashidProfile,
       rating: 4.8,
       reviews: 156,
       location: "Cairo, Egypt",
@@ -438,7 +458,7 @@ const Languages = () => {
     {
       id: 22,
       name: "Fatima Al-Zahra",
-      avatar: carlosRodriguezProfile,
+      avatar: fatimaAlZahraProfile,
       rating: 4.9,
       reviews: 198,
       location: "Dubai, UAE",
@@ -458,7 +478,7 @@ const Languages = () => {
     {
       id: 23,
       name: "David Cohen",
-      avatar: yukiTanakaProfile,
+      avatar: davidCohenProfile,
       rating: 4.7,
       reviews: 134,
       location: "Tel Aviv, Israel",
@@ -476,7 +496,7 @@ const Languages = () => {
     {
       id: 24,
       name: "Sarah Goldberg",
-      avatar: amaraOkaforProfile,
+      avatar: sarahGoldbergProfile,
       rating: 4.8,
       reviews: 167,
       location: "Jerusalem, Israel",
