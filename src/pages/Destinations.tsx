@@ -239,7 +239,7 @@ const Destinations = () => {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <Input placeholder="Search destinations, countries, or cities..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 py-3 text-lg" />
                 </div>
-                <Button type="submit" size="lg" className="bg-gradient-wanderlust hover:opacity-90">
+                <Button type="submit" size="lg" className="bg-gradient-wanderlust hover:opacity-90 text-slate-50 bg-sky-500 hover:bg-sky-400">
                   Explore
                 </Button>
               </form>
