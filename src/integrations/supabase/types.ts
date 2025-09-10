@@ -14,6 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
+      activities: {
+        Row: {
+          address: string | null
+          booking_api_endpoint: string | null
+          booking_requirements: Json | null
+          category_id: string | null
+          city_id: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          duration_hours: number | null
+          external_booking_url: string | null
+          id: string
+          image_urls: string[] | null
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          operating_hours: Json | null
+          price_from: number | null
+          price_to: number | null
+          rating: number | null
+          review_count: number | null
+          seasonal_availability: Json | null
+          short_description: string | null
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          booking_api_endpoint?: string | null
+          booking_requirements?: Json | null
+          category_id?: string | null
+          city_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          duration_hours?: number | null
+          external_booking_url?: string | null
+          id?: string
+          image_urls?: string[] | null
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          operating_hours?: Json | null
+          price_from?: number | null
+          price_to?: number | null
+          rating?: number | null
+          review_count?: number | null
+          seasonal_availability?: Json | null
+          short_description?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          booking_api_endpoint?: string | null
+          booking_requirements?: Json | null
+          category_id?: string | null
+          city_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          duration_hours?: number | null
+          external_booking_url?: string | null
+          id?: string
+          image_urls?: string[] | null
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          operating_hours?: Json | null
+          price_from?: number | null
+          price_to?: number | null
+          rating?: number | null
+          review_count?: number | null
+          seasonal_availability?: Json | null
+          short_description?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "activity_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activity_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       availability: {
         Row: {
           created_at: string
@@ -127,6 +250,188 @@ export type Database = {
           },
         ]
       }
+      cities: {
+        Row: {
+          best_time_to_visit: string | null
+          country_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          latitude: number
+          longitude: number
+          name: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          best_time_to_visit?: string | null
+          country_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude: number
+          longitude: number
+          name: string
+          timezone: string
+          updated_at?: string
+        }
+        Update: {
+          best_time_to_visit?: string | null
+          country_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          name?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cities_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      countries: {
+        Row: {
+          country_code: string
+          created_at: string
+          currency: string
+          id: string
+          name: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          country_code: string
+          created_at?: string
+          currency: string
+          id?: string
+          name: string
+          timezone: string
+          updated_at?: string
+        }
+        Update: {
+          country_code?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          name?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          address: string | null
+          booking_api_endpoint: string | null
+          capacity: number | null
+          category_id: string | null
+          city_id: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          end_date: string
+          end_time: string | null
+          event_type: string | null
+          id: string
+          image_urls: string[] | null
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          price_from: number | null
+          price_to: number | null
+          short_description: string | null
+          start_date: string
+          start_time: string | null
+          tags: string[] | null
+          ticket_url: string | null
+          tickets_sold: number | null
+          updated_at: string
+          venue_name: string | null
+        }
+        Insert: {
+          address?: string | null
+          booking_api_endpoint?: string | null
+          capacity?: number | null
+          category_id?: string | null
+          city_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          end_date: string
+          end_time?: string | null
+          event_type?: string | null
+          id?: string
+          image_urls?: string[] | null
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          price_from?: number | null
+          price_to?: number | null
+          short_description?: string | null
+          start_date: string
+          start_time?: string | null
+          tags?: string[] | null
+          ticket_url?: string | null
+          tickets_sold?: number | null
+          updated_at?: string
+          venue_name?: string | null
+        }
+        Update: {
+          address?: string | null
+          booking_api_endpoint?: string | null
+          capacity?: number | null
+          category_id?: string | null
+          city_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          end_date?: string
+          end_time?: string | null
+          event_type?: string | null
+          id?: string
+          image_urls?: string[] | null
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          price_from?: number | null
+          price_to?: number | null
+          short_description?: string | null
+          start_date?: string
+          start_time?: string | null
+          tags?: string[] | null
+          ticket_url?: string | null
+          tickets_sold?: number | null
+          updated_at?: string
+          venue_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "activity_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       favorites: {
         Row: {
           created_at: string
@@ -148,6 +453,30 @@ export type Database = {
           favorited_type?: string
           id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      interest_tags: {
+        Row: {
+          category: string | null
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }
@@ -191,6 +520,81 @@ export type Database = {
             columns: ["booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personalized_tours: {
+        Row: {
+          city_id: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          end_date: string
+          id: string
+          interests: string[] | null
+          operator_daily_rate: number | null
+          preferences: Json | null
+          start_date: string
+          status: string
+          total_budget: number | null
+          total_days: number
+          tour_name: string
+          tour_operator_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          city_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          end_date: string
+          id?: string
+          interests?: string[] | null
+          operator_daily_rate?: number | null
+          preferences?: Json | null
+          start_date: string
+          status?: string
+          total_budget?: number | null
+          total_days: number
+          tour_name: string
+          tour_operator_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          city_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          interests?: string[] | null
+          operator_daily_rate?: number | null
+          preferences?: Json | null
+          start_date?: string
+          status?: string
+          total_budget?: number | null
+          total_days?: number
+          tour_name?: string
+          tour_operator_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personalized_tours_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "personalized_tours_tour_operator_id_fkey"
+            columns: ["tour_operator_id"]
+            isOneToOne: false
+            referencedRelation: "tour_operators"
             referencedColumns: ["id"]
           },
         ]
@@ -384,6 +788,294 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      tour_bookings: {
+        Row: {
+          activities_cost: number | null
+          booking_date: string
+          booking_status: string
+          confirmation_number: string | null
+          created_at: string
+          currency: string
+          emergency_contact: Json | null
+          id: string
+          operator_fee: number | null
+          payment_status: string
+          platform_fee: number | null
+          special_requests: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          total_amount: number
+          tour_id: string | null
+          tour_operator_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          activities_cost?: number | null
+          booking_date?: string
+          booking_status?: string
+          confirmation_number?: string | null
+          created_at?: string
+          currency?: string
+          emergency_contact?: Json | null
+          id?: string
+          operator_fee?: number | null
+          payment_status?: string
+          platform_fee?: number | null
+          special_requests?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount: number
+          tour_id?: string | null
+          tour_operator_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          activities_cost?: number | null
+          booking_date?: string
+          booking_status?: string
+          confirmation_number?: string | null
+          created_at?: string
+          currency?: string
+          emergency_contact?: Json | null
+          id?: string
+          operator_fee?: number | null
+          payment_status?: string
+          platform_fee?: number | null
+          special_requests?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number
+          tour_id?: string | null
+          tour_operator_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tour_bookings_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "personalized_tours"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tour_bookings_tour_operator_id_fkey"
+            columns: ["tour_operator_id"]
+            isOneToOne: false
+            referencedRelation: "tour_operators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tour_itinerary: {
+        Row: {
+          activity_id: string | null
+          booking_reference: string | null
+          booking_status: string | null
+          cost: number | null
+          created_at: string
+          currency: string
+          custom_activity_description: string | null
+          custom_activity_name: string | null
+          day_number: number
+          estimated_duration_hours: number | null
+          event_id: string | null
+          id: string
+          notes: string | null
+          scheduled_time: string | null
+          tour_id: string | null
+        }
+        Insert: {
+          activity_id?: string | null
+          booking_reference?: string | null
+          booking_status?: string | null
+          cost?: number | null
+          created_at?: string
+          currency?: string
+          custom_activity_description?: string | null
+          custom_activity_name?: string | null
+          day_number: number
+          estimated_duration_hours?: number | null
+          event_id?: string | null
+          id?: string
+          notes?: string | null
+          scheduled_time?: string | null
+          tour_id?: string | null
+        }
+        Update: {
+          activity_id?: string | null
+          booking_reference?: string | null
+          booking_status?: string | null
+          cost?: number | null
+          created_at?: string
+          currency?: string
+          custom_activity_description?: string | null
+          custom_activity_name?: string | null
+          day_number?: number
+          estimated_duration_hours?: number | null
+          event_id?: string | null
+          id?: string
+          notes?: string | null
+          scheduled_time?: string | null
+          tour_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tour_itinerary_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tour_itinerary_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tour_itinerary_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "personalized_tours"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tour_operator_availability: {
+        Row: {
+          created_at: string
+          current_bookings: number | null
+          date: string
+          end_time: string
+          id: string
+          is_available: boolean
+          max_bookings: number | null
+          operator_id: string | null
+          rate_override: number | null
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          current_bookings?: number | null
+          date: string
+          end_time: string
+          id?: string
+          is_available?: boolean
+          max_bookings?: number | null
+          operator_id?: string | null
+          rate_override?: number | null
+          start_time: string
+        }
+        Update: {
+          created_at?: string
+          current_bookings?: number | null
+          date?: string
+          end_time?: string
+          id?: string
+          is_available?: boolean
+          max_bookings?: number | null
+          operator_id?: string | null
+          rate_override?: number | null
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tour_operator_availability_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "tour_operators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tour_operators: {
+        Row: {
+          background_checked: boolean | null
+          business_name: string | null
+          certifications: string[] | null
+          cities_covered: string[] | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          currency: string
+          daily_rate: number | null
+          description: string | null
+          experience_years: number | null
+          gallery_urls: string[] | null
+          hourly_rate: number | null
+          id: string
+          insurance_verified: boolean | null
+          is_active: boolean
+          languages_spoken: string[] | null
+          profile_image_url: string | null
+          rating: number | null
+          review_count: number | null
+          social_media_links: Json | null
+          specialties: string[] | null
+          updated_at: string
+          user_id: string | null
+          website_url: string | null
+        }
+        Insert: {
+          background_checked?: boolean | null
+          business_name?: string | null
+          certifications?: string[] | null
+          cities_covered?: string[] | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          daily_rate?: number | null
+          description?: string | null
+          experience_years?: number | null
+          gallery_urls?: string[] | null
+          hourly_rate?: number | null
+          id?: string
+          insurance_verified?: boolean | null
+          is_active?: boolean
+          languages_spoken?: string[] | null
+          profile_image_url?: string | null
+          rating?: number | null
+          review_count?: number | null
+          social_media_links?: Json | null
+          specialties?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          background_checked?: boolean | null
+          business_name?: string | null
+          certifications?: string[] | null
+          cities_covered?: string[] | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          daily_rate?: number | null
+          description?: string | null
+          experience_years?: number | null
+          gallery_urls?: string[] | null
+          hourly_rate?: number | null
+          id?: string
+          insurance_verified?: boolean | null
+          is_active?: boolean
+          languages_spoken?: string[] | null
+          profile_image_url?: string | null
+          rating?: number | null
+          review_count?: number | null
+          social_media_links?: Json | null
+          specialties?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+          website_url?: string | null
         }
         Relationships: []
       }
