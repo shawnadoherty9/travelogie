@@ -201,23 +201,19 @@ const Destinations = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    
     setIsSearching(true);
-    
+
     // Filter destinations based on search query
-    const filteredResults = popularDestinations.filter(destination =>
-      destination.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      destination.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      destination.name.split(',')[1]?.trim().toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    
+    const filteredResults = popularDestinations.filter(destination => destination.name.toLowerCase().includes(searchQuery.toLowerCase()) || destination.description.toLowerCase().includes(searchQuery.toLowerCase()) || destination.name.split(',')[1]?.trim().toLowerCase().includes(searchQuery.toLowerCase()));
     setSearchResults(filteredResults);
     setIsSearching(false);
-    
+
     // Scroll to results section
     const resultsSection = document.getElementById('search-results');
     if (resultsSection) {
-      resultsSection.scrollIntoView({ behavior: 'smooth' });
+      resultsSection.scrollIntoView({
+        behavior: 'smooth'
+      });
     }
   };
   return <div className="min-h-screen bg-background">
@@ -237,13 +233,11 @@ const Destinations = () => {
             <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
               Explore authentic cultural experiences around the world with local guides
             </p>
-            <div className="bg-gradient-to-r from-sky-200/80 to-sky-300/80 backdrop-blur-sm rounded-lg p-6 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-sky-200/80 to-sky-300/80 backdrop-blur-sm rounded-lg p-6 max-w-2xl mx-auto bg-orange-300 ">
               <p className="text-lg mb-2 font-semibold">
                 🇮🇳 Proud Partner of the Indian Government
               </p>
-              <p className="text-base opacity-90">
-                Official cultural exchange partner for Kumbh Mela Festival via MIT Nanda Project
-              </p>
+              <p className="text-base opacity-90">Pending cultural exchange partner for Kumbh Mela Festival via MIT Nanda Project</p>
             </div>
           </div>
         </section>
@@ -291,8 +285,7 @@ const Destinations = () => {
           </section>}
 
         {/* Search Results */}
-        {searchResults.length > 0 && (
-          <section id="search-results" className="py-16 bg-muted/30">
+        {searchResults.length > 0 && <section id="search-results" className="py-16 bg-muted/30">
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold text-center mb-4">
                 Search Results for "{searchQuery}"
@@ -302,8 +295,7 @@ const Destinations = () => {
               </p>
               
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {searchResults.map((destination, index) => (
-                  <Card key={index} className="hover:travel-shadow transition-all duration-300 cursor-pointer" onClick={() => handleDestinationClick(destination)}>
+                {searchResults.map((destination, index) => <Card key={index} className="hover:travel-shadow transition-all duration-300 cursor-pointer" onClick={() => handleDestinationClick(destination)}>
                     <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
                       <img src={destination.image} alt={destination.name} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
                     </div>
@@ -327,31 +319,27 @@ const Destinations = () => {
                         </div>
                       </div>
                       
-                      <Button className="w-full bg-gradient-wanderlust hover:opacity-90" onClick={(e) => {
-                        e.stopPropagation();
-                        handleDestinationClick(destination);
-                      }}>
+                      <Button className="w-full bg-gradient-wanderlust hover:opacity-90" onClick={e => {
+                  e.stopPropagation();
+                  handleDestinationClick(destination);
+                }}>
                         Explore Destination
                       </Button>
                     </CardContent>
-                  </Card>
-                ))}
+                  </Card>)}
               </div>
               
-              {searchQuery && searchResults.length === 0 && !isSearching && (
-                <div className="text-center py-8">
+              {searchQuery && searchResults.length === 0 && !isSearching && <div className="text-center py-8">
                   <p className="text-muted-foreground mb-4">No destinations found matching "{searchQuery}"</p>
                   <Button variant="outline" onClick={() => {
-                    setSearchQuery("");
-                    setSearchResults([]);
-                  }}>
+              setSearchQuery("");
+              setSearchResults([]);
+            }}>
                     Clear Search
                   </Button>
-                </div>
-              )}
+                </div>}
             </div>
-          </section>
-        )}
+          </section>}
 
         {/* Popular Destinations */}
         <section className="py-16 bg-muted/30">
@@ -362,8 +350,7 @@ const Destinations = () => {
             </p>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {popularDestinations.map((destination, index) => (
-                <Card key={index} className="hover:travel-shadow transition-all duration-300 cursor-pointer" onClick={() => handleDestinationClick(destination)}>
+              {popularDestinations.map((destination, index) => <Card key={index} className="hover:travel-shadow transition-all duration-300 cursor-pointer" onClick={() => handleDestinationClick(destination)}>
                   <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
                     <img src={destination.image} alt={destination.name} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
                   </div>
@@ -387,15 +374,14 @@ const Destinations = () => {
                       </div>
                     </div>
                     
-                    <Button className="w-full bg-gradient-wanderlust hover:opacity-90" onClick={(e) => {
-                      e.stopPropagation();
-                      handleDestinationClick(destination);
-                    }}>
+                    <Button className="w-full bg-gradient-wanderlust hover:opacity-90" onClick={e => {
+                  e.stopPropagation();
+                  handleDestinationClick(destination);
+                }}>
                       Explore Destination
                     </Button>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
         </section>
