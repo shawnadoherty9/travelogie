@@ -22,6 +22,10 @@ import carlosRodriguezProfile from "@/assets/carlos-rodriguez-profile.jpg";
 import yukiTanakaProfile from "@/assets/yuki-tanaka-profile.jpg";
 import amaraOkaforProfile from "@/assets/amara-okafor-profile.jpg";
 
+// Import background images
+import toursHeroBackground from "@/assets/tours-hero-background.jpg";
+import culturalGuidesBackground from "@/assets/cultural-guides-background.jpg";
+
 const Tours = () => {
   const [selectedMode, setSelectedMode] = useState<'personalized' | 'preorganized' | null>(null);
   const [location, setLocation] = useState("");
@@ -155,8 +159,16 @@ Day 3: Personal Connection
       <Header />
       <main className="pt-16">
         {/* Hero Section */}
-        <section className="py-16 bg-gradient-wanderlust text-white">
-          <div className="container mx-auto px-4 text-center">
+        <section 
+          className="py-16 bg-gradient-wanderlust text-white relative overflow-hidden"
+          style={{
+            backgroundImage: `linear-gradient(rgba(32, 130, 180, 0.8), rgba(220, 95, 75, 0.8)), url(${toursHeroBackground})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          <div className="container mx-auto px-4 text-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Discover Your Perfect Tour
             </h1>
@@ -337,8 +349,16 @@ Day 3: Personal Connection
 
         {/* Local Tour Operators */}
         {selectedMode && (
-          <section className="py-12 bg-muted/30">
-            <div className="container mx-auto px-4">
+          <section 
+            className="py-12 bg-muted/30 relative overflow-hidden"
+            style={{
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url(${culturalGuidesBackground})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
+            <div className="container mx-auto px-4 relative z-10">
               <h3 className="text-3xl font-bold text-center mb-8">
                 Meet Your Local Cultural Guides
               </h3>
