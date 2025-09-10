@@ -1,22 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Globe, Menu, User } from "lucide-react";
 import { useState } from "react";
-
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  return (
-    <header className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+  return <header className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between bg-slate-50">
         {/* Logo */}
         <div className="flex items-center space-x-3">
-          <img 
-            src="/lovable-uploads/4f14a223-57a1-4a7d-bf9a-6bc3e17c25b9.png" 
-            alt="Travelogie Logo - Interactive Culture Platform" 
-            className="w-12 h-12 object-contain"
-          />
+          <img src="/lovable-uploads/4f14a223-57a1-4a7d-bf9a-6bc3e17c25b9.png" alt="Travelogie Logo - Interactive Culture Platform" className="w-12 h-12 object-contain" />
           <div>
-            <h1 className="text-xl font-bold text-gradient">Travelogie</h1>
+            <h1 className="text-xl text-gradient text-sky-950 font-bold">Travelogie</h1>
             <p className="text-xs text-muted-foreground">Learn from Locals</p>
           </div>
         </div>
@@ -48,20 +41,14 @@ const Header = () => {
           </Button>
           
           {/* Mobile Menu Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <Menu className="w-5 h-5" />
           </Button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-background border-b border-border">
+      {isMenuOpen && <div className="md:hidden bg-background border-b border-border">
           <nav className="container mx-auto px-4 py-4 space-y-3">
             <a href="#destinations" className="block py-2 text-foreground hover:text-travel-ocean">
               Destinations
@@ -76,10 +63,7 @@ const Header = () => {
               Languages
             </a>
           </nav>
-        </div>
-      )}
-    </header>
-  );
+        </div>}
+    </header>;
 };
-
 export default Header;
