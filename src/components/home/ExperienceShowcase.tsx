@@ -147,7 +147,7 @@ const ExperienceShowcase = () => {
                   ))}
                 </div>
 
-                <Button variant="cultural" className="w-full">
+                <Button className="w-full bg-gradient-to-r from-travel-ocean to-travel-sky text-white border-0 hover:from-travel-ocean/90 hover:to-travel-sky/90">
                   View Details
                 </Button>
               </CardContent>
