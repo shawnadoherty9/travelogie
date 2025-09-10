@@ -56,9 +56,9 @@ const Header = () => {
           <Link to="/tours" className="text-foreground hover:text-travel-ocean transition-colors">
             Tours
           </Link>
-          <a href="#languages" className="text-foreground hover:text-travel-ocean transition-colors">
+          <Link to="/languages" className="text-foreground hover:text-travel-ocean transition-colors">
             Languages
-          </a>
+          </Link>
         </nav>
 
         {/* User Actions */}
@@ -124,9 +124,9 @@ const Header = () => {
             <Link to="/tours" className="block py-2 text-foreground hover:text-travel-ocean">
               Tours
             </Link>
-            <a href="#languages" className="block py-2 text-foreground hover:text-travel-ocean">
+            <Link to="/languages" className="block py-2 text-foreground hover:text-travel-ocean">
               Languages
-            </a>
+            </Link>
           </nav>
         </div>}
     </header>;
