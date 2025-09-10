@@ -11,6 +11,10 @@ type UserType = 'traveler' | 'tour_operator' | 'language_teacher' | 'cultural_ex
 const RegistrationFlow: React.FC = () => {
   const [selectedType, setSelectedType] = useState<UserType | null>(null);
 
+  const handleSelectType = (type: string) => {
+    setSelectedType(type as UserType);
+  };
+
   const renderForm = () => {
     switch (selectedType) {
       case 'traveler':
@@ -24,7 +28,7 @@ const RegistrationFlow: React.FC = () => {
       case 'event_venue':
         return <EventVenueForm />;
       default:
-        return <UserTypeSelection onSelectType={setSelectedType} />;
+        return <UserTypeSelection onSelectType={handleSelectType} />;
     }
   };
 
