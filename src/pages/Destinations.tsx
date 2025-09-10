@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Globe, Users, Calendar } from "lucide-react";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { supabase } from "@/integrations/supabase/client";
 
 // Import background image
 import kumbhMelaBackground from "@/assets/kumbh-mela-destinations-background.jpg";
@@ -15,7 +16,7 @@ import kumbhMelaBackground from "@/assets/kumbh-mela-destinations-background.jpg
 const Destinations = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [mapboxToken, setMapboxToken] = useState("");
-  const [showTokenInput, setShowTokenInput] = useState(true);
+  const [isLoadingToken, setIsLoadingToken] = useState(true);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
 
@@ -69,6 +70,25 @@ const Destinations = () => {
       image: "/assets/thai-market-lesson.jpg"
     }
   ];
+
+  // Fetch Mapbox token from edge function
+  useEffect(() => {
+    const fetchMapboxToken = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-mapbox-token');
+        if (error) throw error;
+        if (data?.token) {
+          setMapboxToken(data.token);
+        }
+      } catch (error) {
+        console.error('Error fetching Mapbox token:', error);
+      } finally {
+        setIsLoadingToken(false);
+      }
+    };
+
+    fetchMapboxToken();
+  }, []);
 
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken) return;
@@ -181,12 +201,6 @@ const Destinations = () => {
     };
   }, [mapboxToken]);
 
-  const handleTokenSubmit = () => {
-    if (mapboxToken.trim()) {
-      setShowTokenInput(false);
-    }
-  };
-
   const handleDestinationClick = (destination: typeof popularDestinations[0]) => {
     if (map.current) {
       map.current.flyTo({
@@ -236,34 +250,6 @@ const Destinations = () => {
           </div>
         </section>
 
-        {/* Mapbox Token Input (if needed) */}
-        {showTokenInput && (
-          <section className="py-8 bg-muted/30">
-            <div className="container mx-auto px-4">
-              <Card className="max-w-md mx-auto">
-                <CardContent className="p-6">
-                  <h3 className="font-bold mb-4">Mapbox Token Required</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Please enter your Mapbox public token to enable the interactive map. 
-                    Get your token from <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-travel-ocean underline">mapbox.com</a>
-                  </p>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="pk.eyJ1Ijoi..."
-                      value={mapboxToken}
-                      onChange={(e) => setMapboxToken(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button onClick={handleTokenSubmit} disabled={!mapboxToken.trim()}>
-                      Load Map
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-        )}
-
         {/* Search Section */}
         <section className="py-12">
           <div className="container mx-auto px-4">
@@ -287,8 +273,18 @@ const Destinations = () => {
           </div>
         </section>
 
+        {/* Loading State */}
+        {isLoadingToken && (
+          <section className="py-16">
+            <div className="container mx-auto px-4 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-travel-ocean mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading interactive map...</p>
+            </div>
+          </section>
+        )}
+
         {/* Interactive Map */}
-        {!showTokenInput && (
+        {!isLoadingToken && mapboxToken && (
           <section className="py-8">
             <div className="container mx-auto px-4">
               <h2 className="text-2xl font-bold text-center mb-8">Explore Destinations Worldwide</h2>
