@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, MapPin, Clock, Users } from "lucide-react";
+import { Star, MapPin, Clock, Users, BookOpen, Trophy } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { DragDropLesson } from "@/components/language/DragDropLesson";
+import { languageLessons, getLessonsByLanguage } from "@/data/languageLessons";
+import { toast } from "sonner";
 
 // Import images
 import osakaStreetFoodBackground from "@/assets/osaka-street-food-background.jpg";
@@ -52,6 +55,8 @@ import sarahGoldbergProfile from "@/assets/sarah-goldberg-profile.jpg";
 
 const Languages = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [activeLesson, setActiveLesson] = useState<string | null>(null);
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
 
   const languages = ["English", "Spanish", "French", "Italian", "Portuguese", "Japanese", "Chinese", "Thai", "Khmer", "Hindi", "Arabic", "Hebrew"];
 
@@ -513,7 +518,8 @@ const Languages = () => {
     }
   ];
 
-  const sampleLessons = [
+  /* Commented out old sample lessons data - now using interactive languageLessons
+  const oldSampleLessons = [
     // English Lessons
     {
       id: 1,
@@ -764,15 +770,26 @@ const Languages = () => {
       ],
       culturalNotes: "Israeli markets are lively and social. Direct communication is appreciated, and haggling is expected in traditional markets."
     }
-  ];
+  ]; */
 
   const filteredInstructors = selectedLanguage 
     ? languageInstructors.filter(instructor => instructor.languages.includes(selectedLanguage))
     : languageInstructors.slice(0, 8); // Show first 8 if no language selected
 
   const filteredLessons = selectedLanguage 
-    ? sampleLessons.filter(lesson => lesson.language === selectedLanguage)
-    : sampleLessons.slice(0, 6); // Show first 6 if no language selected
+    ? getLessonsByLanguage(selectedLanguage)
+    : languageLessons.slice(0, 6); // Show first 6 if no language selected
+
+  const handleLessonComplete = (lessonId: string) => {
+    setCompletedLessons(prev => [...prev, lessonId]);
+    setActiveLesson(null);
+    toast.success("Lesson completed! Great job! 🎉");
+  };
+
+  const startLesson = (lessonId: string) => {
+    setActiveLesson(lessonId);
+    toast.info("Starting lesson...");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -825,79 +842,109 @@ const Languages = () => {
           </div>
         </section>
 
-        {/* Sample Lessons */}
+        {/* Interactive Language Lessons */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-4">
-              {selectedLanguage ? `${selectedLanguage} Lessons` : 'Popular Lessons'}
+              {selectedLanguage ? `${selectedLanguage} Interactive Lessons` : 'Interactive Language Lessons'}
             </h2>
             <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Start with these practical lessons designed to help you communicate confidently in real-world situations
+              Practice real conversations with drag-and-drop vocabulary lessons designed by native speakers
             </p>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredLessons.map((lesson) => (
-                <Card key={lesson.id} className="hover:travel-shadow transition-all duration-300">
-                  <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                    <img 
-                      src={lesson.image} 
-                      alt={lesson.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <Badge variant="outline">{lesson.level}</Badge>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        {lesson.duration}
-                      </div>
-                    </div>
-                    <h3 className="font-bold text-lg mb-2">{lesson.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      with {lesson.instructor}
-                    </p>
-                    
-                    <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {lesson.students.toLocaleString()} students
-                      </div>
-                      <Badge variant="secondary">{lesson.language}</Badge>
-                    </div>
-                    
-                    <div className="space-y-3 mb-4">
-                      <div>
-                        <Label className="text-xs font-semibold">Key Vocabulary:</Label>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {lesson.vocabulary.slice(0, 3).map((word, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {word}
-                            </Badge>
-                          ))}
-                          {lesson.vocabulary.length > 3 && (
-                            <Badge variant="secondary" className="text-xs">
-                              +{lesson.vocabulary.length - 3} more
+
+            {activeLesson ? (
+              <div className="mb-8">
+                <DragDropLesson
+                  key={activeLesson}
+                  language={filteredLessons.find(l => l.id === activeLesson)?.language || ''}
+                  lessonTitle={filteredLessons.find(l => l.id === activeLesson)?.title || ''}
+                  vocabularyItems={filteredLessons.find(l => l.id === activeLesson)?.vocabularyItems || []}
+                  targetSentence={filteredLessons.find(l => l.id === activeLesson)?.targetSentence || ''}
+                  targetPhonetic={filteredLessons.find(l => l.id === activeLesson)?.targetPhonetic || ''}
+                  targetTranslation={filteredLessons.find(l => l.id === activeLesson)?.targetTranslation || ''}
+                  onComplete={() => handleLessonComplete(activeLesson)}
+                />
+                <div className="flex justify-center mt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setActiveLesson(null)}
+                    className="px-8"
+                  >
+                    Back to Lessons
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredLessons.map((lesson) => (
+                  <Card key={lesson.id} className="hover:travel-shadow transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <Badge variant="outline">{lesson.level}</Badge>
+                        <div className="flex items-center gap-2">
+                          {completedLessons.includes(lesson.id) && (
+                            <Badge variant="secondary" className="bg-green-100 text-green-800">
+                              <Trophy className="w-3 h-3 mr-1" />
+                              Completed
                             </Badge>
                           )}
+                          <Badge variant="secondary">{lesson.language}</Badge>
                         </div>
                       </div>
                       
-                      <div>
-                        <Label className="text-xs font-semibold">Sample Phrase:</Label>
-                        <p className="text-sm italic text-travel-ocean mt-1">
-                          "{lesson.phrases[0]}"
-                        </p>
+                      <h3 className="font-bold text-lg mb-3">{lesson.title}</h3>
+                      
+                      <div className="space-y-3 mb-4">
+                        <div>
+                          <Label className="text-xs font-semibold">Target Sentence:</Label>
+                          <p className="text-sm font-medium text-primary mt-1">
+                            {lesson.targetSentence}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {lesson.targetPhonetic}
+                          </p>
+                          <p className="text-xs text-muted-foreground italic">
+                            "{lesson.targetTranslation}"
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <Label className="text-xs font-semibold">Vocabulary ({lesson.vocabularyItems.length} words):</Label>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {lesson.vocabularyItems.slice(0, 3).map((item) => (
+                              <Badge key={item.id} variant="secondary" className="text-xs">
+                                {item.word}
+                              </Badge>
+                            ))}
+                            {lesson.vocabularyItems.length > 3 && (
+                              <Badge variant="secondary" className="text-xs">
+                                +{lesson.vocabularyItems.length - 3} more
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label className="text-xs font-semibold">Cultural Note:</Label>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {lesson.culturalNote}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <Button className="w-full bg-gradient-wanderlust hover:opacity-90">
-                      Start Free Lesson
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      
+                      <Button 
+                        className="w-full bg-gradient-wanderlust hover:opacity-90 flex items-center gap-2"
+                        onClick={() => startLesson(lesson.id)}
+                        disabled={completedLessons.includes(lesson.id)}
+                      >
+                        <BookOpen className="w-4 h-4" />
+                        {completedLessons.includes(lesson.id) ? 'Lesson Completed' : 'Start Interactive Lesson'}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
