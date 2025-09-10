@@ -1,158 +1,186 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { Plane, Users, BookOpen, Languages } from 'lucide-react';
-
-const userTypes = [
-  { value: 'traveler', label: 'Traveler', icon: Plane, description: 'Explore authentic local experiences' },
-  { value: 'tour_operator', label: 'Tour Operator', icon: Users, description: 'Offer guided tours and experiences' },
-  { value: 'local_expert', label: 'Local Expert', icon: BookOpen, description: 'Share your local knowledge and culture' },
-  { value: 'language_tutor', label: 'Language Tutor', icon: Languages, description: 'Teach languages to travelers' },
-];
+import { Loader2, Plane, Users, MapPin, GraduationCap } from 'lucide-react';
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [userType, setUserType] = useState<string>('');
-  const [loading, setLoading] = useState(false);
+  const { user, loading, signIn, signUp } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
-  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const [signInForm, setSignInForm] = useState({
+    email: '',
+    password: ''
+  });
+  
+  const [signUpForm, setSignUpForm] = useState({
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    userType: 'traveler'
+  });
 
-  useEffect(() => {
-    if (user) {
-      navigate('/');
-    }
-  }, [user, navigate]);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
-  const handleAuth = async (e: React.FormEvent) => {
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
+
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-
-        toast({
-          title: "Welcome back!",
-          description: "You've been signed in successfully.",
-        });
-      } else {
-        if (!userType) {
-          toast({
-            title: "Please select a user type",
-            description: "Choose how you'd like to use Travelogie.",
-            variant: "destructive",
-          });
-          setLoading(false);
-          return;
-        }
-
-        const redirectUrl = `${window.location.origin}/`;
-        
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: redirectUrl,
-            data: {
-              first_name: firstName,
-              last_name: lastName,
-              user_type: userType,
-            }
-          }
-        });
-
-        if (error) throw error;
-
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account.",
-        });
-      }
-    } catch (error: any) {
+    setIsLoading(true);
+    
+    const { error } = await signIn(signInForm.email, signInForm.password);
+    
+    if (error) {
       toast({
-        title: "Authentication failed",
+        title: "Sign In Failed",
         description: error.message,
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
+    
+    setIsLoading(false);
   };
 
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    const { error } = await signUp(
+      signUpForm.email,
+      signUpForm.password,
+      signUpForm.userType,
+      signUpForm.firstName,
+      signUpForm.lastName
+    );
+    
+    if (error) {
+      toast({
+        title: "Sign Up Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Check your email",
+        description: "We've sent you a confirmation link to complete your registration.",
+      });
+    }
+    
+    setIsLoading(false);
+  };
+
+  const userTypeOptions = [
+    { value: 'traveler', label: 'Traveler', icon: Plane, description: 'Explore authentic local experiences' },
+    { value: 'tour_operator', label: 'Tour Operator', icon: Users, description: 'Organize and manage travel experiences' },
+    { value: 'local_expert', label: 'Local Expert', icon: MapPin, description: 'Share your local knowledge and culture' },
+    { value: 'language_tutor', label: 'Language Tutor', icon: GraduationCap, description: 'Teach languages to travelers' }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-accent/10 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-primary">
-            {isLogin ? 'Welcome Back' : 'Join Travelogie'}
-          </CardTitle>
-          <CardDescription>
-            {isLogin 
-              ? 'Sign in to continue your journey' 
-              : 'Start connecting with locals and authentic experiences'
-            }
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">Welcome to Travelogie</CardTitle>
+          <CardDescription>Learn from Locals</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAuth} className="space-y-4">
-            {!isLogin && (
-              <>
+          <Tabs defaultValue="signin" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="signin">Sign In</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="signin">
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email">Email</Label>
+                  <Input
+                    id="signin-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={signInForm.email}
+                    onChange={(e) => setSignInForm({ ...signInForm, email: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password">Password</Label>
+                  <Input
+                    id="signin-password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={signInForm.password}
+                    onChange={(e) => setSignInForm({ ...signInForm, password: e.target.value })}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Sign In
+                </Button>
+              </form>
+            </TabsContent>
+            
+            <TabsContent value="signup">
+              <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
                       id="firstName"
-                      type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      required={!isLogin}
+                      placeholder="First name"
+                      value={signUpForm.firstName}
+                      onChange={(e) => setSignUpForm({ ...signUpForm, firstName: e.target.value })}
+                      required
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
                     <Input
                       id="lastName"
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      required={!isLogin}
+                      placeholder="Last name"
+                      value={signUpForm.lastName}
+                      onChange={(e) => setSignUpForm({ ...signUpForm, lastName: e.target.value })}
+                      required
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="userType">I am a...</Label>
-                  <Select value={userType} onValueChange={setUserType} required={!isLogin}>
+                  <Select
+                    value={signUpForm.userType}
+                    onValueChange={(value) => setSignUpForm({ ...signUpForm, userType: value })}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {userTypes.map((type) => {
-                        const Icon = type.icon;
+                      {userTypeOptions.map((option) => {
+                        const Icon = option.icon;
                         return (
-                          <SelectItem key={type.value} value={type.value}>
+                          <SelectItem key={option.value} value={option.value}>
                             <div className="flex items-center gap-2">
                               <Icon className="h-4 w-4" />
                               <div>
-                                <div className="font-medium">{type.label}</div>
-                                <div className="text-sm text-muted-foreground">{type.description}</div>
+                                <div className="font-medium">{option.label}</div>
+                                <div className="text-xs text-muted-foreground">{option.description}</div>
                               </div>
                             </div>
                           </SelectItem>
@@ -161,48 +189,36 @@ const Auth = () => {
                     </SelectContent>
                   </Select>
                 </div>
-              </>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
-            </Button>
-          </form>
-          
-          <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-primary hover:underline"
-            >
-              {isLogin 
-                ? "Don't have an account? Sign up" 
-                : 'Already have an account? Sign in'
-              }
-            </button>
-          </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={signUpForm.email}
+                    onChange={(e) => setSignUpForm({ ...signUpForm, email: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">Password</Label>
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    placeholder="Create a password"
+                    value={signUpForm.password}
+                    onChange={(e) => setSignUpForm({ ...signUpForm, password: e.target.value })}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Create Account
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
