@@ -25,13 +25,200 @@ import amaraOkaforProfile from "@/assets/amara-okafor-profile.jpg";
 // Import background images
 import toursHeroBackground from "@/assets/tours-hero-background.jpg";
 import culturalGuidesBackground from "@/assets/cultural-guides-background.jpg";
+import languageInstructorsBackground from "@/assets/language-instructors-background.jpg";
+
+// Import lesson images
+import englishHotelLesson from "@/assets/english-hotel-lesson.jpg";
+import hindiKumbhMelaLesson from "@/assets/hindi-kumbh-mela-lesson.jpg";
+import japaneseStreetFoodLesson from "@/assets/japanese-street-food-lesson.jpg";
+import frenchCafeLesson from "@/assets/french-cafe-lesson.jpg";
+import spanishDanceLesson from "@/assets/spanish-dance-lesson.jpg";
 
 const Tours = () => {
   const [selectedMode, setSelectedMode] = useState<'personalized' | 'preorganized' | null>(null);
   const [location, setLocation] = useState("");
   const [interests, setInterests] = useState("");
   const [personalizedTour, setPersonalizedTour] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [showLanguageSection, setShowLanguageSection] = useState(false);
   const { toast } = useToast();
+
+  const languageInstructors = [
+    {
+      id: 1,
+      name: "Sarah Johnson",
+      avatar: mayaPatelProfile,
+      rating: 4.9,
+      reviews: 342,
+      location: "London, UK",
+      languages: ["English"],
+      expertise: "Advanced Business English",
+      specializations: ["Hotel & Travel English", "Business Communication", "Cultural Etiquette"],
+      interests: ["Travel", "Photography", "Cultural Exchange"],
+      hourlyRate: "$25-45",
+      experience: "8 years",
+      verified: true,
+      about: "Native English speaker with hospitality background, specializing in practical travel English."
+    },
+    {
+      id: 2,
+      name: "Priya Sharma",
+      avatar: carlosRodriguezProfile,
+      rating: 5.0,
+      reviews: 178,
+      location: "Varanasi, India",
+      languages: ["Hindi", "English"],
+      expertise: "Cultural Hindi & Traditions",
+      specializations: ["Festival Traditions", "Spiritual Practices", "Cultural Customs"],
+      interests: ["Spirituality", "Traditional Arts", "History"],
+      hourlyRate: "$15-30",
+      experience: "12 years",
+      verified: true,
+      about: "Cultural historian and Hindi teacher specializing in Indian festivals and spiritual traditions."
+    },
+    {
+      id: 3,
+      name: "Takeshi Yamamoto",
+      avatar: yukiTanakaProfile,
+      rating: 4.8,
+      reviews: 256,
+      location: "Tokyo, Japan",
+      languages: ["Japanese", "English"],
+      expertise: "Conversational Japanese",
+      specializations: ["Food Culture", "Street Communication", "Daily Conversations"],
+      interests: ["Cooking", "Manga", "Traditional Arts"],
+      hourlyRate: "$30-50",
+      experience: "6 years",
+      verified: true,
+      about: "Tokyo native passionate about sharing Japanese food culture and everyday communication."
+    },
+    {
+      id: 4,
+      name: "Marie Dubois",
+      avatar: amaraOkaforProfile,
+      rating: 4.9,
+      reviews: 203,
+      location: "Paris, France",
+      languages: ["French", "English"],
+      expertise: "French Culture & Cuisine",
+      specializations: ["Café Culture", "French Cuisine", "Travel French"],
+      interests: ["Cooking", "Art", "Literature"],
+      hourlyRate: "$35-55",
+      experience: "10 years",
+      verified: true,
+      about: "Parisian chef and language teacher combining French language with culinary traditions."
+    },
+    {
+      id: 5,
+      name: "Carlos Mendez",
+      avatar: carlosRodriguezProfile,
+      rating: 4.7,
+      reviews: 189,
+      location: "Barcelona, Spain",
+      languages: ["Spanish", "Catalan", "English"],
+      expertise: "Spanish Dance & Culture",
+      specializations: ["Flamenco Culture", "Dance Vocabulary", "Cultural Expressions"],
+      interests: ["Dance", "Music", "History"],
+      hourlyRate: "$20-40",
+      experience: "7 years",
+      verified: true,
+      about: "Professional dancer and Spanish teacher integrating language learning with cultural movement."
+    }
+  ];
+
+  const sampleLessons = [
+    {
+      id: 1,
+      title: "Hotel Check-in in English",
+      language: "English",
+      level: "Beginner",
+      duration: "30 minutes",
+      instructor: "Sarah Johnson",
+      image: englishHotelLesson,
+      vocabulary: ["reservation", "check-in", "passport", "room key", "receipt"],
+      phrases: [
+        "I have a reservation under [name]",
+        "Could I have a room with a view?",
+        "What time is checkout?",
+        "Is breakfast included?",
+        "Could you call a taxi for me?"
+      ],
+      culturalNotes: "In English-speaking countries, it's polite to say 'please' and 'thank you' frequently during hotel interactions."
+    },
+    {
+      id: 2,
+      title: "Kumbh Mela Festival Traditions",
+      language: "Hindi",
+      level: "Intermediate",
+      duration: "45 minutes",
+      instructor: "Priya Sharma",
+      image: hindiKumbhMelaLesson,
+      vocabulary: ["स्नान (snaan)", "पूजा (pooja)", "साधु (sadhu)", "मेला (mela)", "तीर्थ (teerth)"],
+      phrases: [
+        "कुंभ मेला कब है? (Kumbh mela kab hai?)",
+        "स्नान का समय क्या है? (Snaan ka samay kya hai?)",
+        "यह बहुत पवित्र है (Yah bahut pavitra hai)",
+        "गंगा आरती देखना है (Ganga aarti dekhna hai)"
+      ],
+      culturalNotes: "Kumbh Mela is the world's largest peaceful gathering. Respect for elders and spiritual leaders is paramount."
+    },
+    {
+      id: 3,
+      title: "Ordering Street Food in Japanese",
+      language: "Japanese",
+      level: "Beginner",
+      duration: "25 minutes",
+      instructor: "Takeshi Yamamoto",
+      image: japaneseStreetFoodLesson,
+      vocabulary: ["ラーメン (raamen)", "やきとり (yakitori)", "おいしい (oishii)", "ください (kudasai)", "いくら (ikura)"],
+      phrases: [
+        "ラーメンをください (Raamen wo kudasai)",
+        "辛くないですか？ (Karakunai desu ka?)",
+        "おいしいです (Oishii desu)",
+        "いくらですか？ (Ikura desu ka?)",
+        "ありがとうございます (Arigatou gozaimasu)"
+      ],
+      culturalNotes: "Bowing slightly when ordering and saying 'itadakimasu' before eating shows respect for the food and chef."
+    },
+    {
+      id: 4,
+      title: "French Café Conversations",
+      language: "French",
+      level: "Beginner",
+      duration: "35 minutes",
+      instructor: "Marie Dubois",
+      image: frenchCafeLesson,
+      vocabulary: ["café", "croissant", "addition", "terrasse", "bonjour"],
+      phrases: [
+        "Un café, s'il vous plaît",
+        "L'addition, s'il vous plaît",
+        "C'est délicieux!",
+        "Pourriez-vous recommander quelque chose?",
+        "Merci beaucoup"
+      ],
+      culturalNotes: "French café culture values taking time to enjoy your drink. It's common to sit for hours with just one coffee."
+    },
+    {
+      id: 5,
+      title: "Spanish Dance Expressions",
+      language: "Spanish",
+      level: "Intermediate",
+      duration: "40 minutes",
+      instructor: "Carlos Mendez",
+      image: spanishDanceLesson,
+      vocabulary: ["baile", "flamenco", "compás", "palmas", "zapateado"],
+      phrases: [
+        "¿Sabes bailar flamenco?",
+        "El ritmo es muy importante",
+        "Siente la música",
+        "¡Qué arte tienes!",
+        "Vamos a practicar juntos"
+      ],
+      culturalNotes: "Flamenco is deeply emotional. Each movement tells a story, and improvisation is valued over perfection."
+    }
+  ];
+
+  const languages = ["English", "Hindi", "Japanese", "French", "Spanish"];
 
   const tourOperators = [
     {
@@ -447,6 +634,210 @@ Day 3: Personal Connection
             </div>
           </section>
         )}
+
+        {/* Language Learning Section */}
+        <section className="py-16 bg-gradient-to-r from-blue-50 to-purple-50">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold mb-4">Learn Languages with Locals</h2>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                Master essential phrases and cultural nuances with native speakers who understand the heart of their language
+              </p>
+            </div>
+
+            {/* Language Selector */}
+            <div className="max-w-md mx-auto mb-12">
+              <Label htmlFor="language-select" className="block text-center mb-4 font-semibold">
+                Choose a language to learn:
+              </Label>
+              <select
+                id="language-select"
+                className="w-full p-3 border rounded-lg bg-background"
+                value={selectedLanguage}
+                onChange={(e) => {
+                  setSelectedLanguage(e.target.value);
+                  setShowLanguageSection(e.target.value !== "");
+                }}
+              >
+                <option value="">Select a language...</option>
+                {languages.map((language) => (
+                  <option key={language} value={language}>{language}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Language Content */}
+            {showLanguageSection && (
+              <div className="space-y-16">
+                {/* Sample Lessons */}
+                <div>
+                  <h3 className="text-3xl font-bold text-center mb-8">
+                    Sample Lessons in {selectedLanguage}
+                  </h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {sampleLessons
+                      .filter(lesson => !selectedLanguage || lesson.language === selectedLanguage)
+                      .map((lesson) => (
+                        <Card key={lesson.id} className="hover:travel-shadow transition-all duration-300">
+                          <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
+                            <img 
+                              src={lesson.image} 
+                              alt={lesson.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <CardContent className="p-6">
+                            <div className="flex items-center justify-between mb-3">
+                              <Badge variant="outline">{lesson.level}</Badge>
+                              <span className="text-sm text-muted-foreground">{lesson.duration}</span>
+                            </div>
+                            <h4 className="font-bold text-lg mb-2">{lesson.title}</h4>
+                            <p className="text-sm text-muted-foreground mb-4">
+                              Instructor: {lesson.instructor}
+                            </p>
+                            
+                            <div className="space-y-4">
+                              <div>
+                                <Label className="text-xs font-semibold">Key Vocabulary:</Label>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {lesson.vocabulary.slice(0, 3).map((word, index) => (
+                                    <Badge key={index} variant="secondary" className="text-xs">
+                                      {word}
+                                    </Badge>
+                                  ))}
+                                  {lesson.vocabulary.length > 3 && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      +{lesson.vocabulary.length - 3} more
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <Label className="text-xs font-semibold">Sample Phrase:</Label>
+                                <p className="text-sm italic text-travel-ocean mt-1">
+                                  "{lesson.phrases[0]}"
+                                </p>
+                              </div>
+                              
+                              <div>
+                                <Label className="text-xs font-semibold">Cultural Note:</Label>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {lesson.culturalNotes}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <Button className="w-full mt-4 bg-gradient-wanderlust hover:opacity-90">
+                              Start Free Lesson
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      ))}
+                  </div>
+                </div>
+
+                {/* Language Instructors */}
+                <div 
+                  className="relative overflow-hidden rounded-2xl"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url(${languageInstructorsBackground})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                  }}
+                >
+                  <div className="p-8 relative z-10">
+                    <h3 className="text-3xl font-bold text-center mb-8">
+                      Meet Your {selectedLanguage} Instructors
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {languageInstructors
+                        .filter(instructor => !selectedLanguage || instructor.languages.includes(selectedLanguage))
+                        .map((instructor) => (
+                          <Card key={instructor.id} className="hover:travel-shadow transition-all duration-300">
+                            <CardContent className="p-6">
+                              <div className="flex items-start gap-4">
+                                <Avatar className="w-16 h-16">
+                                  <AvatarImage src={instructor.avatar} alt={instructor.name} />
+                                  <AvatarFallback>{instructor.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                                </Avatar>
+                                
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <h4 className="font-bold text-lg">{instructor.name}</h4>
+                                    {instructor.verified && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        ✓ Verified
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  
+                                  <div className="flex items-center gap-4 mb-3">
+                                    <div className="flex items-center gap-1">
+                                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                      <span className="font-semibold">{instructor.rating}</span>
+                                      <span className="text-muted-foreground text-sm">
+                                        ({instructor.reviews} reviews)
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                      <MapPin className="w-3 h-3" />
+                                      {instructor.location}
+                                    </div>
+                                  </div>
+                                  
+                                  <p className="text-sm text-muted-foreground mb-4">{instructor.about}</p>
+                                  
+                                  <div className="space-y-3">
+                                    <div>
+                                      <Label className="text-xs font-semibold">Expertise</Label>
+                                      <p className="text-sm text-travel-ocean">{instructor.expertise}</p>
+                                    </div>
+                                    
+                                    <div>
+                                      <Label className="text-xs font-semibold">Specializations</Label>
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {instructor.specializations.map((spec, index) => (
+                                          <Badge key={index} variant="outline" className="text-xs">
+                                            {spec}
+                                          </Badge>
+                                        ))}
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                      <div>
+                                        <Label className="text-xs font-semibold">Rate</Label>
+                                        <p className="text-travel-sunset font-semibold">{instructor.hourlyRate}/hr</p>
+                                      </div>
+                                      <div>
+                                        <Label className="text-xs font-semibold">Experience</Label>
+                                        <p>{instructor.experience}</p>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="flex gap-2 mt-4">
+                                      <Button size="sm" className="flex-1 bg-gradient-wanderlust hover:opacity-90">
+                                        Book Session
+                                      </Button>
+                                      <Button size="sm" variant="outline" className="flex-1">
+                                        View Calendar
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
       </main>
       <Footer />
     </div>
