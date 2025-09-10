@@ -237,7 +237,7 @@ const Destinations = () => {
             <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
               Explore authentic cultural experiences around the world with local guides
             </p>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-sky-200/80 to-sky-300/80 backdrop-blur-sm rounded-lg p-6 max-w-2xl mx-auto">
               <p className="text-lg mb-2 font-semibold">
                 🇮🇳 Proud Partner of the Indian Government
               </p>
