@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Upload, X } from "lucide-react";
+import { FileUpload } from "@/components/ui/file-upload";
+import { CalendarIcon, X } from "lucide-react";
 import { format } from "date-fns";
 
 interface TravelerRegistrationProps {
@@ -28,7 +29,8 @@ const TravelerRegistration = ({ onComplete, onBack }: TravelerRegistrationProps)
     languages: [] as Array<{code: string, name: string, fluency: string, isPrimary: boolean}>,
     interests: [] as string[],
     customInterests: '',
-    socialMedia: {} as Record<string, string>
+    socialMedia: {} as Record<string, string>,
+    profileImageUrl: ''
   });
 
   const [currentLanguage, setCurrentLanguage] = useState({
@@ -305,13 +307,17 @@ const TravelerRegistration = ({ onComplete, onBack }: TravelerRegistrationProps)
             {/* Profile Photo Upload */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Profile Photo</h3>
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                <Upload className="w-8 h-8 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground mb-4">Upload your profile photo</p>
-                <Button type="button" variant="outline">
-                  Choose File
-                </Button>
-              </div>
+              <p className="text-sm text-muted-foreground">
+                Add a profile photo to help locals recognize you and build trust
+              </p>
+              <FileUpload
+                onUpload={(url) => setFormData(prev => ({ ...prev, profileImageUrl: url }))}
+                currentImageUrl={formData.profileImageUrl}
+                bucket="avatars"
+                variant="avatar"
+                maxSize={5}
+                accept="image/*"
+              />
             </div>
 
             <Button type="submit" className="w-full" size="lg">

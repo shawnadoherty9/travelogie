@@ -36,7 +36,8 @@ const Registration = () => {
           upcoming_travel: registrationData.upcomingTravel,
           interests: registrationData.interests,
           custom_interests: registrationData.customInterests ? registrationData.customInterests.split(',').map((s: string) => s.trim()) : [],
-          social_media_links: registrationData.socialMedia
+          social_media_links: registrationData.socialMedia,
+          profile_image_url: registrationData.profileImageUrl
         })
         .eq('user_id', user.id);
 
