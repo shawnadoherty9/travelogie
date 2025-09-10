@@ -28,6 +28,8 @@ import Header from '@/components/layout/Header';
 import { VisitedPlacesMap } from '@/components/dashboard/VisitedPlacesMap';
 import { UpcomingTrips } from '@/components/dashboard/UpcomingTrips';
 import { PersonalizedRecommendations } from '@/components/dashboard/PersonalizedRecommendations';
+import { PassportRewards } from '@/components/dashboard/PassportRewards';
+import { DashboardCalendar } from '@/components/dashboard/DashboardCalendar';
 import { FileUpload } from '@/components/ui/file-upload';
 
 interface Profile {
@@ -242,7 +244,7 @@ const Dashboard = () => {
               <div className="flex items-center gap-6">
                 <div className="relative">
                   <Avatar className="w-20 h-20">
-                    <AvatarImage src={profile?.profile_image_url} />
+                    <AvatarImage src={profile?.profile_image_url || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"} />
                     <AvatarFallback className="bg-primary/10 text-2xl">
                       {profile?.first_name?.[0]}{profile?.last_name?.[0]}
                     </AvatarFallback>
@@ -299,8 +301,10 @@ const Dashboard = () => {
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="calendar">Calendar</TabsTrigger>
               <TabsTrigger value="trips">My Trips</TabsTrigger>
               <TabsTrigger value="map">Places Visited</TabsTrigger>
+              <TabsTrigger value="rewards">Passport</TabsTrigger>
               <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
               <TabsTrigger value="profile">Profile</TabsTrigger>
             </TabsList>
@@ -395,6 +399,10 @@ const Dashboard = () => {
               />
             </TabsContent>
 
+            <TabsContent value="calendar">
+              <DashboardCalendar />
+            </TabsContent>
+
             <TabsContent value="trips" className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2">
@@ -460,6 +468,10 @@ const Dashboard = () => {
 
             <TabsContent value="map">
               <VisitedPlacesMap visitedPlaces={visitedPlaces} />
+            </TabsContent>
+
+            <TabsContent value="rewards">
+              <PassportRewards visitedPlaces={visitedPlaces} />
             </TabsContent>
 
             <TabsContent value="upcoming">

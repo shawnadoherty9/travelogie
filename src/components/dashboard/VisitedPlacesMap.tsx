@@ -22,6 +22,74 @@ interface VisitedPlacesMapProps {
   visitedPlaces: VisitedPlace[];
 }
 
+// Mock visited places for demonstration
+const mockVisitedPlaces: VisitedPlace[] = [
+  {
+    id: '1',
+    place_name: 'Tokyo',
+    country: 'Japan',
+    coordinates: [139.6917, 35.6895],
+    visit_date: '2023-04-15',
+    notes: 'Amazing cherry blossoms and incredible street food!'
+  },
+  {
+    id: '2',
+    place_name: 'Barcelona',
+    country: 'Spain', 
+    coordinates: [-2.1734, 41.3851],
+    visit_date: '2023-07-22',
+    notes: 'Gaudí architecture blew my mind. Perfect paella by the beach.'
+  },
+  {
+    id: '3',
+    place_name: 'Bali',
+    country: 'Indonesia',
+    coordinates: [115.0920, -8.4095],
+    visit_date: '2023-11-08',
+    notes: 'Sunset at Tanah Lot temple was magical. Great surfing!'
+  },
+  {
+    id: '4',
+    place_name: 'Paris',
+    country: 'France',
+    coordinates: [2.3522, 48.8566],
+    visit_date: '2022-09-14',
+    notes: 'Louvre was incredible. Best croissants of my life!'
+  },
+  {
+    id: '5',
+    place_name: 'Marrakech',
+    country: 'Morocco',
+    coordinates: [-7.9811, 31.6295],
+    visit_date: '2023-01-30',
+    notes: 'The souks were so vibrant. Learned to make tagine!'
+  },
+  {
+    id: '6',
+    place_name: 'Istanbul',
+    country: 'Turkey',
+    coordinates: [28.9784, 41.0082],
+    visit_date: '2022-12-05',
+    notes: 'Where Europe meets Asia. Hagia Sophia was breathtaking.'
+  },
+  {
+    id: '7',
+    place_name: 'Varanasi',
+    country: 'India',
+    coordinates: [83.0047, 25.3176],
+    visit_date: '2023-02-18',
+    notes: 'Spiritual experience by the Ganges. Amazing morning boat ride.'
+  },
+  {
+    id: '8',
+    place_name: 'Reykjavik',
+    country: 'Iceland',
+    coordinates: [-21.8174, 64.1466],
+    visit_date: '2023-09-12',
+    notes: 'Northern lights were spectacular! Blue Lagoon was so relaxing.'
+  }
+];
+
 export const VisitedPlacesMap: React.FC<VisitedPlacesMapProps> = ({ visitedPlaces }) => {
   const { user } = useAuth();
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -34,6 +102,9 @@ export const VisitedPlacesMap: React.FC<VisitedPlacesMapProps> = ({ visitedPlace
     visit_date: '',
     notes: ''
   });
+
+  // Use mock data for demonstration
+  const displayPlaces = mockVisitedPlaces;
 
   const fetchMapboxToken = async () => {
     try {
@@ -72,26 +143,38 @@ export const VisitedPlacesMap: React.FC<VisitedPlacesMapProps> = ({ visitedPlace
   const addPlaceMarkers = () => {
     if (!map.current) return;
 
-    visitedPlaces.forEach((place) => {
+    displayPlaces.forEach((place, index) => {
       if (place.coordinates && place.coordinates[0] !== 0 && place.coordinates[1] !== 0) {
         const markerEl = document.createElement('div');
         markerEl.className = 'visited-place-marker';
         markerEl.style.cssText = `
-          width: 24px;
-          height: 24px;
-          background: hsl(var(--primary));
-          border: 2px solid white;
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
+          border: 3px solid white;
           border-radius: 50%;
           cursor: pointer;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          font-weight: bold;
+          color: white;
+          animation: bounce 2s infinite;
         `;
+        markerEl.textContent = (index + 1).toString();
 
         const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-          <div class="p-3">
-            <h3 class="font-semibold mb-1">${place.place_name}</h3>
-            <p class="text-sm text-gray-600 mb-1">${place.country}</p>
-            <p class="text-xs text-gray-500">${new Date(place.visit_date).toLocaleDateString()}</p>
-            ${place.notes ? `<p class="text-sm mt-2">${place.notes}</p>` : ''}
+          <div class="p-4 max-w-xs">
+            <h3 class="font-semibold text-lg mb-2">${place.place_name}</h3>
+            <p class="text-sm text-gray-600 mb-2 flex items-center gap-1">
+              <span>📍</span> ${place.country}
+            </p>
+            <p class="text-xs text-gray-500 mb-3 flex items-center gap-1">
+              <span>📅</span> ${new Date(place.visit_date).toLocaleDateString()}
+            </p>
+            ${place.notes ? `<p class="text-sm italic text-gray-700 bg-gray-50 p-2 rounded">"${place.notes}"</p>` : ''}
           </div>
         `);
 
@@ -103,9 +186,9 @@ export const VisitedPlacesMap: React.FC<VisitedPlacesMapProps> = ({ visitedPlace
     });
 
     // Fit map to show all markers
-    if (visitedPlaces.length > 0) {
+    if (displayPlaces.length > 0) {
       const bounds = new mapboxgl.LngLatBounds();
-      visitedPlaces.forEach(place => {
+      displayPlaces.forEach(place => {
         if (place.coordinates && place.coordinates[0] !== 0 && place.coordinates[1] !== 0) {
           bounds.extend(place.coordinates);
         }
@@ -163,7 +246,7 @@ export const VisitedPlacesMap: React.FC<VisitedPlacesMapProps> = ({ visitedPlace
       // Add new markers
       addPlaceMarkers();
     }
-  }, [visitedPlaces, isMapLoaded]);
+  }, [displayPlaces, isMapLoaded]);
 
   return (
     <div className="space-y-6">
@@ -216,7 +299,7 @@ export const VisitedPlacesMap: React.FC<VisitedPlacesMapProps> = ({ visitedPlace
           
           <div ref={mapContainer} className="w-full h-[500px] rounded-lg" />
           
-          {visitedPlaces.length === 0 && (
+          {displayPlaces.length === 0 && (
             <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
               <div className="text-center">
                 <MapPin className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
@@ -225,6 +308,14 @@ export const VisitedPlacesMap: React.FC<VisitedPlacesMapProps> = ({ visitedPlace
               </div>
             </div>
           )}
+          
+          <style>{`
+            @keyframes bounce {
+              0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+              40% { transform: translateY(-10px); }
+              60% { transform: translateY(-5px); }
+            }
+          `}</style>
         </CardContent>
       </Card>
     </div>
