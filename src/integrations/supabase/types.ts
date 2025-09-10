@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          is_verified: boolean | null
+          languages: string[] | null
+          last_name: string | null
+          location: string | null
+          profile_image_url: string | null
+          updated_at: string
+          user_id: string
+          user_type: Database["public"]["Enums"]["user_type"]
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id?: string
+          is_verified?: boolean | null
+          languages?: string[] | null
+          last_name?: string | null
+          location?: string | null
+          profile_image_url?: string | null
+          updated_at?: string
+          user_id: string
+          user_type: Database["public"]["Enums"]["user_type"]
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          is_verified?: boolean | null
+          languages?: string[] | null
+          last_name?: string | null
+          location?: string | null
+          profile_image_url?: string | null
+          updated_at?: string
+          user_id?: string
+          user_type?: Database["public"]["Enums"]["user_type"]
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +70,11 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_type:
+        | "traveler"
+        | "tour_operator"
+        | "local_expert"
+        | "language_tutor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +201,13 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_type: [
+        "traveler",
+        "tour_operator",
+        "local_expert",
+        "language_tutor",
+      ],
+    },
   },
 } as const

@@ -1,8 +1,32 @@
 import { Button } from "@/components/ui/button";
-import { Globe, Menu, User } from "lucide-react";
+import { Globe, Menu, User, LogOut } from "lucide-react";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error signing out",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Signed out successfully",
+        description: "You've been signed out of your account.",
+      });
+      navigate('/');
+    }
+  };
   return <header className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between bg-slate-50">
         {/* Logo */}
@@ -32,13 +56,29 @@ const Header = () => {
 
         {/* User Actions */}
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="sm" className="hidden sm:flex">
-            Sign In
-          </Button>
-          <Button variant="wanderlust" size="sm">
-            <User className="w-4 h-4" />
-            Join Now
-          </Button>
+          {user ? (
+            <>
+              <span className="hidden sm:block text-sm text-muted-foreground">
+                Welcome back!
+              </span>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
+                <Link to="/auth">Sign In</Link>
+              </Button>
+              <Button variant="wanderlust" size="sm" asChild>
+                <Link to="/auth">
+                  <User className="w-4 h-4" />
+                  Join Now
+                </Link>
+              </Button>
+            </>
+          )}
           
           {/* Mobile Menu Toggle */}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>

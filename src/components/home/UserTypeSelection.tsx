@@ -8,8 +8,11 @@ import {
   MapPin, 
   Users 
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const UserTypeSelection = () => {
+  const { user } = useAuth();
   const userTypes = [
     {
       type: "traveler",
@@ -99,8 +102,11 @@ const UserTypeSelection = () => {
                   <Button 
                     variant="cultural" 
                     className="w-full mt-4"
+                    asChild
                   >
-                    Get Started as {userType.title}
+                    <Link to={user ? "/dashboard" : "/auth"}>
+                      Get Started as {userType.title}
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
