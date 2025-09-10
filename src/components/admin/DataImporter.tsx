@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ThailandDataImporter } from '@/utils/importThailandData';
+import { CountryDataImporter } from '@/utils/importThailandData';
 
 export const DataImporter = () => {
   const [csvData, setCsvData] = useState<string[]>(['', '', '']);
+  const [selectedCountry, setSelectedCountry] = useState('Thailand');
   const [importing, setImporting] = useState(false);
   const { toast } = useToast();
 
@@ -14,7 +15,7 @@ export const DataImporter = () => {
     try {
       setImporting(true);
       
-      const importer = new ThailandDataImporter();
+      const importer = new CountryDataImporter();
       const validCsvData = csvData.filter(csv => csv.trim());
       
       if (validCsvData.length === 0) {
@@ -27,8 +28,8 @@ export const DataImporter = () => {
       }
 
       for (const csvText of validCsvData) {
-        const data = ThailandDataImporter.parseCSV(csvText);
-        await importer.importAttractions(data);
+        const data = CountryDataImporter.parseCSV(csvText);
+        await importer.importAttractions(data, selectedCountry);
       }
 
       toast({
@@ -61,11 +62,23 @@ export const DataImporter = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Thailand Data Importer</CardTitle>
+          <CardTitle>Country Data Importer</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Country</label>
+            <select 
+              value={selectedCountry} 
+              onChange={(e) => setSelectedCountry(e.target.value)}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="Thailand">Thailand</option>
+              <option value="Japan">Japan</option>
+            </select>
+          </div>
+          
           <p className="text-muted-foreground">
-            Paste your Thailand CSV data below. Each textarea can contain one CSV dataset.
+            Paste your {selectedCountry} CSV data below. Each textarea can contain one CSV dataset.
           </p>
           
           {csvData.map((csv, index) => (
@@ -88,7 +101,7 @@ export const DataImporter = () => {
             disabled={importing || csvData.every(csv => !csv.trim())}
             className="w-full"
           >
-            {importing ? 'Importing...' : 'Import Thailand Data'}
+            {importing ? 'Importing...' : `Import ${selectedCountry} Data`}
           </Button>
         </CardContent>
       </Card>

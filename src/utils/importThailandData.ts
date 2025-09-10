@@ -41,8 +41,8 @@ interface ProcessedAttraction {
   category_id?: string;
 }
 
-export class ThailandDataImporter {
-  private async findOrCreateCity(cityName: string, countryName: string = 'Thailand') {
+export class CountryDataImporter {
+  private async findOrCreateCity(cityName: string, countryName: string) {
     // First try to find existing city
     const { data: existingCity } = await supabase
       .from('cities')
@@ -62,7 +62,7 @@ export class ThailandDataImporter {
         latitude: 0, // Will be updated with actual coordinates
         longitude: 0,
         timezone: 'Asia/Bangkok',
-        description: `${cityName}, Thailand`
+        description: `${cityName}, ${countryName}`
       })
       .select('id')
       .single();
@@ -147,14 +147,14 @@ export class ThailandDataImporter {
     };
   }
 
-  async importAttractions(csvData: ThailandDataRow[]) {
+  async importAttractions(csvData: ThailandDataRow[], countryName: string = 'Thailand') {
     console.log(`Starting import of ${csvData.length} attractions...`);
     
     const attractions: any[] = [];
     
     for (const row of csvData) {
       try {
-        const cityId = await this.findOrCreateCity(row.city);
+        const cityId = await this.findOrCreateCity(row.city, countryName);
         const categoryId = await this.findOrCreateCategory(row.category);
         
         const attraction = this.processRow(row);
@@ -225,15 +225,20 @@ export class ThailandDataImporter {
 }
 
 // Usage example:
-export const importThailandData = async (csvFiles: string[]) => {
-  const importer = new ThailandDataImporter();
+export const importCountryData = async (csvFiles: string[], countryName: string = 'Thailand') => {
+  const importer = new CountryDataImporter();
   
   for (const csvText of csvFiles) {
     try {
-      const data = ThailandDataImporter.parseCSV(csvText);
-      await importer.importAttractions(data);
+      const data = CountryDataImporter.parseCSV(csvText);
+      await importer.importAttractions(data, countryName);
     } catch (error) {
       console.error('Import error:', error);
     }
   }
+};
+
+// Keep backwards compatibility
+export const importThailandData = async (csvFiles: string[]) => {
+  return importCountryData(csvFiles, 'Thailand');
 };
