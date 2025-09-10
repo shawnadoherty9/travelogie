@@ -97,7 +97,7 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Welcome to Travelogie</CardTitle>
-          <CardDescription>Learn from Locals</CardDescription>
+          <CardDescription>Learn with Locals</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">

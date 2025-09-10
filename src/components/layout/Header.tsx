@@ -34,7 +34,7 @@ const Header = () => {
           <img src="/lovable-uploads/4f14a223-57a1-4a7d-bf9a-6bc3e17c25b9.png" alt="Travelogie Logo - Interactive Culture Platform" className="w-12 h-12 object-contain" />
           <div>
             <h1 className="text-xl text-gradient text-sky-950 font-bold">Travelogie</h1>
-            <p className="text-xs text-muted-foreground">Learn from Locals</p>
+            <p className="text-xs text-muted-foreground">Learn with Locals</p>
           </div>
         </div>
 

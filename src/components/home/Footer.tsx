@@ -14,7 +14,7 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="text-xl font-bold">Travelogie</h3>
-                <p className="text-sm opacity-80">Learn from Locals</p>
+                <p className="text-sm opacity-80">Learn with Locals</p>
               </div>
             </div>
             <p className="text-sm opacity-80 leading-relaxed">

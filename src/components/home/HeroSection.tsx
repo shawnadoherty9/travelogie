@@ -19,7 +19,7 @@ const HeroSection = () => {
           <div className="space-y-4">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground">
               Discover the World
-              <span className="text-gradient block">with Travelogie</span>
+              <span className="text-gradient block">Travelogie</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">Connect with locals for personalized tours, language lessons, and cultural authentic experiences that transform travelers into storytellers.</p>
           </div>
