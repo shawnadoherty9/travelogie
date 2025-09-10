@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/home/Footer";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ import parisDestination from "@/assets/paris-destination.jpg";
 import bangkokDestination from "@/assets/bangkok-destination.jpg";
 
 const Destinations = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [mapboxToken, setMapboxToken] = useState("");
   const [isLoadingToken, setIsLoadingToken] = useState(true);
@@ -210,14 +212,8 @@ const Destinations = () => {
   }, [mapboxToken]);
 
   const handleDestinationClick = (destination: typeof popularDestinations[0]) => {
-    if (map.current) {
-      map.current.flyTo({
-        center: destination.coordinates,
-        zoom: 12,
-        pitch: 60,
-        duration: 2000
-      });
-    }
+    const cityId = destination.name.toLowerCase().split(',')[0].replace(/\s+/g, '');
+    navigate(`/destinations/${cityId}`);
   };
 
   const handleSearch = (e: React.FormEvent) => {
