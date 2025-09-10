@@ -13,6 +13,14 @@ import { supabase } from "@/integrations/supabase/client";
 // Import background image
 import kumbhMelaBackground from "@/assets/kumbh-mela-destinations-background.jpg";
 
+// Import destination images
+import varanasiDestination from "@/assets/varanasi-destination.jpg";
+import tokyoDestination from "@/assets/tokyo-destination.jpg";
+import barcelonaDestination from "@/assets/barcelona-destination.jpg";
+import mumbaiDestination from "@/assets/mumbai-destination.jpg";
+import parisDestination from "@/assets/paris-destination.jpg";
+import bangkokDestination from "@/assets/bangkok-destination.jpg";
+
 const Destinations = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [mapboxToken, setMapboxToken] = useState("");
@@ -27,7 +35,7 @@ const Destinations = () => {
       coordinates: [83.0047, 25.3176] as [number, number],
       experiences: 45,
       guides: 23,
-      image: "/assets/varanasi-temples.jpg"
+      image: varanasiDestination
     },
     {
       name: "Tokyo, Japan", 
@@ -35,7 +43,7 @@ const Destinations = () => {
       coordinates: [139.6917, 35.6895] as [number, number],
       experiences: 78,
       guides: 34,
-      image: "/assets/tokyo-food-tour.jpg"
+      image: tokyoDestination
     },
     {
       name: "Barcelona, Spain",
@@ -43,7 +51,7 @@ const Destinations = () => {
       coordinates: [2.1734, 41.3851] as [number, number],
       experiences: 56,
       guides: 28,
-      image: "/assets/barcelona-architecture-tour.jpg"
+      image: barcelonaDestination
     },
     {
       name: "Mumbai, India",
@@ -51,7 +59,7 @@ const Destinations = () => {
       coordinates: [72.8777, 19.0760] as [number, number],
       experiences: 67,
       guides: 31,
-      image: "/assets/mumbai-photography-tour.jpg"
+      image: mumbaiDestination
     },
     {
       name: "Paris, France",
@@ -59,7 +67,7 @@ const Destinations = () => {
       coordinates: [2.3522, 48.8566] as [number, number],
       experiences: 89,
       guides: 42,
-      image: "/assets/french-cafe-lesson.jpg"
+      image: parisDestination
     },
     {
       name: "Bangkok, Thailand",
@@ -67,7 +75,7 @@ const Destinations = () => {
       coordinates: [100.5018, 13.7563] as [number, number],
       experiences: 52,
       guides: 26,
-      image: "/assets/thai-market-lesson.jpg"
+      image: bangkokDestination
     }
   ];
 
@@ -317,9 +325,11 @@ const Destinations = () => {
                   onClick={() => handleDestinationClick(destination)}
                 >
                   <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                    <div className="w-full h-full bg-gradient-to-br from-travel-ocean to-travel-sunset flex items-center justify-center">
-                      <Globe className="w-16 h-16 text-white/80" />
-                    </div>
+                    <img 
+                      src={destination.image} 
+                      alt={destination.name}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
                   </div>
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-3">
