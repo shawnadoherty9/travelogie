@@ -107,11 +107,14 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
     console.log('Sending booking request email to guide:', guide?.name);
   };
   const getMapMarkers = () => {
-    return cityActivities.filter(a => selectedActivities.includes(a.id)).map(a => ({
+    const selectedData = cityActivities.filter(a => selectedActivities.includes(a.id));
+    console.log('Selected activities for map:', selectedData);
+    
+    return selectedData.map(a => ({
       id: a.id,
       position: a.location,
       title: a.name,
-      type: a.type,
+      type: a.type as 'activity' | 'attraction' | 'experience',
       category: a.category
     }));
   };
@@ -156,10 +159,11 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
 
               {/* Map showing selected locations */}
               {selectedActivities.length > 0 && <div className="mt-6">
-                  <h4 className="font-semibold mb-2">Your Selected Locations</h4>
+                  <h4 className="font-semibold mb-2">Your Selected Locations ({selectedActivities.length} activities)</h4>
                   <TourMap 
                     markers={getMapMarkers()} 
-                    center={getCityCenter(location)} 
+                    center={getCityCenter(location)}
+                    className="h-96 w-full rounded-lg"
                   />
                 </div>}
 

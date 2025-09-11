@@ -143,19 +143,33 @@ export const TourMap: React.FC<TourMapProps> = ({
     markersRef.current = [];
 
     // Add new markers
+    console.log('Adding markers to map:', markers);
     const newMarkers = markers.map(markerData => {
+      console.log('Creating marker for:', markerData.title, 'at', markerData.position);
+      
       const marker = L.marker(
         [markerData.position.lat, markerData.position.lng],
         { icon: getCustomIcon(markerData.type, markerData.category) }
       );
 
+      // Calculate distance from city center if available
+      const distanceFromCenter = mapInstanceRef.current ? 
+        mapInstanceRef.current.distance(
+          [markerData.position.lat, markerData.position.lng],
+          mapInstanceRef.current.getCenter()
+        ) / 1000 : 0; // Convert to km
+
       marker.bindPopup(`
-        <div style="text-align: center; padding: 8px;">
-          <h4 style="margin: 0 0 8px 0; font-weight: bold; color: #333;">
+        <div style="text-align: center; padding: 12px; min-width: 200px;">
+          <h4 style="margin: 0 0 8px 0; font-weight: bold; color: #333; font-size: 14px;">
             ${markerData.title}
           </h4>
-          <div style="display: inline-block; background-color: #f0f0f0; padding: 4px 8px; border-radius: 12px; font-size: 12px; color: #666;">
+          <div style="display: inline-block; background-color: #f0f0f0; padding: 4px 8px; border-radius: 12px; font-size: 12px; color: #666; margin-bottom: 8px;">
             ${markerData.category} • ${markerData.type}
+          </div>
+          <div style="font-size: 11px; color: #888;">
+            📍 ${markerData.position.lat.toFixed(4)}, ${markerData.position.lng.toFixed(4)}
+            ${distanceFromCenter > 0 ? `<br>📏 ${distanceFromCenter.toFixed(1)} km from center` : ''}
           </div>
         </div>
       `);
@@ -170,6 +184,10 @@ export const TourMap: React.FC<TourMapProps> = ({
     if (markers.length > 1) {
       const group = L.featureGroup(newMarkers);
       mapInstanceRef.current.fitBounds(group.getBounds().pad(0.1));
+    } else if (markers.length === 1) {
+      // Center on single marker
+      const marker = markers[0];
+      mapInstanceRef.current.setView([marker.position.lat, marker.position.lng], 15);
     }
   }, [markers]);
 
