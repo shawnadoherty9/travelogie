@@ -321,7 +321,7 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
                   <Button variant="outline" onClick={() => setStep('categories')}>
                     Back to Categories
                   </Button>
-                  <Button onClick={handleNextStep} disabled={selectedActivities.length === 0} className="bg-gradient-wanderlust hover:opacity-90">
+                  <Button onClick={handleNextStep} disabled={selectedActivities.length === 0} className="bg-sky-600 hover:bg-sky-500 text-white">
                     Continue to Guide Options
                   </Button>
                 </div>
