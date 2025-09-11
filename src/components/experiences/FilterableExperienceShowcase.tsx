@@ -11,6 +11,7 @@ import baliImage from "@/assets/bali-monkey-forest.jpg";
 import varanasiImage from "@/assets/varanasi-temples.jpg";
 import laplandImage from "@/assets/lapland-northern-lights.jpg";
 import whaleSharkImage from "@/assets/whale-shark-swimming.jpg";
+import italianNonnaCookingImage from "@/assets/italian-nonna-cooking-class.jpg";
 
 const FilterableExperienceShowcase = () => {
   const [filters, setFilters] = useState<FilterState>({
@@ -145,7 +146,7 @@ const FilterableExperienceShowcase = () => {
       tags: ["Food & Drink", "Cultural", "Online"],
       categories: ["Food & Drink", "Cultural"],
       description: "Learn authentic Italian recipes from a real Italian grandmother in this interactive online cooking experience.",
-      image: cultureImage,
+      image: italianNonnaCookingImage,
       type: "online",
       availableDates: ["2024-11-22", "2024-12-03", "2025-01-12", "2025-02-15"]
     },
