@@ -36,14 +36,14 @@ const Header = () => {
   };
   return <header className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between bg-slate-50">
-        {/* Logo */}
-        <div className="flex items-center space-x-3">
+        {/* Logo - Clickable link to home */}
+        <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
           <img src="/lovable-uploads/4f14a223-57a1-4a7d-bf9a-6bc3e17c25b9.png" alt="Travelogie Logo - Interactive Culture Platform" className="w-12 h-12 object-contain" />
           <div>
             <h1 className="text-xl text-gradient text-sky-950 font-bold">Travelogie</h1>
             <p className="text-xs text-muted-foreground">Learn with Locals</p>
           </div>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
