@@ -116,10 +116,19 @@ export const TourGuideModal: React.FC<TourGuideModalProps> = ({
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Globe className="w-4 h-4" />
-                            <span>{guide.languages.join(', ')}</span>
+                        <div>
+                          <h5 className="font-medium text-sm mb-1">Languages:</h5>
+                          <div className="flex flex-wrap gap-1">
+                            {guide.languages.map(language => (
+                              <Badge 
+                                key={language} 
+                                variant="outline" 
+                                className="text-xs px-2 py-1 bg-blue-50 border-blue-200 text-blue-700"
+                              >
+                                <Globe className="w-3 h-3 mr-1" />
+                                {language}
+                              </Badge>
+                            ))}
                           </div>
                         </div>
                       </div>

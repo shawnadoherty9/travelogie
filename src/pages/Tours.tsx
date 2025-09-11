@@ -481,6 +481,18 @@ const Tours = () => {
                               </div>
                             </div>
                             
+                            <div>
+                              <Label className="text-xs font-semibold">Languages</Label>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {operator.languages.map((language, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs bg-blue-50 border-blue-200 text-blue-700">
+                                    <Globe className="w-3 h-3 mr-1" />
+                                    {language}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                            
                             <div className="flex justify-between items-center text-sm">
                               <div>
                                 <span className="font-semibold text-travel-ocean">{operator.priceRange}</span>
