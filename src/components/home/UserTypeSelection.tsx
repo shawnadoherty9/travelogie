@@ -57,54 +57,56 @@ const UserTypeSelection = () => {
   ];
 
   return (
-    <section className="py-20 bg-muted/30">
-      <div className="container mx-auto px-4">
-        <div className="text-center space-y-4 mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+    <section className="py-12 sm:py-16 md:py-20 bg-muted/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
             Join Our Global Community
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             Whether you're seeking adventure or sharing your culture, 
             there's a place for you in the Travelogie family.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 max-w-7xl mx-auto items-stretch">
+        {/* Responsive grid: 1 col on mobile, 2 cols on sm, 3 cols on lg, 5 cols on xl+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-4 max-w-7xl mx-auto items-stretch">
           {userTypes.map((userType) => {
             const IconComponent = userType.icon;
             return (
               <Card 
                 key={userType.type} 
-                className="group hover:transform hover:scale-105 transition-all duration-300 cursor-pointer border-border hover:border-travel-ocean/50 cultural-shadow h-full flex flex-col"
+                className="group hover:transform hover:scale-105 transition-all duration-300 cursor-pointer border-border hover:border-travel-ocean/50 cultural-shadow h-full flex flex-col animate-fade-in"
               >
-                <CardHeader className="text-center">
-                  <div className={`w-16 h-16 mx-auto rounded-full bg-${userType.color}/10 flex items-center justify-center mb-4 group-hover:bg-${userType.color}/20 transition-colors`}>
-                    <IconComponent className={`w-8 h-8 text-${userType.color}`} />
+                <CardHeader className="text-center p-4 sm:p-6">
+                  <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full bg-${userType.color}/10 flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-${userType.color}/20 transition-colors`}>
+                    <IconComponent className={`w-6 h-6 sm:w-8 sm:h-8 text-${userType.color}`} />
                   </div>
-                  <CardTitle className="text-xl font-bold text-foreground">
+                  <CardTitle className="text-lg sm:text-xl font-bold text-foreground">
                     {userType.title}
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground">
+                  <CardDescription className="text-sm sm:text-base text-muted-foreground">
                     {userType.description}
                   </CardDescription>
                 </CardHeader>
                 
-                <CardContent className="space-y-4 flex-grow flex flex-col justify-between">
+                <CardContent className="space-y-4 flex-grow flex flex-col justify-between p-4 sm:p-6 pt-0">
                   <ul className="space-y-2">
                     {userType.features.map((feature, index) => (
-                      <li key={index} className="flex items-center text-sm text-muted-foreground">
-                        <div className="w-2 h-2 rounded-full bg-travel-ocean mr-3 flex-shrink-0" />
+                      <li key={index} className="flex items-center text-xs sm:text-sm text-muted-foreground">
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-travel-ocean mr-2 sm:mr-3 flex-shrink-0" />
                         {feature}
                       </li>
                     ))}
                   </ul>
                   
                   <Button 
-                    className="w-full mt-4 bg-gradient-to-r from-travel-ocean to-travel-sky text-white border-0 hover:from-travel-ocean/90 hover:to-travel-sky/90"
+                    className="w-full mt-4 text-sm sm:text-base bg-gradient-to-r from-travel-ocean to-travel-sky text-white border-0 hover:from-travel-ocean/90 hover:to-travel-sky/90 hover-scale"
                     asChild
                   >
                     <Link to={user ? "/registration" : "/auth"}>
-                      Get Started as {userType.title}
+                      <span className="hidden sm:inline">Get Started as {userType.title}</span>
+                      <span className="sm:hidden">Join as {userType.title.split(' ')[0]}</span>
                     </Link>
                   </Button>
                 </CardContent>
@@ -113,12 +115,13 @@ const UserTypeSelection = () => {
           })}
         </div>
 
-        {/* Community Stats */}
-        <div className="mt-16 text-center">
-          <div className="inline-flex items-center space-x-2 bg-background rounded-full px-6 py-3 travel-shadow">
-            <Users className="w-5 h-5 text-travel-ocean" />
-            <span className="text-sm font-medium text-foreground">
-              Join 50,000+ locals and travelers worldwide
+        {/* Community Stats - Responsive */}
+        <div className="mt-12 sm:mt-16 text-center px-4">
+          <div className="inline-flex items-center space-x-2 bg-background rounded-full px-4 sm:px-6 py-2 sm:py-3 travel-shadow">
+            <Users className="w-4 h-4 sm:w-5 sm:h-5 text-travel-ocean flex-shrink-0" />
+            <span className="text-xs sm:text-sm font-medium text-foreground">
+              <span className="hidden sm:inline">Join 50,000+ locals and travelers worldwide</span>
+              <span className="sm:hidden">50k+ community members</span>
             </span>
           </div>
         </div>
