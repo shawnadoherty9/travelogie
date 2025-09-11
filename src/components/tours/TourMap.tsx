@@ -35,37 +35,79 @@ export const TourMap: React.FC<TourMapProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
 
-  // Custom icons for different types
+  // Enhanced 3D-style icons for different categories
   const getCustomIcon = (type: string, category: string) => {
-    const iconColor = {
-      'activity': '#e74c3c',
-      'attraction': '#3498db', 
-      'experience': '#9b59b6'
-    }[type] || '#95a5a6';
+    const categoryColors = {
+      'cultural': '#8B4513',
+      'culinary': '#FF6347', 
+      'spiritual': '#9370DB',
+      'adventure': '#228B22',
+      'entertainment': '#FF1493',
+      'shopping': '#FF8C00',
+      'nature': '#32CD32',
+      'nightlife': '#4B0082'
+    };
+
+    const iconColor = categoryColors[category] || '#6B7280';
+    const typeIcon = {
+      'activity': '🎯',
+      'attraction': '📍', 
+      'experience': '✨'
+    }[type] || '📍';
 
     return L.divIcon({
-      className: 'custom-marker',
+      className: 'custom-3d-marker',
       html: `
         <div style="
-          background-color: ${iconColor}; 
-          width: 24px; 
-          height: 24px; 
+          background: linear-gradient(135deg, ${iconColor} 0%, ${iconColor}CC 100%);
+          width: 32px; 
+          height: 32px; 
           border-radius: 50%; 
           border: 3px solid white;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 0 2px ${iconColor}40;
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
+          font-size: 14px;
           font-weight: bold;
-          font-size: 12px;
+          position: relative;
+          transform: perspective(20px) rotateX(5deg);
+          transition: all 0.3s ease;
         ">
-          ${type === 'activity' ? 'A' : type === 'attraction' ? 'T' : 'E'}
+          <div style="
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+          ">
+            ${typeIcon}
+          </div>
+        </div>
+        <div style="
+          position: absolute;
+          top: 34px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: ${iconColor};
+          color: white;
+          padding: 2px 6px;
+          border-radius: 8px;
+          font-size: 10px;
+          font-weight: bold;
+          white-space: nowrap;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        ">
+          ${category.charAt(0).toUpperCase() + category.slice(1)}
         </div>
       `,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12],
-      popupAnchor: [0, -12]
+      iconSize: [32, 50],
+      iconAnchor: [16, 16],
+      popupAnchor: [0, -16]
     });
   };
 
@@ -135,19 +177,31 @@ export const TourMap: React.FC<TourMapProps> = ({
     <div className={className}>
       <div ref={mapRef} className="w-full h-full rounded-lg border border-border" />
       
-      {/* Legend */}
-      <div className="mt-2 flex justify-center gap-4 text-xs">
+      {/* Enhanced Legend with Categories */}
+      <div className="mt-3 flex flex-wrap justify-center gap-2 text-xs">
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-[#e74c3c] border border-white"></div>
-          <span>Activities</span>
+          <div className="w-3 h-3 rounded-full bg-[#8B4513] border border-white shadow-sm"></div>
+          <span>Cultural</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-[#3498db] border border-white"></div>
-          <span>Attractions</span>
+          <div className="w-3 h-3 rounded-full bg-[#FF6347] border border-white shadow-sm"></div>
+          <span>Culinary</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-[#9b59b6] border border-white"></div>
-          <span>Experiences</span>
+          <div className="w-3 h-3 rounded-full bg-[#9370DB] border border-white shadow-sm"></div>
+          <span>Spiritual</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 rounded-full bg-[#228B22] border border-white shadow-sm"></div>
+          <span>Adventure</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 rounded-full bg-[#FF1493] border border-white shadow-sm"></div>
+          <span>Entertainment</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 rounded-full bg-[#FF8C00] border border-white shadow-sm"></div>
+          <span>Shopping</span>
         </div>
       </div>
     </div>
