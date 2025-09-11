@@ -327,6 +327,117 @@ const Tours = () => {
           </div>
         </section>
 
+        {/* Multicultural Tour Guides Section */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Connect with Local Cultural Guides
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                Meet passionate locals who will share their city's hidden gems, cultural traditions, 
+                and authentic experiences. Each guide brings unique perspectives and deep local knowledge.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {tourOperators.map((guide) => (
+                <Card key={guide.id} className="group hover:travel-shadow transition-all duration-300 hover:scale-[1.02] overflow-hidden">
+                  <div className="relative">
+                    <div className="aspect-square overflow-hidden">
+                      <Avatar className="w-full h-full rounded-none">
+                        <AvatarImage 
+                          src={guide.avatar} 
+                          alt={guide.name}
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                        <AvatarFallback className="w-full h-full rounded-none text-2xl bg-gradient-to-br from-travel-ocean to-travel-sky text-white">
+                          {guide.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    {guide.verified && (
+                      <Badge className="absolute top-3 right-3 bg-green-500 text-white">
+                        <Star className="w-3 h-3 mr-1 fill-current" />
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <CardContent className="p-4 space-y-3">
+                    <div>
+                      <h3 className="font-bold text-lg mb-1">{guide.name}</h3>
+                      <div className="flex items-center text-sm text-muted-foreground mb-2">
+                        <MapPin className="w-4 h-4 mr-1" />
+                        {guide.location}
+                      </div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center">
+                          <Star className="w-4 h-4 text-travel-sunset fill-current mr-1" />
+                          <span className="font-medium">{guide.rating}</span>
+                          <span className="text-sm text-muted-foreground ml-1">({guide.reviews})</span>
+                        </div>
+                        <div className="text-sm font-semibold text-travel-ocean">
+                          {guide.priceRange}
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {guide.about}
+                    </p>
+
+                    <div className="space-y-2">
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground mb-1">SPECIALTIES</p>
+                        <div className="flex flex-wrap gap-1">
+                          {guide.specialties.slice(0, 2).map((specialty) => {
+                            const IconComponent = interestIcons[specialty as keyof typeof interestIcons] || Globe;
+                            return (
+                              <Badge key={specialty} variant="secondary" className="text-xs">
+                                <IconComponent className="w-3 h-3 mr-1" />
+                                {specialty}
+                              </Badge>
+                            );
+                          })}
+                          {guide.specialties.length > 2 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{guide.specialties.length - 2} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground mb-1">LANGUAGES</p>
+                        <div className="flex flex-wrap gap-1">
+                          {guide.languages.map((language) => (
+                            <Badge key={language} variant="outline" className="text-xs">
+                              {language}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <Button className="w-full bg-gradient-to-r from-travel-ocean to-travel-sky text-white">
+                      <Users className="w-4 h-4 mr-2" />
+                      Connect with Guide
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <div className="text-center mt-8">
+              <Button variant="wanderlust" size="lg">
+                <Globe className="w-5 h-5 mr-2" />
+                Discover More Guides Worldwide
+              </Button>
+            </div>
+          </div>
+        </section>
+
         {/* Personalized Tour Form */}
         {selectedMode === 'personalized' && <section className="py-12 bg-muted/30">
             <div className="container mx-auto px-4 max-w-2xl">
