@@ -407,8 +407,8 @@ const Tours = () => {
             </div>
           </section>}
 
-        {/* Local Tour Operators */}
-        {selectedMode && <section className="py-12 bg-muted/30 relative overflow-hidden" style={{
+        {/* Local Tour Operators - Only show when NOT in personalized workflow */}
+        {selectedMode && !showWorkflow && <section className="py-12 bg-muted/30 relative overflow-hidden" style={{
         backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url(${culturalGuidesBackground})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
