@@ -12,6 +12,7 @@ import varanasiImage from "@/assets/varanasi-temples.jpg";
 import laplandImage from "@/assets/lapland-northern-lights.jpg";
 import whaleSharkImage from "@/assets/whale-shark-swimming.jpg";
 import italianNonnaCookingImage from "@/assets/italian-nonna-cooking-class.jpg";
+import japaneseTeaCeremonyImage from "@/assets/japanese-tea-ceremony.jpg";
 
 const FilterableExperienceShowcase = () => {
   const [filters, setFilters] = useState<FilterState>({
@@ -164,7 +165,7 @@ const FilterableExperienceShowcase = () => {
       tags: ["Cultural", "Spiritual", "Online"],
       categories: ["Cultural", "Spiritual"],
       description: "Discover the meditative art of Japanese tea ceremony from a traditional tea master in Kyoto.",
-      image: cultureImage,
+      image: japaneseTeaCeremonyImage,
       type: "online",
       availableDates: ["2024-11-28", "2024-12-08", "2025-01-25", "2025-02-10"]
     }
