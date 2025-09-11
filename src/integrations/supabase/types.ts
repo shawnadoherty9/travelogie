@@ -1158,6 +1158,20 @@ export type Database = {
           last_name: string
         }[]
       }
+      get_public_profile_data: {
+        Args: { profile_user_id: string }
+        Returns: {
+          bio: string
+          first_name: string
+          id: string
+          is_verified: boolean
+          languages: string[]
+          last_name: string
+          location: string
+          profile_image_url: string
+          user_type: string
+        }[]
+      }
     }
     Enums: {
       user_type:
