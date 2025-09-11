@@ -369,6 +369,170 @@ export const tourGuides: TourGuide[] = [
     about: 'Master wood carver from traditional artisan family, showcasing Ubud\'s artistic heritage.',
     cityId: 'ubud',
     location: { lat: -8.5069, lng: 115.2625 }
+  },
+
+  // Bangkok Guides
+  {
+    id: 'bangkok-guide1',
+    name: 'Somchai Pongpat',
+    avatar: '/src/assets/somchai-pongpat-profile.jpg',
+    rating: 4.9,
+    reviews: 267,
+    specialties: ['Temple Tours', 'Royal Palaces', 'Buddhist Culture'],
+    dailyRate: 65,
+    languages: ['Thai', 'English', 'Mandarin'],
+    experience: '10 years',
+    about: 'Former monk turned cultural guide, offering deep insights into Thai Buddhist traditions and royal heritage.',
+    cityId: 'bangkok',
+    location: { lat: 13.7563, lng: 100.5018 }
+  },
+  {
+    id: 'bangkok-guide2',
+    name: 'Ploy Siriwan',
+    avatar: '/src/assets/ploy-siriwan-profile.jpg',
+    rating: 4.8,
+    reviews: 198,
+    specialties: ['Street Food', 'Floating Markets', 'Local Markets'],
+    dailyRate: 55,
+    languages: ['Thai', 'English', 'Japanese'],
+    experience: '6 years',
+    about: 'Food blogger and market expert who knows every hidden gem in Bangkok\'s incredible street food scene.',
+    cityId: 'bangkok',
+    location: { lat: 13.7540, lng: 100.5014 }
+  },
+  {
+    id: 'bangkok-guide3',
+    name: 'Niran Thanakit',
+    avatar: '/src/assets/dara-vicheka-profile.jpg',
+    rating: 4.7,
+    reviews: 189,
+    specialties: ['Muay Thai', 'Boxing Stadiums', 'Sports Culture'],
+    dailyRate: 70,
+    languages: ['Thai', 'English'],
+    experience: '8 years',
+    about: 'Former professional Muay Thai fighter sharing the authentic world of Thai boxing and sports culture.',
+    cityId: 'bangkok',
+    location: { lat: 13.7469, lng: 100.5346 }
+  },
+  {
+    id: 'bangkok-guide4',
+    name: 'Apinya Chaiwong',
+    avatar: '/src/assets/giulia-ferrari-profile.jpg',
+    rating: 4.9,
+    reviews: 234,
+    specialties: ['Thai Massage', 'Wellness Retreats', 'Traditional Medicine'],
+    dailyRate: 60,
+    languages: ['Thai', 'English', 'German'],
+    experience: '7 years',
+    about: 'Certified traditional Thai massage therapist and wellness expert offering authentic healing experiences.',
+    cityId: 'bangkok',
+    location: { lat: 13.7308, lng: 100.5418 }
+  },
+
+  // Chiang Mai Guides
+  {
+    id: 'chiang-mai-guide1',
+    name: 'Kamon Lertkasemsuk',
+    avatar: '/src/assets/marco-rossi-profile.jpg',
+    rating: 4.8,
+    reviews: 156,
+    specialties: ['Hill Tribes', 'Elephant Sanctuaries', 'Mountain Adventures'],
+    dailyRate: 75,
+    languages: ['Thai', 'English', 'Karen'],
+    experience: '9 years',
+    about: 'Mountain guide and tribal culture expert offering ethical elephant experiences and hill tribe visits.',
+    cityId: 'chiang-mai',
+    location: { lat: 18.7883, lng: 98.9853 }
+  },
+  {
+    id: 'chiang-mai-guide2',
+    name: 'Siriporn Wongsawat',
+    avatar: '/src/assets/amara-okafor-profile.jpg',
+    rating: 4.9,
+    reviews: 203,
+    specialties: ['Cooking Classes', 'Night Markets', 'Local Crafts'],
+    dailyRate: 65,
+    languages: ['Thai', 'English', 'French'],
+    experience: '5 years',
+    about: 'Professional chef and artisan showcasing northern Thai cuisine and traditional handicrafts.',
+    cityId: 'chiang-mai',
+    location: { lat: 18.7961, lng: 98.9668 }
+  },
+  {
+    id: 'chiang-mai-guide3',
+    name: 'Thanawat Jaikla',
+    avatar: '/src/assets/carlos-mendez-profile.jpg',
+    rating: 4.7,
+    reviews: 145,
+    specialties: ['Temple Art', 'Lanna Culture', 'Traditional Architecture'],
+    dailyRate: 70,
+    languages: ['Thai', 'English'],
+    experience: '12 years',
+    about: 'Art historian specializing in Lanna kingdom heritage and northern Thai temple architecture.',
+    cityId: 'chiang-mai',
+    location: { lat: 18.7912, lng: 98.9817 }
+  },
+
+  // Phuket Guides
+  {
+    id: 'phuket-guide1',
+    name: 'Natthawut Saengthong',
+    avatar: '/src/assets/bruno-silva-profile.jpg',
+    rating: 4.6,
+    reviews: 187,
+    specialties: ['Island Hopping', 'Diving', 'Marine Life'],
+    dailyRate: 80,
+    languages: ['Thai', 'English', 'Russian'],
+    experience: '7 years',
+    about: 'Professional dive master and marine biologist offering underwater adventures and island exploration.',
+    cityId: 'phuket',
+    location: { lat: 7.8804, lng: 98.3923 }
+  },
+  {
+    id: 'phuket-guide2',
+    name: 'Malee Boonsiri',
+    avatar: '/src/assets/sarah-goldberg-profile.jpg',
+    rating: 4.8,
+    reviews: 234,
+    specialties: ['Beach Culture', 'Sunset Tours', 'Local Seafood'],
+    dailyRate: 70,
+    languages: ['Thai', 'English', 'Swedish'],
+    experience: '6 years',
+    about: 'Local beach expert and seafood connoisseur sharing Phuket\'s best coastal experiences.',
+    cityId: 'phuket',
+    location: { lat: 7.9519, lng: 98.3381 }
+  },
+
+  // Krabi Guides
+  {
+    id: 'krabi-guide1',
+    name: 'Chalerm Promthep',
+    avatar: '/src/assets/li-wei-profile.jpg',
+    rating: 4.9,
+    reviews: 178,
+    specialties: ['Rock Climbing', 'Limestone Karsts', 'Adventure Sports'],
+    dailyRate: 85,
+    languages: ['Thai', 'English', 'Japanese'],
+    experience: '8 years',
+    about: 'Professional rock climbing instructor and adventure guide exploring Krabi\'s stunning limestone formations.',
+    cityId: 'krabi',
+    location: { lat: 8.0863, lng: 98.9063 }
+  },
+
+  // Ayutthaya Guides
+  {
+    id: 'ayutthaya-guide1',
+    name: 'Preecha Thongsuk',
+    avatar: '/src/assets/zhang-mei-profile.jpg',
+    rating: 4.8,
+    reviews: 156,
+    specialties: ['Ancient Ruins', 'Siamese History', 'Archaeological Sites'],
+    dailyRate: 60,
+    languages: ['Thai', 'English'],
+    experience: '11 years',
+    about: 'Archaeologist and historian specializing in the ancient Siamese capital and UNESCO World Heritage sites.',
+    cityId: 'ayutthaya',
+    location: { lat: 14.3532, lng: 100.5648 }
   }
 ];
 
