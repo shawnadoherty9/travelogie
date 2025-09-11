@@ -193,34 +193,42 @@ const Tours = () => {
     culturalNotes: "Flamenco is deeply emotional. Each movement tells a story, and improvisation is valued over perfection."
   }];
   const languages = ["English", "Hindi", "Japanese", "French", "Spanish"];
-  // Get diverse international tour guides for multicultural showcase
+  // Get one diverse guide from each country for multicultural showcase
   const getDisplayGuides = () => {
     if (!location) {
-      // Show diverse international guides when no location is specified
+      // Show one guide from each country for maximum diversity
       const internationalGuides = [
-        ...getTourGuidesByCity('tokyo').slice(0, 2),      // Japan
-        ...getTourGuidesByCity('mumbai').slice(0, 2),     // India  
-        ...getTourGuidesByCity('bangkok').slice(0, 2),    // Thailand
-        ...getTourGuidesByCity('bali').slice(0, 2),       // Indonesia
-        ...getTourGuidesByCity('varanasi').slice(0, 1),   // India (spiritual)
-        ...getTourGuidesByCity('kyoto').slice(0, 1),      // Japan (traditional)
-        ...getTourGuidesByCity('chiang-mai').slice(0, 1), // Thailand (northern)
-        ...getTourGuidesByCity('ubud').slice(0, 1)        // Indonesia (arts)
+        ...getTourGuidesByCity('tokyo').slice(0, 1),      // Japan
+        ...getTourGuidesByCity('mumbai').slice(0, 1),     // India  
+        ...getTourGuidesByCity('bangkok').slice(0, 1),    // Thailand
+        ...getTourGuidesByCity('bali').slice(0, 1),       // Indonesia
+        ...getTourGuidesByCity('new-york').slice(0, 1),   // USA
+        ...getTourGuidesByCity('delhi').slice(0, 1),      // India (different city for variety)
+        ...getTourGuidesByCity('chiang-mai').slice(0, 1), // Thailand (northern culture)
+        ...getTourGuidesByCity('ubud').slice(0, 1)        // Indonesia (arts focus)
       ];
-      return internationalGuides.slice(0, 8); // Show 8 diverse guides
+      // Filter to ensure one per country by taking first from each unique country
+      const uniqueCountryGuides = [
+        getTourGuidesByCity('tokyo')[0],      // Japan
+        getTourGuidesByCity('mumbai')[0],     // India  
+        getTourGuidesByCity('bangkok')[0],    // Thailand
+        getTourGuidesByCity('bali')[0],       // Indonesia
+        getTourGuidesByCity('new-york')[0]    // USA
+      ].filter(Boolean);
+      return uniqueCountryGuides;
     }
     
     const cityId = location.toLowerCase().replace(/\s+/g, '-');
     const cityGuides = getTourGuidesByCity(cityId);
     
-    // If no guides found for the specific city, show international mix
+    // If no guides found for the specific city, show one from each country
     if (cityGuides.length === 0) {
       const fallbackGuides = [
-        ...getTourGuidesByCity('tokyo').slice(0, 2),
-        ...getTourGuidesByCity('mumbai').slice(0, 2),
-        ...getTourGuidesByCity('bangkok').slice(0, 2),
-        ...getTourGuidesByCity('bali').slice(0, 2)
-      ];
+        getTourGuidesByCity('tokyo')[0],      // Japan
+        getTourGuidesByCity('mumbai')[0],     // India  
+        getTourGuidesByCity('bangkok')[0],    // Thailand
+        getTourGuidesByCity('bali')[0]        // Indonesia
+      ].filter(Boolean);
       return fallbackGuides;
     }
     
@@ -350,7 +358,7 @@ const Tours = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
               {tourOperators.map((guide) => (
                 <Card key={guide.id} className="group hover:travel-shadow transition-all duration-300 hover:scale-[1.02] overflow-hidden">
                   <div className="relative">
