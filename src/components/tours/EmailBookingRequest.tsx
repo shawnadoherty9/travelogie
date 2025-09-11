@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Mail, User, Calendar, MapPin, DollarSign } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface EmailBookingRequestProps {
   guideName: string;
@@ -71,11 +72,35 @@ This booking request was sent via Travelogie - Learn from Locals
 Visit: https://travelogie.io
   `.trim();
 
-  const handleSendEmail = () => {
-    // In a real implementation, this would call the email edge function
-    const mailtoLink = `mailto:${guideEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    window.open(mailtoLink, '_blank');
-    onSendRequest();
+  const handleSendEmail = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-booking-email', {
+        body: {
+          guideName,
+          guideEmail,
+          clientName,
+          clientEmail,
+          tourDetails
+        }
+      });
+
+      if (error) {
+        console.error('Error sending booking email:', error);
+        // Fallback to mailto if edge function fails
+        const mailtoLink = `mailto:${guideEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        window.open(mailtoLink, '_blank');
+      } else {
+        console.log('Booking email sent successfully');
+      }
+      
+      onSendRequest();
+    } catch (error) {
+      console.error('Error:', error);
+      // Fallback to mailto
+      const mailtoLink = `mailto:${guideEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+      window.open(mailtoLink, '_blank');
+      onSendRequest();
+    }
   };
 
   return (
