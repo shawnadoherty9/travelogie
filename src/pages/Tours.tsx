@@ -47,8 +47,18 @@ const Tours = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [showLanguageSection, setShowLanguageSection] = useState(false);
   const [showWorkflow, setShowWorkflow] = useState(false);
-  const { toast } = useToast();
-  const { tours, attractions, activities, loading, bookTour, bookAttraction, bookActivity } = useTours();
+  const {
+    toast
+  } = useToast();
+  const {
+    tours,
+    attractions,
+    activities,
+    loading,
+    bookTour,
+    bookAttraction,
+    bookActivity
+  } = useTours();
   const languageInstructors = [{
     id: 1,
     name: "Sarah Johnson",
@@ -346,19 +356,13 @@ const Tours = () => {
                     <Textarea id="interests" placeholder="e.g., traditional cooking, ancient history, street art, local music, spiritual practices, sustainable living..." value={interests} onChange={e => setInterests(e.target.value)} rows={4} />
                   </div>
 
-                  <Button onClick={handlePersonalizedRequest} className="w-full bg-gradient-wanderlust hover:opacity-90" size="lg">
+                  <Button onClick={handlePersonalizedRequest} size="lg" className="w-full bg-gradient-wanderlust hover:opacity-90 bg-sky-600 hover:bg-sky-500">
                     Create My Personalized Tour
                   </Button>
 
-                  {showWorkflow && (
-                    <div className="mt-6">
-                      <PersonalizedTourWorkflow 
-                        location={location}
-                        interests={interests}
-                        onComplete={() => setShowWorkflow(false)}
-                      />
-                    </div>
-                  )}
+                  {showWorkflow && <div className="mt-6">
+                      <PersonalizedTourWorkflow location={location} interests={interests} onComplete={() => setShowWorkflow(false)} />
+                    </div>}
                 </CardContent>
               </Card>
             </div>
@@ -386,58 +390,29 @@ const Tours = () => {
                 </TabsList>
 
                 <TabsContent value="tours" className="space-y-6">
-                  {loading ? (
-                    <div className="text-center py-8">Loading tours...</div>
-                  ) : tours.length > 0 ? (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {tours.map((tour) => (
-                        <TourCard
-                          key={tour.id}
-                          tour={{
-                            ...tour,
-                            city: "City", // TODO: Join with cities table
-                            attractions: [],
-                            activities: [],
-                          }}
-                          onBookTour={bookTour}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
+                  {loading ? <div className="text-center py-8">Loading tours...</div> : tours.length > 0 ? <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {tours.map(tour => <TourCard key={tour.id} tour={{
+                  ...tour,
+                  city: "City",
+                  // TODO: Join with cities table
+                  attractions: [],
+                  activities: []
+                }} onBookTour={bookTour} />)}
+                    </div> : <div className="text-center py-8 text-muted-foreground">
                       No tours available at the moment.
-                    </div>
-                  )}
+                    </div>}
                 </TabsContent>
 
                 <TabsContent value="attractions" className="space-y-6">
-                  {loading ? (
-                    <div className="text-center py-8">Loading attractions...</div>
-                  ) : attractions.length > 0 ? (
-                    <AttractionsGrid 
-                      attractions={attractions}
-                      onBookAttraction={bookAttraction}
-                    />
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
+                  {loading ? <div className="text-center py-8">Loading attractions...</div> : attractions.length > 0 ? <AttractionsGrid attractions={attractions} onBookAttraction={bookAttraction} /> : <div className="text-center py-8 text-muted-foreground">
                       No attractions available at the moment.
-                    </div>
-                  )}
+                    </div>}
                 </TabsContent>
 
                 <TabsContent value="activities" className="space-y-6">
-                  {loading ? (
-                    <div className="text-center py-8">Loading activities...</div>
-                  ) : activities.length > 0 ? (
-                    <ActivitiesGrid 
-                      activities={activities}
-                      onBookActivity={bookActivity}
-                    />
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
+                  {loading ? <div className="text-center py-8">Loading activities...</div> : activities.length > 0 ? <ActivitiesGrid activities={activities} onBookActivity={bookActivity} /> : <div className="text-center py-8 text-muted-foreground">
                       No activities available at the moment.
-                    </div>
-                  )}
+                    </div>}
                 </TabsContent>
               </Tabs>
             </div>
@@ -545,8 +520,7 @@ const Tours = () => {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {tourOperators.map((operator) => (
-                <Card key={operator.id} className="overflow-hidden hover:travel-shadow transition-all duration-300">
+              {tourOperators.map(operator => <Card key={operator.id} className="overflow-hidden hover:travel-shadow transition-all duration-300">
                   <CardContent className="p-0">
                     <div className="relative">
                       <Avatar className="w-full h-48 rounded-none">
@@ -555,9 +529,7 @@ const Tours = () => {
                           {operator.name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
-                      {operator.verified && (
-                        <Badge className="absolute top-2 right-2 bg-emerald-500">Verified</Badge>
-                      )}
+                      {operator.verified && <Badge className="absolute top-2 right-2 bg-emerald-500">Verified</Badge>}
                     </div>
                     
                     <div className="p-4">
@@ -577,15 +549,13 @@ const Tours = () => {
                       <p className="text-sm text-muted-foreground mb-3">{operator.about}</p>
                       
                       <div className="flex flex-wrap gap-1 mb-3">
-                        {operator.specialties.slice(0, 2).map((specialty) => {
-                          const IconComponent = interestIcons[specialty as keyof typeof interestIcons] || Heart;
-                          return (
-                            <Badge key={specialty} variant="outline" className="text-xs">
+                        {operator.specialties.slice(0, 2).map(specialty => {
+                      const IconComponent = interestIcons[specialty as keyof typeof interestIcons] || Heart;
+                      return <Badge key={specialty} variant="outline" className="text-xs">
                               <IconComponent className="w-3 h-3 mr-1" />
                               {specialty}
-                            </Badge>
-                          );
-                        })}
+                            </Badge>;
+                    })}
                       </div>
                       
                       <div className="flex items-center justify-between">
@@ -596,8 +566,7 @@ const Tours = () => {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
         </section>
