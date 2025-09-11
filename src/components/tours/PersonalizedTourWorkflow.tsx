@@ -78,16 +78,24 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
   const cityActivities = getFilteredActivities();
   const cityId = location.toLowerCase().replace(/\s+/g, '-');
   const availableGuides = getTourGuidesByCity(cityId);
+  
+  // Debug logging
+  console.log('Location input:', location);
+  console.log('City ID:', cityId);
+  console.log('City activities found:', cityActivities.length);
+  console.log('Available guides:', availableGuides.length);
 
   // Get city center coordinates
   const getCityCenter = (locationName: string) => {
     const cityCoords = {
       'tokyo': { lat: 35.6762, lng: 139.6503 },
       'new-york': { lat: 40.7829, lng: -73.9654 },
+      'new york': { lat: 40.7829, lng: -73.9654 },
       'mumbai': { lat: 19.0760, lng: 72.8777 }
     };
     const key = locationName.toLowerCase().replace(/\s+/g, '-') as keyof typeof cityCoords;
-    return cityCoords[key] || cityCoords['tokyo'];
+    const keyWithSpaces = locationName.toLowerCase() as keyof typeof cityCoords;
+    return cityCoords[key] || cityCoords[keyWithSpaces] || cityCoords['tokyo'];
   };
 
   // Get user's current location
@@ -189,10 +197,14 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
     console.log('Sending booking request email to guide:', guide?.name);
   };
   const getMapMarkers = () => {
-    const selectedData = cityActivities.filter(a => selectedActivities.includes(a.id));
-    console.log('Selected activities for map:', selectedData);
+    // Show selected activities, or all activities if none selected
+    const dataToShow = selectedActivities.length > 0 
+      ? cityActivities.filter(a => selectedActivities.includes(a.id))
+      : cityActivities;
     
-    const markers = selectedData.map(a => ({
+    console.log('Activities for map:', dataToShow);
+    
+    const markers = dataToShow.map(a => ({
       id: a.id,
       position: a.location,
       title: a.name,
@@ -287,15 +299,19 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
             <CardContent>
               <ActivitySelector selectedCity={location} selectedCategories={selectedCategories} selectedActivities={selectedActivities} onActivityToggle={handleActivityToggle} />
 
-              {/* Map showing selected locations */}
-              {selectedActivities.length > 0 && <div className="mt-6">
-                  <h4 className="font-semibold mb-2">Your Selected Locations ({selectedActivities.length} activities)</h4>
-                  <TourMap 
-                    markers={getMapMarkers()} 
-                    center={getCityCenter(location)}
-                    className="h-96 w-full rounded-lg"
-                  />
-                </div>}
+              {/* Map showing selected locations - Always show map during activity selection */}
+              <div className="mt-6">
+                <h4 className="font-semibold mb-2">
+                  {selectedActivities.length > 0 
+                    ? `Your Selected Locations (${selectedActivities.length} activities)` 
+                    : `Available Activities in ${location}`}
+                </h4>
+                <TourMap 
+                  markers={getMapMarkers()} 
+                  center={getCityCenter(location)}
+                  className="h-96 w-full rounded-lg"
+                />
+              </div>
 
               <div className="mt-6 flex justify-between items-center">
                 <div className="text-sm text-muted-foreground">
