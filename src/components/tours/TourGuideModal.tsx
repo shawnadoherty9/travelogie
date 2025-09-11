@@ -31,6 +31,8 @@ export const TourGuideModal: React.FC<TourGuideModalProps> = ({
   onConfirm,
   cityName
 }) => {
+  console.log('TourGuideModal render:', { isOpen, guidesCount: guides.length, cityName });
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">

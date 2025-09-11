@@ -151,8 +151,10 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
       if (selectedGuideType === 'self') {
         setStep('self-explore');
         handleSelfExploreBooking();
-      } else {
+      } else if (selectedGuideType === 'guided') {
+        // Show the guide modal immediately
         setShowGuideModal(true);
+        console.log('Opening guide modal with guides:', availableGuides);
       }
     } else if (step === 'guide-selection' && selectedGuide) {
       setStep('finalization');
@@ -369,7 +371,10 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
       {/* Tour Guide Modal */}
       <TourGuideModal
         isOpen={showGuideModal}
-        onClose={() => setShowGuideModal(false)}
+        onClose={() => {
+          console.log('Closing guide modal');
+          setShowGuideModal(false);
+        }}
         guides={availableGuides}
         selectedGuide={selectedGuide}
         onSelectGuide={handleGuideSelection}
