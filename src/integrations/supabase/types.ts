@@ -1196,6 +1196,40 @@ export type Database = {
           user_type: string
         }[]
       }
+      get_public_tour_operators: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          background_checked: boolean
+          business_name: string
+          certifications: string[]
+          cities_covered: string[]
+          created_at: string
+          currency: string
+          daily_rate: number
+          description: string
+          experience_years: number
+          gallery_urls: string[]
+          hourly_rate: number
+          id: string
+          insurance_verified: boolean
+          is_active: boolean
+          languages_spoken: string[]
+          profile_image_url: string
+          rating: number
+          review_count: number
+          social_media_links: Json
+          specialties: string[]
+          updated_at: string
+          website_url: string
+        }[]
+      }
+      get_tour_operator_contact: {
+        Args: { operator_id: string }
+        Returns: {
+          contact_email: string
+          contact_phone: string
+        }[]
+      }
       get_user_roles: {
         Args: { _user_id: string }
         Returns: {

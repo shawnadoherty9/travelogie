@@ -15,6 +15,7 @@ import { TourCard } from "@/components/tours/TourCard";
 import { AttractionsGrid } from "@/components/tours/AttractionsGrid";
 import { ActivitiesGrid } from "@/components/tours/ActivitiesGrid";
 import { useTours } from "@/hooks/useTours";
+import { useTourOperators } from "@/hooks/useTourOperators";
 import { PersonalizedTourWorkflow } from "@/components/tours/PersonalizedTourWorkflow";
 import { getTourGuidesByCity } from "@/data/tourGuides";
 
@@ -60,6 +61,13 @@ const Tours = () => {
     bookAttraction,
     bookActivity
   } = useTours();
+  
+  // Use secure tour operators hook for database data
+  const { 
+    operators: dbTourOperators, 
+    loading: operatorsLoading,
+    getTourOperatorContact 
+  } = useTourOperators();
   const languageInstructors = [{
     id: 1,
     name: "Sarah Johnson",
@@ -282,6 +290,18 @@ const Tours = () => {
       title: "Creating your personalized tour",
       description: "Generating customized recommendations based on your preferences..."
     });
+  };
+
+  const handleContactTourOperator = async (operatorId: string) => {
+    const contactInfo = await getTourOperatorContact(operatorId);
+    if (contactInfo) {
+      toast({
+        title: "Contact Information Retrieved",
+        description: "You can now contact the tour operator for booking.",
+      });
+      // In a real implementation, you might open a modal with contact info
+      // or redirect to a booking page
+    }
   };
   return <div className="min-h-screen bg-background">
       <Header />
