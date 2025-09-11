@@ -16,6 +16,7 @@ import { AttractionsGrid } from "@/components/tours/AttractionsGrid";
 import { ActivitiesGrid } from "@/components/tours/ActivitiesGrid";
 import { useTours } from "@/hooks/useTours";
 import { PersonalizedTourWorkflow } from "@/components/tours/PersonalizedTourWorkflow";
+import { getTourGuidesByCity } from "@/data/tourGuides";
 
 // Import tour images
 import tokyoFoodTour from "@/assets/tokyo-food-tour.jpg";
@@ -192,59 +193,47 @@ const Tours = () => {
     culturalNotes: "Flamenco is deeply emotional. Each movement tells a story, and improvisation is valued over perfection."
   }];
   const languages = ["English", "Hindi", "Japanese", "French", "Spanish"];
-  const tourOperators = [{
-    id: 1,
-    name: "Maya Patel",
-    avatar: mayaPatelProfile,
-    rating: 4.9,
-    reviews: 156,
-    location: "Mumbai, India",
-    specialties: ["Cultural Heritage", "Street Food", "Photography"],
-    languages: ["English", "Hindi", "Gujarati"],
-    priceRange: "$45-85/day",
+  // Get tour guides dynamically based on location
+  const getDisplayGuides = () => {
+    if (!location) {
+      // Default to New York guides when no location is specified
+      return getTourGuidesByCity('new-york').slice(0, 4);
+    }
+    
+    const cityId = location.toLowerCase().replace(/\s+/g, '-');
+    const cityGuides = getTourGuidesByCity(cityId);
+    
+    // If no guides found for the specific city, show a mix from popular cities
+    if (cityGuides.length === 0) {
+      const fallbackGuides = [
+        ...getTourGuidesByCity('new-york').slice(0, 1),
+        ...getTourGuidesByCity('tokyo').slice(0, 1),
+        ...getTourGuidesByCity('mumbai').slice(0, 1),
+        ...getTourGuidesByCity('bangkok').slice(0, 1)
+      ];
+      return fallbackGuides;
+    }
+    
+    return cityGuides.slice(0, 4);
+  };
+
+  const displayGuides = getDisplayGuides();
+  
+  // Convert tour guides to the format expected by the UI
+  const tourOperators = displayGuides.map(guide => ({
+    id: guide.id,
+    name: guide.name,
+    avatar: guide.avatar,
+    rating: guide.rating,
+    reviews: guide.reviews,
+    location: `${guide.cityId.charAt(0).toUpperCase() + guide.cityId.slice(1).replace('-', ' ')}`,
+    specialties: guide.specialties,
+    languages: guide.languages,
+    priceRange: `$${guide.dailyRate - 20}-${guide.dailyRate}/day`,
     verified: true,
-    about: "Local photographer and cultural guide with 8 years experience showcasing authentic Mumbai.",
+    about: guide.about,
     availability: "Available next 7 days"
-  }, {
-    id: 2,
-    name: "Carlos Rodriguez",
-    avatar: carlosRodriguezProfile,
-    rating: 4.8,
-    reviews: 203,
-    location: "Barcelona, Spain",
-    specialties: ["Architecture", "History", "Local Gastronomy"],
-    languages: ["Spanish", "English", "Catalan"],
-    priceRange: "$60-120/day",
-    verified: true,
-    about: "Architecture historian passionate about sharing Barcelona's hidden gems and culinary secrets.",
-    availability: "Available in 3 days"
-  }, {
-    id: 3,
-    name: "Yuki Tanaka",
-    avatar: yukiTanakaProfile,
-    rating: 5.0,
-    reviews: 89,
-    location: "Kyoto, Japan",
-    specialties: ["Traditional Arts", "Tea Ceremony", "Temple Tours"],
-    languages: ["Japanese", "English"],
-    priceRange: "$80-150/day",
-    verified: true,
-    about: "Traditional arts master offering authentic cultural experiences in ancient Kyoto.",
-    availability: "Available next 14 days"
-  }, {
-    id: 4,
-    name: "Amara Okafor",
-    avatar: amaraOkaforProfile,
-    rating: 4.9,
-    reviews: 127,
-    location: "Lagos, Nigeria",
-    specialties: ["Music & Dance", "Local Markets", "Cultural Stories"],
-    languages: ["English", "Yoruba", "Igbo"],
-    priceRange: "$35-70/day",
-    verified: true,
-    about: "Cultural storyteller and musician sharing Nigeria's vibrant traditions and rhythms.",
-    availability: "Available next 10 days"
-  }];
+  }));
   const interestIcons = {
     "Cultural Heritage": Building,
     "Street Food": Utensils,
