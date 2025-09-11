@@ -24,13 +24,11 @@ interface TourGuide {
   experience: string;
   about: string;
 }
-
 interface PersonalizedTourWorkflowProps {
   location: string;
   interests: string;
   onComplete?: () => void;
 }
-
 export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> = ({
   location,
   interests,
@@ -41,68 +39,54 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [selectedGuideType, setSelectedGuideType] = useState<'self' | 'guided' | null>(null);
   const [selectedGuide, setSelectedGuide] = useState<string | null>(null);
-
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
 
   // Get city-specific activities
   const cityActivities = getCityActivities(location);
 
   // Mock tour guides
-  const tourGuides: TourGuide[] = [
-    {
-      id: 'guide1',
-      name: 'Hiroshi Yamada',
-      avatar: '/placeholder-guide1.jpg',
-      rating: 4.9,
-      reviews: 156,
-      specialties: ['Cultural Heritage', 'Traditional Arts', 'Temple Tours'],
-      dailyRate: 120,
-      languages: ['Japanese', 'English'],
-      experience: '8 years',
-      about: 'Cultural historian passionate about sharing Tokyo\'s hidden gems and traditional practices.'
-    },
-    {
-      id: 'guide2',
-      name: 'Akiko Tanaka',
-      avatar: '/placeholder-guide2.jpg',
-      rating: 4.8,
-      reviews: 203,
-      specialties: ['Food Culture', 'Local Markets', 'Street Art'],
-      dailyRate: 95,
-      languages: ['Japanese', 'English', 'Korean'],
-      experience: '6 years',
-      about: 'Food enthusiast and artist who knows every hidden restaurant and gallery in the city.'
-    },
-    {
-      id: 'guide3',
-      name: 'Kenji Nakamura',
-      avatar: '/placeholder-guide3.jpg',
-      rating: 5.0,
-      reviews: 89,
-      specialties: ['Traditional Crafts', 'Spiritual Sites', 'Photography'],
-      dailyRate: 140,
-      languages: ['Japanese', 'English'],
-      experience: '10 years',
-      about: 'Master craftsman and spiritual guide offering deep cultural immersion experiences.'
-    }
-  ];
-
+  const tourGuides: TourGuide[] = [{
+    id: 'guide1',
+    name: 'Hiroshi Yamada',
+    avatar: '/placeholder-guide1.jpg',
+    rating: 4.9,
+    reviews: 156,
+    specialties: ['Cultural Heritage', 'Traditional Arts', 'Temple Tours'],
+    dailyRate: 120,
+    languages: ['Japanese', 'English'],
+    experience: '8 years',
+    about: 'Cultural historian passionate about sharing Tokyo\'s hidden gems and traditional practices.'
+  }, {
+    id: 'guide2',
+    name: 'Akiko Tanaka',
+    avatar: '/placeholder-guide2.jpg',
+    rating: 4.8,
+    reviews: 203,
+    specialties: ['Food Culture', 'Local Markets', 'Street Art'],
+    dailyRate: 95,
+    languages: ['Japanese', 'English', 'Korean'],
+    experience: '6 years',
+    about: 'Food enthusiast and artist who knows every hidden restaurant and gallery in the city.'
+  }, {
+    id: 'guide3',
+    name: 'Kenji Nakamura',
+    avatar: '/placeholder-guide3.jpg',
+    rating: 5.0,
+    reviews: 89,
+    specialties: ['Traditional Crafts', 'Spiritual Sites', 'Photography'],
+    dailyRate: 140,
+    languages: ['Japanese', 'English'],
+    experience: '10 years',
+    about: 'Master craftsman and spiritual guide offering deep cultural immersion experiences.'
+  }];
   const handleCategoryToggle = (categoryId: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(categoryId) 
-        ? prev.filter(id => id !== categoryId) 
-        : [...prev, categoryId]
-    );
+    setSelectedCategories(prev => prev.includes(categoryId) ? prev.filter(id => id !== categoryId) : [...prev, categoryId]);
   };
-
   const handleActivityToggle = (activityId: string) => {
-    setSelectedActivities(prev => 
-      prev.includes(activityId) 
-        ? prev.filter(id => id !== activityId) 
-        : [...prev, activityId]
-    );
+    setSelectedActivities(prev => prev.includes(activityId) ? prev.filter(id => id !== activityId) : [...prev, activityId]);
   };
-
   const handleNextStep = () => {
     if (step === 'categories' && selectedCategories.length > 0) {
       setStep('activities');
@@ -119,7 +103,6 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
       setStep('finalization');
     }
   };
-
   const handleSelfExploreBooking = () => {
     const selected = cityActivities.filter(a => selectedActivities.includes(a.id));
     const total = selected.reduce((sum, item) => sum + item.price, 0);
@@ -134,7 +117,6 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
       console.log(`Auto-booking: ${activity.name} via ${activity.ticketUrl}`);
     });
   };
-
   const handleGuideBooking = () => {
     const guide = tourGuides.find(g => g.id === selectedGuide);
     const selected = cityActivities.filter(a => selectedActivities.includes(a.id));
@@ -150,7 +132,6 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
     // Here you would send email to the guide and handle payment processing
     console.log('Sending booking request email to guide:', guide?.name);
   };
-
   const getMapMarkers = () => {
     return cityActivities.filter(a => selectedActivities.includes(a.id)).map(a => ({
       id: a.id,
@@ -160,12 +141,9 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
       category: a.category
     }));
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Category Selection Step */}
-      {step === 'categories' && (
-        <Card>
+      {step === 'categories' && <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-primary" />
@@ -177,31 +155,21 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
               Based on your interests in {interests}, select the types of activities you'd like to experience:
             </p>
             
-            <ActivityCategorySelector
-              selectedCity={location}
-              selectedCategories={selectedCategories}
-              onCategoryToggle={handleCategoryToggle}
-            />
+            <ActivityCategorySelector selectedCity={location} selectedCategories={selectedCategories} onCategoryToggle={handleCategoryToggle} />
 
             <div className="mt-6 flex justify-between items-center">
               <div className="text-sm text-muted-foreground">
                 {selectedCategories.length} categor{selectedCategories.length !== 1 ? 'ies' : 'y'} selected
               </div>
-              <Button 
-                onClick={handleNextStep} 
-                disabled={selectedCategories.length === 0} 
-                className="bg-gradient-wanderlust hover:opacity-90"
-              >
+              <Button onClick={handleNextStep} disabled={selectedCategories.length === 0} className="bg-gradient-wanderlust hover:opacity-90 bg-sky-600 hover:bg-sky-500">
                 Choose Activities
               </Button>
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Activity Selection Step */}
-      {step === 'activities' && (
-        <div className="space-y-6">
+      {step === 'activities' && <div className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -210,68 +178,42 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ActivitySelector
-                selectedCity={location}
-                selectedCategories={selectedCategories}
-                selectedActivities={selectedActivities}
-                onActivityToggle={handleActivityToggle}
-              />
+              <ActivitySelector selectedCity={location} selectedCategories={selectedCategories} selectedActivities={selectedActivities} onActivityToggle={handleActivityToggle} />
 
               {/* Map showing selected locations */}
-              {selectedActivities.length > 0 && (
-                <div className="mt-6">
+              {selectedActivities.length > 0 && <div className="mt-6">
                   <h4 className="font-semibold mb-2">Your Selected Locations</h4>
-                  <TourMap 
-                    markers={getMapMarkers()} 
-                    center={{
-                      lat: location.toLowerCase().includes('tokyo') ? 35.6762 : 
-                           location.toLowerCase().includes('new york') ? 40.7829 :
-                           location.toLowerCase().includes('mumbai') ? 19.0760 : 35.6762,
-                      lng: location.toLowerCase().includes('tokyo') ? 139.6503 : 
-                           location.toLowerCase().includes('new york') ? -73.9654 :
-                           location.toLowerCase().includes('mumbai') ? 72.8777 : 139.6503
-                    }} 
-                  />
-                </div>
-              )}
+                  <TourMap markers={getMapMarkers()} center={{
+              lat: location.toLowerCase().includes('tokyo') ? 35.6762 : location.toLowerCase().includes('new york') ? 40.7829 : location.toLowerCase().includes('mumbai') ? 19.0760 : 35.6762,
+              lng: location.toLowerCase().includes('tokyo') ? 139.6503 : location.toLowerCase().includes('new york') ? -73.9654 : location.toLowerCase().includes('mumbai') ? 72.8777 : 139.6503
+            }} />
+                </div>}
 
               <div className="mt-6 flex justify-between items-center">
                 <div className="text-sm text-muted-foreground">
                   {selectedActivities.length} activit{selectedActivities.length !== 1 ? 'ies' : 'y'} selected
                 </div>
                 <div className="flex gap-3">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setStep('categories')}
-                  >
+                  <Button variant="outline" onClick={() => setStep('categories')}>
                     Back to Categories
                   </Button>
-                  <Button 
-                    onClick={handleNextStep} 
-                    disabled={selectedActivities.length === 0} 
-                    className="bg-gradient-wanderlust hover:opacity-90"
-                  >
+                  <Button onClick={handleNextStep} disabled={selectedActivities.length === 0} className="bg-gradient-wanderlust hover:opacity-90">
                     Continue to Guide Options
                   </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
-        </div>
-      )}
+        </div>}
 
       {/* Guide Choice Step */}
-      {step === 'guide-choice' && (
-        <Card>
+      {step === 'guide-choice' && <Card>
           <CardHeader>
             <CardTitle>Choose Your Experience Style</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
-              <Card 
-                className={`cursor-pointer transition-all ${selectedGuideType === 'self' ? 'ring-2 ring-primary' : ''}`} 
-                onClick={() => setSelectedGuideType('self')}
-              >
+              <Card className={`cursor-pointer transition-all ${selectedGuideType === 'self' ? 'ring-2 ring-primary' : ''}`} onClick={() => setSelectedGuideType('self')}>
                 <CardContent className="p-6 text-center">
                   <MapPin className="w-8 h-8 mx-auto mb-3 text-primary" />
                   <h3 className="font-semibold mb-2">Self-Guided Exploration</h3>
@@ -281,10 +223,7 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
                 </CardContent>
               </Card>
 
-              <Card 
-                className={`cursor-pointer transition-all ${selectedGuideType === 'guided' ? 'ring-2 ring-primary' : ''}`} 
-                onClick={() => setSelectedGuideType('guided')}
-              >
+              <Card className={`cursor-pointer transition-all ${selectedGuideType === 'guided' ? 'ring-2 ring-primary' : ''}`} onClick={() => setSelectedGuideType('guided')}>
                 <CardContent className="p-6 text-center">
                   <Users className="w-8 h-8 mx-auto mb-3 text-primary" />
                   <h3 className="font-semibold mb-2">Local Tour Guide</h3>
@@ -301,23 +240,16 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
               </Button>
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Guide Selection Step */}
-      {step === 'guide-selection' && (
-        <Card>
+      {step === 'guide-selection' && <Card>
           <CardHeader>
             <CardTitle>Choose Your Local Guide</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4">
-              {tourGuides.map(guide => (
-                <Card 
-                  key={guide.id} 
-                  className={`cursor-pointer transition-all ${selectedGuide === guide.id ? 'ring-2 ring-primary' : ''}`} 
-                  onClick={() => setSelectedGuide(guide.id)}
-                >
+              {tourGuides.map(guide => <Card key={guide.id} className={`cursor-pointer transition-all ${selectedGuide === guide.id ? 'ring-2 ring-primary' : ''}`} onClick={() => setSelectedGuide(guide.id)}>
                   <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                       <Avatar className="w-16 h-16">
@@ -337,11 +269,9 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
                         </div>
                         <p className="text-sm text-muted-foreground mb-2">{guide.about}</p>
                         <div className="flex flex-wrap gap-2 mb-2">
-                          {guide.specialties.map(specialty => (
-                            <Badge key={specialty} variant="secondary" className="text-xs">
+                          {guide.specialties.map(specialty => <Badge key={specialty} variant="secondary" className="text-xs">
                               {specialty}
-                            </Badge>
-                          ))}
+                            </Badge>)}
                         </div>
                         <div className="text-xs text-muted-foreground">
                           Languages: {guide.languages.join(', ')} • {guide.experience} experience
@@ -349,8 +279,7 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
                       </div>
                     </div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
 
             <div className="mt-6 text-center">
@@ -359,12 +288,10 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
               </Button>
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Finalization Step */}
-      {step === 'finalization' && (
-        <Card>
+      {step === 'finalization' && <Card>
           <CardHeader>
             <CardTitle>Finalize Your Tour</CardTitle>
           </CardHeader>
@@ -372,23 +299,19 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">Selected Activities:</h4>
-                {cityActivities.filter(a => selectedActivities.includes(a.id)).map(activity => (
-                  <div key={activity.id} className="flex justify-between items-center py-2 border-b">
+                {cityActivities.filter(a => selectedActivities.includes(a.id)).map(activity => <div key={activity.id} className="flex justify-between items-center py-2 border-b">
                     <span>{activity.name}</span>
                     <span>${activity.price}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
 
-              {selectedGuide && (
-                <div>
+              {selectedGuide && <div>
                   <h4 className="font-semibold mb-2">Your Guide:</h4>
                   <div className="flex justify-between items-center py-2 border-b">
                     <span>{tourGuides.find(g => g.id === selectedGuide)?.name}</span>
                     <span>${tourGuides.find(g => g.id === selectedGuide)?.dailyRate}/day</span>
                   </div>
-                </div>
-              )}
+                </div>}
 
               <div className="pt-4 border-t">
                 <div className="flex justify-between font-semibold">
@@ -404,12 +327,10 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
               </Button>
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Self-Explore Confirmation */}
-      {step === 'self-explore' && (
-        <Card>
+      {step === 'self-explore' && <Card>
           <CardHeader>
             <CardTitle className="text-green-600">Booking Confirmed!</CardTitle>
           </CardHeader>
@@ -418,16 +339,12 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
               Your self-guided tour has been booked. All tickets have been automatically purchased and you'll receive confirmation emails shortly.
             </p>
             <div className="space-y-2">
-              {cityActivities.filter(a => selectedActivities.includes(a.id)).map(activity => (
-                <div key={activity.id} className="flex items-center gap-2">
+              {cityActivities.filter(a => selectedActivities.includes(a.id)).map(activity => <div key={activity.id} className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
                   <span>{activity.name} - Booked</span>
-                </div>
-              ))}
+                </div>)}
             </div>
           </CardContent>
-        </Card>
-      )}
-    </div>
-  );
+        </Card>}
+    </div>;
 };
