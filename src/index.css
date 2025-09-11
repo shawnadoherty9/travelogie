@@ -141,7 +141,27 @@ All colors MUST be HSL.
   .cultural-shadow {
     box-shadow: 0 8px 25px -8px hsl(var(--travel-earth) / 0.4);
   }
-}
+  }
+
+  /* Pulse animation for user location marker */
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5), 0 0 0 2px #3B82F640;
+    }
+    50% {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.7), 0 0 0 4px #3B82F620;
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5), 0 0 0 2px #3B82F640;
+    }
+  }
+
+  .custom-user-marker div {
+    animation: pulse 2s infinite;
+  }
 
 @layer base {
   * {

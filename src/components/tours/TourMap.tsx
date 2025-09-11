@@ -14,7 +14,7 @@ interface MapMarker {
   id: string;
   position: { lat: number; lng: number };
   title: string;
-  type: 'activity' | 'attraction' | 'experience';
+  type: 'activity' | 'attraction' | 'experience' | 'user-location';
   category: string;
 }
 
@@ -37,6 +37,46 @@ export const TourMap: React.FC<TourMapProps> = ({
 
   // Enhanced 3D-style icons for different categories
   const getCustomIcon = (type: string, category: string) => {
+    // Special icon for user location
+    if (type === 'user-location') {
+      return L.divIcon({
+        className: 'custom-user-marker',
+        html: `
+          <div style="
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5), 0 0 0 2px #3B82F640;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            position: relative;
+            animation: pulse 2s infinite;
+          ">
+            📍
+            <div style="
+              position: absolute;
+              top: -8px;
+              right: -8px;
+              background: #10B981;
+              border-radius: 50%;
+              width: 16px;
+              height: 16px;
+              border: 2px solid white;
+            "></div>
+          </div>
+        `,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+        popupAnchor: [0, -20]
+      });
+    }
+
     const categoryColors = {
       'cultural': '#8B4513',
       'culinary': '#FF6347', 

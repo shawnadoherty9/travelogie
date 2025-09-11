@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, Clock, DollarSign, Star, Users, CheckCircle } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { MapPin, Clock, DollarSign, Star, Users, CheckCircle, Navigation } from 'lucide-react';
 import { TourMap } from './TourMap';
 import { TourGuideModal } from './TourGuideModal';
 import { useToast } from '@/hooks/use-toast';
@@ -29,10 +31,51 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
   const [selectedGuideType, setSelectedGuideType] = useState<'self' | 'guided' | null>(null);
   const [selectedGuide, setSelectedGuide] = useState<string | null>(null);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showNearMe, setShowNearMe] = useState(false);
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [nearbyRadius, setNearbyRadius] = useState(10); // km
+  const [locationError, setLocationError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Calculate distance between two coordinates using Haversine formula
+  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const R = 6371; // Earth's radius in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
+  // Filter activities by proximity to user
+  const getFilteredActivities = () => {
+    let activities = getCityActivities(location);
+    
+    if (showNearMe && userLocation) {
+      activities = activities.filter(activity => {
+        const distance = calculateDistance(
+          userLocation.lat, 
+          userLocation.lng, 
+          activity.location.lat, 
+          activity.location.lng
+        );
+        return distance <= nearbyRadius;
+      }).sort((a, b) => {
+        // Sort by distance
+        const distA = calculateDistance(userLocation.lat, userLocation.lng, a.location.lat, a.location.lng);
+        const distB = calculateDistance(userLocation.lat, userLocation.lng, b.location.lat, b.location.lng);
+        return distA - distB;
+      });
+    }
+    
+    return activities;
+  };
+
   // Get city-specific activities and guides
-  const cityActivities = getCityActivities(location);
+  const cityActivities = getFilteredActivities();
   const cityId = location.toLowerCase().replace(/\s+/g, '-');
   const availableGuides = getTourGuidesByCity(cityId);
 
@@ -45,6 +88,45 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
     };
     const key = locationName.toLowerCase().replace(/\s+/g, '-') as keyof typeof cityCoords;
     return cityCoords[key] || cityCoords['tokyo'];
+  };
+
+  // Get user's current location
+  const getUserLocation = () => {
+    setLocationError(null);
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by this browser');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+        toast({
+          title: "Location found!",
+          description: "Now showing activities near your current location"
+        });
+      },
+      (error) => {
+        setLocationError('Unable to retrieve your location');
+        setShowNearMe(false);
+        toast({
+          title: "Location error",
+          description: "Please enable location access to see nearby activities",
+          variant: "destructive"
+        });
+      }
+    );
+  };
+
+  // Handle nearby toggle
+  const handleNearbyToggle = (checked: boolean) => {
+    setShowNearMe(checked);
+    if (checked && !userLocation) {
+      getUserLocation();
+    }
   };
   const handleCategoryToggle = (categoryId: string) => {
     setSelectedCategories(prev => prev.includes(categoryId) ? prev.filter(id => id !== categoryId) : [...prev, categoryId]);
@@ -110,13 +192,26 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
     const selectedData = cityActivities.filter(a => selectedActivities.includes(a.id));
     console.log('Selected activities for map:', selectedData);
     
-    return selectedData.map(a => ({
+    const markers = selectedData.map(a => ({
       id: a.id,
       position: a.location,
       title: a.name,
       type: a.type as 'activity' | 'attraction' | 'experience',
       category: a.category
     }));
+
+    // Add user location marker if available
+    if (userLocation && showNearMe) {
+      markers.push({
+        id: 'user-location',
+        position: userLocation,
+        title: 'Your Location',
+        type: 'user-location' as any,
+        category: 'user'
+      });
+    }
+
+    return markers;
   };
   return <div className="space-y-6">
       {/* Category Selection Step */}
@@ -131,12 +226,47 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
             <p className="text-muted-foreground mb-6">
               Based on your interests in {interests}, select the types of activities you'd like to experience:
             </p>
+
+            {/* Near Me Toggle */}
+            <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg mb-6">
+              <div className="flex items-center space-x-3">
+                <Navigation className="w-5 h-5 text-primary" />
+                <div>
+                  <Label htmlFor="near-me-toggle" className="text-sm font-medium">
+                    Show activities near me
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Use your location to find nearby experiences (within {nearbyRadius}km)
+                  </p>
+                </div>
+              </div>
+              <Switch
+                id="near-me-toggle"
+                checked={showNearMe}
+                onCheckedChange={handleNearbyToggle}
+              />
+            </div>
+
+            {locationError && (
+              <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-lg mb-4">
+                {locationError}
+              </div>
+            )}
+
+            {showNearMe && userLocation && (
+              <div className="p-3 bg-primary/10 text-primary text-sm rounded-lg mb-4">
+                📍 Showing {cityActivities.length} activities within {nearbyRadius}km of your location
+              </div>
+            )}
             
             <ActivityCategorySelector selectedCity={location} selectedCategories={selectedCategories} onCategoryToggle={handleCategoryToggle} />
 
             <div className="mt-6 flex justify-between items-center">
               <div className="text-sm text-muted-foreground">
                 {selectedCategories.length} categor{selectedCategories.length !== 1 ? 'ies' : 'y'} selected
+                {showNearMe && userLocation && (
+                  <span className="ml-2 text-primary">• Near your location</span>
+                )}
               </div>
               <Button onClick={handleNextStep} disabled={selectedCategories.length === 0} className="bg-gradient-wanderlust hover:opacity-90 bg-sky-600 hover:bg-sky-500">
                 Choose Activities
