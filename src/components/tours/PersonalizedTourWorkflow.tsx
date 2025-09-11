@@ -359,7 +359,7 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
             </div>
 
             <div className="mt-6 text-center">
-              <Button onClick={handleNextStep} disabled={!selectedGuideType} className="bg-gradient-wanderlust hover:opacity-90">
+              <Button onClick={handleNextStep} disabled={!selectedGuideType} className="bg-sky-600 hover:bg-sky-500 text-white">
                 {selectedGuideType === 'self' ? 'Book Self-Guided Tour' : 'Choose Your Guide'}
               </Button>
             </div>
