@@ -15,6 +15,7 @@ import { TourCard } from "@/components/tours/TourCard";
 import { AttractionsGrid } from "@/components/tours/AttractionsGrid";
 import { ActivitiesGrid } from "@/components/tours/ActivitiesGrid";
 import { useTours } from "@/hooks/useTours";
+import { PersonalizedTourWorkflow } from "@/components/tours/PersonalizedTourWorkflow";
 
 // Import tour images
 import tokyoFoodTour from "@/assets/tokyo-food-tour.jpg";
@@ -45,6 +46,7 @@ const Tours = () => {
   const [personalizedTour, setPersonalizedTour] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [showLanguageSection, setShowLanguageSection] = useState(false);
+  const [showWorkflow, setShowWorkflow] = useState(false);
   const { toast } = useToast();
   const { tours, attractions, activities, loading, bookTour, bookAttraction, bookActivity } = useTours();
   const languageInstructors = [{
@@ -257,40 +259,12 @@ const Tours = () => {
       return;
     }
 
-    // Simulate AI agent processing
+    // Start the new workflow
+    setShowWorkflow(true);
     toast({
       title: "Creating your personalized tour",
-      description: "Our AI agent is crafting a unique experience based on your preferences..."
+      description: "Generating customized recommendations based on your preferences..."
     });
-
-    // Simulate tour generation
-    setTimeout(() => {
-      setPersonalizedTour(`Based on your interest in ${interests} and location ${location}, here's your personalized tour:
-
-🗓️ 3-Day Cultural Immersion Experience
-📍 Starting point: ${location}
-
-Day 1: Authentic Local Life
-- Morning: Traditional breakfast with local family
-- Afternoon: Guided neighborhood walk focusing on ${interests}
-- Evening: Sunset viewing at hidden local spot
-
-Day 2: Deep Cultural Dive
-- Morning: Hands-on workshop related to ${interests}
-- Afternoon: Visit to local artisans and craftspeople
-- Evening: Traditional dinner and cultural performance
-
-Day 3: Personal Connection
-- Morning: One-on-one time with local expert
-- Afternoon: Create something to take home
-- Evening: Reflection and farewell ceremony
-
-💡 This tour can be customized further based on your specific needs and the available local guides below.`);
-      toast({
-        title: "Your personalized tour is ready!",
-        description: "Scroll down to see your custom itinerary and available local guides."
-      });
-    }, 3000);
   };
   return <div className="min-h-screen bg-background">
       <Header />
@@ -376,16 +350,15 @@ Day 3: Personal Connection
                     Create My Personalized Tour
                   </Button>
 
-                  {personalizedTour && <Card className="mt-6">
-                      <CardHeader>
-                        <CardTitle className="text-travel-ocean">Your Personalized Tour</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                          {personalizedTour}
-                        </pre>
-                      </CardContent>
-                    </Card>}
+                  {showWorkflow && (
+                    <div className="mt-6">
+                      <PersonalizedTourWorkflow 
+                        location={location}
+                        interests={interests}
+                        onComplete={() => setShowWorkflow(false)}
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
