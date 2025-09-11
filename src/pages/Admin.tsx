@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { DataImporter } from "@/components/admin/DataImporter";
+import { RoleManagement } from "@/components/admin/RoleManagement";
 import { Shield, Key, Lock, MapPin, Mic, Workflow, LogIn } from "lucide-react";
 
 const Admin = () => {
@@ -34,7 +35,7 @@ const Admin = () => {
       }
 
       try {
-        const { data, error } = await supabase.functions.invoke('admin-auth', {
+        const { data, error } = await supabase.functions.invoke('admin-auth-rbac', {
           body: { action: 'verify_admin' },
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -202,7 +203,7 @@ const Admin = () => {
         </Alert>
 
         <Tabs defaultValue="elevenlabs" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="elevenlabs">
               <Mic className="w-4 h-4 mr-2" />
               Eleven Labs
@@ -214,6 +215,10 @@ const Admin = () => {
             <TabsTrigger value="mapbox">
               <MapPin className="w-4 h-4 mr-2" />
               MapBox
+            </TabsTrigger>
+            <TabsTrigger value="roles">
+              <Shield className="w-4 h-4 mr-2" />
+              User Roles
             </TabsTrigger>
             <TabsTrigger value="import">
               <Key className="w-4 h-4 mr-2" />
@@ -324,6 +329,10 @@ const Admin = () => {
                 </Button>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="roles">
+            <RoleManagement />
           </TabsContent>
 
           <TabsContent value="import">
