@@ -173,35 +173,82 @@ export const TourMap: React.FC<TourMapProps> = ({
     }
   }, [markers]);
 
+  // Group markers by category
+  const markersByCategory = markers.reduce((acc, marker) => {
+    if (!acc[marker.category]) {
+      acc[marker.category] = [];
+    }
+    acc[marker.category].push(marker);
+    return acc;
+  }, {} as Record<string, typeof markers>);
+
+  const categoryColors = {
+    'cultural': '#8B4513',
+    'culinary': '#FF6347', 
+    'spiritual': '#9370DB',
+    'adventure': '#228B22',
+    'entertainment': '#FF1493',
+    'shopping': '#FF8C00',
+    'nature': '#32CD32',
+    'nightlife': '#4B0082'
+  };
+
   return (
-    <div className={className}>
-      <div ref={mapRef} className="w-full h-full rounded-lg border border-border" />
+    <div className={`${className} flex gap-4`}>
+      <div className="flex-1">
+        <div ref={mapRef} className="w-full h-full rounded-lg border border-border" />
+      </div>
       
-      {/* Enhanced Legend with Categories */}
-      <div className="mt-3 flex flex-wrap justify-center gap-2 text-xs">
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-[#8B4513] border border-white shadow-sm"></div>
-          <span>Cultural</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-[#FF6347] border border-white shadow-sm"></div>
-          <span>Culinary</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-[#9370DB] border border-white shadow-sm"></div>
-          <span>Spiritual</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-[#228B22] border border-white shadow-sm"></div>
-          <span>Adventure</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-[#FF1493] border border-white shadow-sm"></div>
-          <span>Entertainment</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-[#FF8C00] border border-white shadow-sm"></div>
-          <span>Shopping</span>
+      {/* Side Legend */}
+      <div className="w-64 bg-card border border-border rounded-lg p-4 overflow-y-auto">
+        <h3 className="font-semibold text-lg mb-4 text-foreground">Your Selected Locations</h3>
+        
+        {Object.entries(markersByCategory).map(([category, categoryMarkers]) => (
+          <div key={category} className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div 
+                className="w-4 h-4 rounded-full border-2 border-white shadow-sm" 
+                style={{ backgroundColor: categoryColors[category] || '#6B7280' }}
+              ></div>
+              <span className="font-medium text-sm capitalize text-foreground">
+                {category} ({categoryMarkers.length})
+              </span>
+            </div>
+            
+            <div className="ml-6 space-y-1">
+              {categoryMarkers.map((marker) => (
+                <div key={marker.id} className="text-xs text-muted-foreground flex items-center gap-2">
+                  <span className="text-lg">
+                    {marker.type === 'activity' ? '🎯' : marker.type === 'attraction' ? '📍' : '✨'}
+                  </span>
+                  <span className="truncate">{marker.title}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        
+        {markers.length === 0 && (
+          <div className="text-center text-muted-foreground text-sm py-8">
+            <div className="mb-2">🗺️</div>
+            <p>Select activities to see them on the map</p>
+          </div>
+        )}
+        
+        {/* Category Legend */}
+        <div className="mt-6 pt-4 border-t border-border">
+          <h4 className="font-medium text-sm mb-3 text-foreground">Category Colors</h4>
+          <div className="space-y-2">
+            {Object.entries(categoryColors).map(([category, color]) => (
+              <div key={category} className="flex items-center gap-2 text-xs">
+                <div 
+                  className="w-3 h-3 rounded-full border border-white shadow-sm" 
+                  style={{ backgroundColor: color }}
+                ></div>
+                <span className="capitalize text-muted-foreground">{category}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
