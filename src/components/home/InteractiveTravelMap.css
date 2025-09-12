@@ -1,11 +1,56 @@
+/* Custom marker animations */
 .suggestion-marker {
   cursor: pointer;
+  animation: pulse 2s infinite;
 }
 
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Postcard container with dotted background */
 .postcard-container {
   background-image: 
     radial-gradient(circle at 25px 25px, #ddd 2px, transparent 0),
     radial-gradient(circle at 75px 75px, #ddd 2px, transparent 0);
   background-size: 100px 100px;
   background-position: 0 0, 25px 25px;
+}
+
+/* Postcard flip animation */
+.postcard {
+  transition: transform 0.7s ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.postcard-front,
+.postcard-back {
+  backface-visibility: hidden;
+}
+
+.postcard-back {
+  transform: rotateY(180deg);
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Custom marker styles */
+.custom-suggestion-marker,
+.custom-temp-marker {
+  z-index: 1000;
+}
+
+.custom-suggestion-marker:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
 }

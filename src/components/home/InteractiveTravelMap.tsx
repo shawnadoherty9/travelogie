@@ -19,6 +19,14 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+interface Comment {
+  id: string;
+  author: string;
+  text: string;
+  date: string;
+  avatar?: string;
+}
+
 interface TravelSuggestion {
   id: string;
   latitude: number;
@@ -26,10 +34,10 @@ interface TravelSuggestion {
   title: string;
   description: string;
   author: string;
-  image?: string;
+  image: string;
   rating: number;
   likes: number;
-  comments: number;
+  comments: Comment[];
   tags: string[];
   date: string;
 }
@@ -38,6 +46,7 @@ const InteractiveTravelMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState<TravelSuggestion | null>(null);
+  const [isFlipped, setIsFlipped] = useState(false);
   const [isAddingPin, setIsAddingPin] = useState(false);
   const [newSuggestion, setNewSuggestion] = useState({
     title: '',
@@ -57,9 +66,14 @@ const InteractiveTravelMap = () => {
       title: 'Hidden Shrine in Shibuya',
       description: 'A peaceful shrine tucked away behind the busy streets. Perfect for meditation and experiencing traditional Japan.',
       author: 'Yuki T.',
+      image: '/lovable-uploads/25f8f091-7b7d-4b9a-aa2c-bffc8e9b3b68.png',
       rating: 4.8,
       likes: 156,
-      comments: 23,
+      comments: [
+        { id: '1', author: 'Sarah K.', text: 'Amazing place! So peaceful despite being in the middle of Tokyo.', date: '1 day ago' },
+        { id: '2', author: 'Mike L.', text: 'Found this thanks to your suggestion. The traditional architecture is stunning!', date: '2 hours ago' },
+        { id: '3', author: 'Emma R.', text: 'Perfect spot for morning meditation. Thank you for sharing!', date: '30 minutes ago' }
+      ],
       tags: ['Spiritual', 'Hidden Gem', 'Culture'],
       date: '2 days ago'
     },
@@ -70,9 +84,13 @@ const InteractiveTravelMap = () => {
       title: 'Secret Rooftop Garden',
       description: 'Amazing views of Sagrada Familia from this hidden rooftop garden. Local artists sell their work here on weekends.',
       author: 'Carlos M.',
+      image: '/lovable-uploads/4f14a223-57a1-4a7d-bf9a-6bc3e17c25b9.png',
       rating: 4.9,
       likes: 203,
-      comments: 31,
+      comments: [
+        { id: '4', author: 'Julia P.', text: 'The sunset views from here are incredible! Got some amazing photos.', date: '3 hours ago' },
+        { id: '5', author: 'David S.', text: 'Met some amazing local artists here. Bought a beautiful painting of the city.', date: '1 day ago' }
+      ],
       tags: ['Views', 'Art', 'Local'],
       date: '1 week ago'
     },
@@ -83,9 +101,14 @@ const InteractiveTravelMap = () => {
       title: 'Dawn Yoga by the Ganges',
       description: 'Join locals for sunrise yoga sessions by the holy river. Life-changing spiritual experience.',
       author: 'Priya S.',
+      image: '/assets/varanasi-temples.jpg',
       rating: 5.0,
       likes: 289,
-      comments: 45,
+      comments: [
+        { id: '6', author: 'Alex M.', text: 'Most spiritual experience of my life. The energy here at sunrise is indescribable.', date: '2 days ago' },
+        { id: '7', author: 'Lisa W.', text: 'The yoga instructor was amazing and so welcoming to visitors. Highly recommend!', date: '4 hours ago' },
+        { id: '8', author: 'Tom B.', text: 'Changed my perspective on travel. This is what authentic cultural exchange looks like.', date: '1 hour ago' }
+      ],
       tags: ['Spiritual', 'Wellness', 'Local'],
       date: '3 days ago'
     }
@@ -185,9 +208,10 @@ const InteractiveTravelMap = () => {
       title: newSuggestion.title,
       description: newSuggestion.description,
       author: newSuggestion.author || 'Anonymous',
+      image: '/assets/hero-travel.jpg', // Default image
       rating: 0,
       likes: 0,
-      comments: 0,
+      comments: [],
       tags: newSuggestion.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       date: 'Just now'
     };
@@ -322,73 +346,148 @@ const InteractiveTravelMap = () => {
 
         {/* Postcard Modal */}
         {selectedSuggestion && (
-          <Dialog open={!!selectedSuggestion} onOpenChange={() => setSelectedSuggestion(null)}>
+          <Dialog open={!!selectedSuggestion} onOpenChange={() => {
+            setSelectedSuggestion(null);
+            setIsFlipped(false);
+          }}>
             <DialogContent className="sm:max-w-lg p-0 overflow-hidden">
-              <div className="postcard-container relative bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-900">
-                {/* Postcard Header */}
-                <div className="relative h-48 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/40"></div>
-                  <div className="absolute top-4 right-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedSuggestion(null)}
-                      className="text-white hover:bg-white/20"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <div className="flex items-center gap-2 mb-2">
-                      <MapPin className="w-4 h-4" />
-                      <span className="text-sm opacity-90">Travel Suggestion</span>
-                    </div>
-                    <h3 className="text-xl font-bold">{selectedSuggestion.title}</h3>
-                  </div>
-                </div>
-
-                {/* Postcard Content */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-medium">{selectedSuggestion.rating || 'New'}</span>
-                    </div>
-                    <span className="text-sm text-muted-foreground">{selectedSuggestion.date}</span>
-                  </div>
-
-                  <p className="text-muted-foreground mb-4 leading-relaxed">
-                    {selectedSuggestion.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {selectedSuggestion.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t">
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Heart className="w-4 h-4" />
-                        {selectedSuggestion.likes}
+              <div className="postcard-container relative w-full h-[500px]" style={{ perspective: '1000px' }}>
+                <div 
+                  className={`postcard absolute inset-0 w-full h-full transition-transform duration-700 ${isFlipped ? 'rotate-y-180' : ''}`}
+                  style={{ 
+                    transformStyle: 'preserve-3d',
+                    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+                  }}
+                >
+                  {/* Front of postcard - Image */}
+                  <div 
+                    className="postcard-front absolute inset-0 w-full h-full rounded-lg overflow-hidden shadow-xl"
+                    style={{ backfaceVisibility: 'hidden' }}
+                  >
+                    <div className="relative w-full h-full">
+                      <img 
+                        src={selectedSuggestion.image} 
+                        alt={selectedSuggestion.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
+                      
+                      {/* Close button */}
+                      <div className="absolute top-4 right-4">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedSuggestion(null);
+                            setIsFlipped(false);
+                          }}
+                          className="text-white hover:bg-white/20"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <MessageCircle className="w-4 h-4" />
-                        {selectedSuggestion.comments}
+
+                      {/* Title and location */}
+                      <div className="absolute bottom-4 left-4 text-white">
+                        <div className="flex items-center gap-2 mb-2">
+                          <MapPin className="w-4 h-4" />
+                          <span className="text-sm opacity-90">Travel Suggestion</span>
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2">{selectedSuggestion.title}</h3>
+                        <div className="flex items-center gap-2">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="font-medium">{selectedSuggestion.rating || 'New'}</span>
+                          <span className="text-sm opacity-75">by {selectedSuggestion.author}</span>
+                        </div>
+                      </div>
+
+                      {/* Flip button */}
+                      <div className="absolute bottom-4 right-4">
+                        <Button
+                          onClick={() => setIsFlipped(true)}
+                          variant="ghost"
+                          size="sm"
+                          className="text-white bg-black/30 hover:bg-black/50"
+                        >
+                          <MessageCircle className="w-4 h-4 mr-1" />
+                          Read Comments
+                        </Button>
+                      </div>
+
+                      {/* Postcard stamp effect */}
+                      <div className="absolute top-2 right-2 w-12 h-12 border-2 border-dashed border-white/50 rounded flex items-center justify-center text-xs text-white/70 bg-black/20">
+                        STAMP
                       </div>
                     </div>
-                    <span className="text-sm font-medium text-primary">
-                      by {selectedSuggestion.author}
-                    </span>
                   </div>
-                </div>
 
-                {/* Postcard stamp effect */}
-                <div className="absolute top-2 right-2 w-12 h-12 border-2 border-dashed border-primary/30 rounded flex items-center justify-center text-xs text-primary/60 bg-white/50">
-                  STAMP
+                  {/* Back of postcard - Comments */}
+                  <div 
+                    className="postcard-back absolute inset-0 w-full h-full bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-900 rounded-lg shadow-xl"
+                    style={{ 
+                      backfaceVisibility: 'hidden',
+                      transform: 'rotateY(180deg)'
+                    }}
+                  >
+                    <div className="p-6 h-full flex flex-col">
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-foreground">Comments & Reviews</h3>
+                        <Button
+                          onClick={() => setIsFlipped(false)}
+                          variant="ghost"
+                          size="sm"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+
+                      {/* Description */}
+                      <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+                        <p className="text-sm text-muted-foreground italic">
+                          "{selectedSuggestion.description}"
+                        </p>
+                      </div>
+
+                      {/* Comments */}
+                      <div className="flex-1 overflow-y-auto space-y-3">
+                        {selectedSuggestion.comments.map((comment) => (
+                          <div key={comment.id} className="bg-background/80 rounded-lg p-3 border">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-sm">{comment.author}</span>
+                              <span className="text-xs text-muted-foreground">{comment.date}</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{comment.text}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Tags and stats */}
+                      <div className="mt-4 pt-4 border-t">
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {selectedSuggestion.tags.map((tag) => (
+                            <Badge key={tag} variant="secondary" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                        
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Heart className="w-4 h-4" />
+                            {selectedSuggestion.likes}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <MessageCircle className="w-4 h-4" />
+                            {selectedSuggestion.comments.length}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs">Posted {selectedSuggestion.date}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </DialogContent>
