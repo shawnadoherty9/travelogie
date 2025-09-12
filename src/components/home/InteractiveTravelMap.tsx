@@ -350,7 +350,7 @@ const InteractiveTravelMap = () => {
         {/* Add Suggestion Dialog */}
         {tempMarker && (
           <Dialog open={isAddingPin && tempMarker !== null} onOpenChange={() => cancelAddPin()}>
-            <DialogContent className="sm:max-w-md z-[2000] bg-background border shadow-lg">
+            <DialogContent className="sm:max-w-md z-[6001] bg-background border shadow-lg">
               <DialogHeader>
                 <DialogTitle>Share Your Travel Suggestion</DialogTitle>
               </DialogHeader>
@@ -443,7 +443,7 @@ const InteractiveTravelMap = () => {
             setSelectedSuggestion(null);
             setIsEnlarged(false);
           }}>
-            <DialogContent className={`${isEnlarged ? 'max-w-4xl' : 'max-w-md'} transition-all duration-300 p-0 bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-2xl`}>
+            <DialogContent className={`${isEnlarged ? 'max-w-4xl' : 'max-w-md'} z-[6001] transition-all duration-300 p-0 bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-2xl`}>
               <DialogHeader className="sr-only">
                 <DialogTitle>Travel Suggestion Postcard</DialogTitle>
               </DialogHeader>
