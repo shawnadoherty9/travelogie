@@ -47,6 +47,7 @@ const InteractiveTravelMap = () => {
   const map = useRef<L.Map | null>(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState<TravelSuggestion | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isEnlarged, setIsEnlarged] = useState(false);
   const [isAddingPin, setIsAddingPin] = useState(false);
   const [newSuggestion, setNewSuggestion] = useState({
     title: '',
@@ -344,14 +345,22 @@ const InteractiveTravelMap = () => {
           </Dialog>
         )}
 
-        {/* Postcard Modal */}
+        {/* Modern Postcard Modal */}
         {selectedSuggestion && (
           <Dialog open={!!selectedSuggestion} onOpenChange={() => {
             setSelectedSuggestion(null);
             setIsFlipped(false);
+            setIsEnlarged(false);
           }}>
-            <DialogContent className="sm:max-w-lg p-0 overflow-hidden">
-              <div className="postcard-container relative w-full h-[500px]" style={{ perspective: '1000px' }}>
+            <DialogContent className={`p-0 overflow-hidden transition-all duration-500 ${
+              isEnlarged ? 'sm:max-w-2xl' : 'sm:max-w-sm'
+            }`}>
+              <div 
+                className={`postcard-container relative w-full transition-all duration-500 ${
+                  isEnlarged ? 'h-[600px]' : 'h-[350px]'
+                }`} 
+                style={{ perspective: '1000px' }}
+              >
                 <div 
                   className={`postcard absolute inset-0 w-full h-full transition-transform duration-700 ${isFlipped ? 'rotate-y-180' : ''}`}
                   style={{ 
@@ -359,71 +368,106 @@ const InteractiveTravelMap = () => {
                     transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
                   }}
                 >
-                  {/* Front of postcard - Image */}
+                  {/* Front of postcard - Modern Art Style */}
                   <div 
-                    className="postcard-front absolute inset-0 w-full h-full rounded-lg overflow-hidden shadow-xl"
+                    className="postcard-front absolute inset-0 w-full h-full rounded-2xl overflow-hidden shadow-2xl border"
                     style={{ backfaceVisibility: 'hidden' }}
                   >
-                    <div className="relative w-full h-full">
-                      <img 
-                        src={selectedSuggestion.image} 
-                        alt={selectedSuggestion.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
-                      
-                      {/* Close button */}
-                      <div className="absolute top-4 right-4">
+                    <div className="relative w-full h-full bg-gradient-to-br from-primary/10 via-background to-secondary/10">
+                      {/* Modern geometric background */}
+                      <div className="absolute inset-0 opacity-30">
+                        <div className="absolute top-0 left-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-0 right-0 w-40 h-40 bg-secondary/20 rounded-full blur-3xl"></div>
+                        <div className="absolute top-1/2 left-1/2 w-24 h-24 bg-accent/20 rounded-full blur-2xl transform -translate-x-1/2 -translate-y-1/2"></div>
+                      </div>
+
+                      {/* Header with close and enlarge buttons */}
+                      <div className="absolute top-3 right-3 flex gap-2 z-10">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setIsEnlarged(!isEnlarged)}
+                          className="bg-background/80 backdrop-blur-sm hover:bg-background/90"
+                        >
+                          {isEnlarged ? '⤓' : '⤢'}
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => {
                             setSelectedSuggestion(null);
                             setIsFlipped(false);
+                            setIsEnlarged(false);
                           }}
-                          className="text-white hover:bg-white/20"
+                          className="bg-background/80 backdrop-blur-sm hover:bg-background/90"
                         >
                           <X className="w-4 h-4" />
                         </Button>
                       </div>
 
-                      {/* Title and location */}
-                      <div className="absolute bottom-4 left-4 text-white">
-                        <div className="flex items-center gap-2 mb-2">
-                          <MapPin className="w-4 h-4" />
-                          <span className="text-sm opacity-90">Travel Suggestion</span>
+                      {/* Main content area */}
+                      <div className="relative z-10 p-6 h-full flex flex-col justify-between">
+                        {/* City name with modern typography */}
+                        <div className="text-center">
+                          <h2 className={`font-bold text-foreground tracking-wider uppercase ${
+                            isEnlarged ? 'text-4xl mb-2' : 'text-2xl mb-1'
+                          }`}>
+                            {selectedSuggestion.title.split(' ').slice(-2).join(' ')}
+                          </h2>
+                          <div className="h-1 w-16 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
                         </div>
-                        <h3 className="text-2xl font-bold mb-2">{selectedSuggestion.title}</h3>
-                        <div className="flex items-center gap-2">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="font-medium">{selectedSuggestion.rating || 'New'}</span>
-                          <span className="text-sm opacity-75">by {selectedSuggestion.author}</span>
+
+                        {/* Minimalist illustration placeholder */}
+                        <div className={`mx-auto ${isEnlarged ? 'w-48 h-32' : 'w-32 h-20'} relative`}>
+                          <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-secondary/30 rounded-lg transform rotate-2"></div>
+                          <div className="absolute inset-0 bg-gradient-to-br from-accent/40 to-primary/40 rounded-lg transform -rotate-1"></div>
+                          <div className="absolute inset-2 bg-background/90 rounded-lg flex items-center justify-center">
+                            <MapPin className={`text-primary ${isEnlarged ? 'w-12 h-12' : 'w-8 h-8'}`} />
+                          </div>
+                        </div>
+
+                        {/* Bottom info */}
+                        <div className="text-center space-y-2">
+                          <p className={`text-muted-foreground ${isEnlarged ? 'text-sm' : 'text-xs'}`}>
+                            {selectedSuggestion.description.substring(0, isEnlarged ? 100 : 60)}...
+                          </p>
+                          <div className="flex items-center justify-center gap-4">
+                            <div className="flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                              <span className="text-xs text-muted-foreground">{selectedSuggestion.rating || 'New'}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Heart className="w-3 h-3 text-red-400" />
+                              <span className="text-xs text-muted-foreground">{selectedSuggestion.likes}</span>
+                            </div>
+                          </div>
+                          <p className="text-xs text-muted-foreground/70">by {selectedSuggestion.author}</p>
                         </div>
                       </div>
 
-                      {/* Flip button */}
-                      <div className="absolute bottom-4 right-4">
+                      {/* Bottom action bar */}
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                         <Button
                           onClick={() => setIsFlipped(true)}
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
-                          className="text-white bg-black/30 hover:bg-black/50"
+                          className="bg-background/80 backdrop-blur-sm"
                         >
-                          <MessageCircle className="w-4 h-4 mr-1" />
-                          Read Comments
+                          <MessageCircle className="w-3 h-3 mr-1" />
+                          Comments ({selectedSuggestion.comments.length})
                         </Button>
                       </div>
 
-                      {/* Postcard stamp effect */}
-                      <div className="absolute top-2 right-2 w-12 h-12 border-2 border-dashed border-white/50 rounded flex items-center justify-center text-xs text-white/70 bg-black/20">
-                        STAMP
+                      {/* Decorative elements */}
+                      <div className="absolute top-4 left-4 w-8 h-8 border-2 border-dashed border-primary/30 rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
                       </div>
                     </div>
                   </div>
 
                   {/* Back of postcard - Comments */}
                   <div 
-                    className="postcard-back absolute inset-0 w-full h-full bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-900 rounded-lg shadow-xl"
+                    className="postcard-back absolute inset-0 w-full h-full bg-gradient-to-br from-muted/50 to-background rounded-2xl shadow-2xl border"
                     style={{ 
                       backfaceVisibility: 'hidden',
                       transform: 'rotateY(180deg)'
@@ -432,7 +476,7 @@ const InteractiveTravelMap = () => {
                     <div className="p-6 h-full flex flex-col">
                       {/* Header */}
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-foreground">Comments & Reviews</h3>
+                        <h3 className="text-lg font-bold text-foreground">Traveler Stories</h3>
                         <Button
                           onClick={() => setIsFlipped(false)}
                           variant="ghost"
@@ -443,7 +487,7 @@ const InteractiveTravelMap = () => {
                       </div>
 
                       {/* Description */}
-                      <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+                      <div className="mb-4 p-3 bg-primary/5 rounded-lg border-l-4 border-primary">
                         <p className="text-sm text-muted-foreground italic">
                           "{selectedSuggestion.description}"
                         </p>
@@ -452,9 +496,9 @@ const InteractiveTravelMap = () => {
                       {/* Comments */}
                       <div className="flex-1 overflow-y-auto space-y-3">
                         {selectedSuggestion.comments.map((comment) => (
-                          <div key={comment.id} className="bg-background/80 rounded-lg p-3 border">
+                          <div key={comment.id} className="bg-background/60 rounded-lg p-3 border border-border/50">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="font-medium text-sm">{comment.author}</span>
+                              <span className="font-medium text-sm text-foreground">{comment.author}</span>
                               <span className="text-xs text-muted-foreground">{comment.date}</span>
                             </div>
                             <p className="text-sm text-muted-foreground">{comment.text}</p>
@@ -463,26 +507,26 @@ const InteractiveTravelMap = () => {
                       </div>
 
                       {/* Tags and stats */}
-                      <div className="mt-4 pt-4 border-t">
+                      <div className="mt-4 pt-4 border-t border-border/50">
                         <div className="flex flex-wrap gap-2 mb-3">
                           {selectedSuggestion.tags.map((tag) => (
-                            <Badge key={tag} variant="secondary" className="text-xs">
+                            <Badge key={tag} variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
                               {tag}
                             </Badge>
                           ))}
                         </div>
                         
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
-                            <Heart className="w-4 h-4" />
+                            <Heart className="w-4 h-4 text-red-400" />
                             {selectedSuggestion.likes}
                           </div>
                           <div className="flex items-center gap-1">
                             <MessageCircle className="w-4 h-4" />
                             {selectedSuggestion.comments.length}
                           </div>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs">Posted {selectedSuggestion.date}</span>
+                          <div className="text-xs opacity-70">
+                            {selectedSuggestion.date}
                           </div>
                         </div>
                       </div>
