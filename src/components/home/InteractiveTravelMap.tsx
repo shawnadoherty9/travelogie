@@ -443,7 +443,7 @@ const InteractiveTravelMap = () => {
             setSelectedSuggestion(null);
             setIsEnlarged(false);
           }}>
-            <DialogContent className={`${isEnlarged ? 'max-w-4xl' : 'max-w-md'} z-[6001] transition-all duration-300 p-0 bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-2xl`}>
+            <DialogContent className={`${isEnlarged ? 'max-w-4xl' : 'max-w-md'} z-[6001] transition-all duration-300 p-0 bg-gradient-to-br from-blue-50 to-indigo-100 border-8 border-white shadow-2xl rounded-lg relative before:absolute before:inset-0 before:border-2 before:border-amber-200/30 before:rounded-lg before:pointer-events-none after:absolute after:-inset-1 after:border after:border-amber-100/20 after:rounded-xl after:pointer-events-none`}>
               <DialogHeader className="sr-only">
                 <DialogTitle>Travel Suggestion Postcard</DialogTitle>
               </DialogHeader>
