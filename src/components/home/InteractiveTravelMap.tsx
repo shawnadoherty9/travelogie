@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import './InteractiveTravelMap.css';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { MapPin, Plus, Heart, MessageCircle, Star, X } from "lucide-react";
 import { toast } from "sonner";
+
+// Fix Leaflet default marker icons
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 interface TravelSuggestion {
   id: string;
@@ -28,10 +36,7 @@ interface TravelSuggestion {
 
 const InteractiveTravelMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState<string>('');
-  const [tokenError, setTokenError] = useState<boolean>(false);
-  const [userToken, setUserToken] = useState<string>('');
+  const map = useRef<L.Map | null>(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState<TravelSuggestion | null>(null);
   const [isAddingPin, setIsAddingPin] = useState(false);
   const [newSuggestion, setNewSuggestion] = useState({
@@ -40,7 +45,8 @@ const InteractiveTravelMap = () => {
     author: '',
     tags: ''
   });
-  const [tempMarker, setTempMarker] = useState<mapboxgl.Marker | null>(null);
+  const [tempMarker, setTempMarker] = useState<L.Marker | null>(null);
+  const [suggestionMarkers, setSuggestionMarkers] = useState<L.Marker[]>([]);
 
   // Sample travel suggestions data
   const [travelSuggestions, setTravelSuggestions] = useState<TravelSuggestion[]>([
@@ -86,128 +92,46 @@ const InteractiveTravelMap = () => {
   ]);
 
   useEffect(() => {
-    // Fetch Mapbox token
-    const fetchMapboxToken = async () => {
-      try {
-        const response = await fetch('/api/get-mapbox-token');
-        const data = await response.json();
-        if (data.token) {
-          setMapboxToken(data.token);
-          setTokenError(false);
-        } else {
-          console.error('Failed to fetch Mapbox token:', data.error);
-          setTokenError(true);
-        }
-      } catch (error) {
-        console.error('Error fetching Mapbox token:', error);
-        setTokenError(true);
-      }
-    };
+    if (!mapContainer.current) return;
 
-    fetchMapboxToken();
-  }, []);
-
-  useEffect(() => {
-    const activeToken = mapboxToken || userToken;
-    if (!mapContainer.current || !activeToken) return;
-
-    // Initialize map
-    mapboxgl.accessToken = activeToken;
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      projection: 'globe',
-      zoom: 1.5,
-      center: [30, 15],
-      pitch: 45,
+    // Initialize map with OpenStreetMap
+    map.current = L.map(mapContainer.current, {
+      center: [20, 0],
+      zoom: 2,
+      zoomControl: true,
+      worldCopyJump: true
     });
 
-    // Add navigation controls
-    map.current.addControl(
-      new mapboxgl.NavigationControl({
-        visualizePitch: true,
-      }),
-      'top-right'
-    );
-
-    // Add atmosphere and fog effects
-    map.current.on('style.load', () => {
-      map.current?.setFog({
-        color: 'rgb(255, 255, 255)',
-        'high-color': 'rgb(200, 200, 225)',
-        'horizon-blend': 0.2,
-      });
-    });
-
-    // Rotation animation settings
-    const secondsPerRevolution = 240;
-    const maxSpinZoom = 5;
-    const slowSpinZoom = 3;
-    let userInteracting = false;
-    let spinEnabled = true;
-
-    function spinGlobe() {
-      if (!map.current) return;
-      
-      const zoom = map.current.getZoom();
-      if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
-        let distancePerSecond = 360 / secondsPerRevolution;
-        if (zoom > slowSpinZoom) {
-          const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
-          distancePerSecond *= zoomDif;
-        }
-        const center = map.current.getCenter();
-        center.lng -= distancePerSecond;
-        map.current.easeTo({ center, duration: 1000, easing: (n) => n });
-      }
-    }
-
-    // Event listeners for interaction
-    map.current.on('mousedown', () => {
-      userInteracting = true;
-    });
-    
-    map.current.on('dragstart', () => {
-      userInteracting = true;
-    });
-    
-    map.current.on('mouseup', () => {
-      userInteracting = false;
-      spinGlobe();
-    });
-    
-    map.current.on('touchend', () => {
-      userInteracting = false;
-      spinGlobe();
-    });
-
-    map.current.on('moveend', () => {
-      spinGlobe();
-    });
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(map.current);
 
     // Add click handler for adding new pins
     map.current.on('click', (e) => {
       if (isAddingPin && map.current) {
         // Remove previous temp marker
         if (tempMarker) {
-          tempMarker.remove();
+          map.current.removeLayer(tempMarker);
         }
 
+        // Create custom marker icon
+        const customIcon = L.divIcon({
+          className: 'custom-temp-marker',
+          html: `<div style="background-color: #FF6B6B; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        });
+
         // Add temporary marker
-        const marker = new mapboxgl.Marker({
-          color: '#FF6B6B',
-          scale: 1.2
-        })
-          .setLngLat([e.lngLat.lng, e.lngLat.lat])
-          .addTo(map.current);
+        const marker = L.marker([e.latlng.lat, e.latlng.lng], {
+          icon: customIcon
+        }).addTo(map.current);
 
         setTempMarker(marker);
       }
     });
-
-    // Start the globe spinning
-    spinGlobe();
 
     // Add existing suggestion markers
     travelSuggestions.forEach((suggestion) => {
@@ -216,30 +140,35 @@ const InteractiveTravelMap = () => {
 
     // Cleanup
     return () => {
-      map.current?.remove();
+      if (map.current) {
+        map.current.remove();
+      }
     };
-  }, [mapboxToken, userToken, travelSuggestions, isAddingPin]);
+  }, [isAddingPin, travelSuggestions]);
 
   const addSuggestionMarker = (suggestion: TravelSuggestion) => {
     if (!map.current) return;
 
-    // Create custom marker element
-    const el = document.createElement('div');
-    el.className = 'suggestion-marker';
-    el.innerHTML = `
-      <div class="w-8 h-8 bg-primary rounded-full border-2 border-white shadow-lg cursor-pointer transform transition-transform hover:scale-110 flex items-center justify-center">
-        <div class="w-4 h-4 bg-white rounded-full animate-pulse"></div>
-      </div>
-    `;
+    // Create custom marker icon
+    const customIcon = L.divIcon({
+      className: 'custom-suggestion-marker',
+      html: `<div style="background-color: hsl(var(--primary)); width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 8px; height: 8px; background-color: white; border-radius: 50%; animation: pulse 2s infinite;"></div>
+      </div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
 
-    const marker = new mapboxgl.Marker(el)
-      .setLngLat([suggestion.longitude, suggestion.latitude])
-      .addTo(map.current);
+    const marker = L.marker([suggestion.latitude, suggestion.longitude], {
+      icon: customIcon
+    }).addTo(map.current);
 
     // Add click handler to open postcard
-    el.addEventListener('click', () => {
+    marker.on('click', () => {
       setSelectedSuggestion(suggestion);
     });
+
+    setSuggestionMarkers(prev => [...prev, marker]);
   };
 
   const handleAddSuggestion = () => {
@@ -248,11 +177,11 @@ const InteractiveTravelMap = () => {
       return;
     }
 
-    const lngLat = tempMarker.getLngLat();
+    const latlng = tempMarker.getLatLng();
     const suggestion: TravelSuggestion = {
       id: Date.now().toString(),
-      latitude: lngLat.lat,
-      longitude: lngLat.lng,
+      latitude: latlng.lat,
+      longitude: latlng.lng,
       title: newSuggestion.title,
       description: newSuggestion.description,
       author: newSuggestion.author || 'Anonymous',
@@ -268,7 +197,9 @@ const InteractiveTravelMap = () => {
     // Reset form
     setNewSuggestion({ title: '', description: '', author: '', tags: '' });
     setIsAddingPin(false);
-    tempMarker.remove();
+    if (map.current && tempMarker) {
+      map.current.removeLayer(tempMarker);
+    }
     setTempMarker(null);
     
     toast.success('Travel suggestion added successfully!');
@@ -276,8 +207,8 @@ const InteractiveTravelMap = () => {
 
   const cancelAddPin = () => {
     setIsAddingPin(false);
-    if (tempMarker) {
-      tempMarker.remove();
+    if (tempMarker && map.current) {
+      map.current.removeLayer(tempMarker);
       setTempMarker(null);
     }
     setNewSuggestion({ title: '', description: '', author: '', tags: '' });
@@ -291,92 +222,46 @@ const InteractiveTravelMap = () => {
             Discover & Share Travel Gems
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Explore our interactive 3D globe to discover hidden travel gems shared by fellow adventurers.
+            Explore our interactive world map to discover hidden travel gems shared by fellow adventurers.
             Click anywhere to add your own travel suggestions!
           </p>
         </div>
 
         <div className="relative">
-          {/* Token input for fallback */}
-          {tokenError && !userToken && (
-            <Card className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
-              <div className="space-y-3">
-                <div>
-                  <h3 className="font-medium text-yellow-800 dark:text-yellow-200">Mapbox Token Required</h3>
-                  <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                    To display the interactive map, please add your Mapbox public token to Supabase Edge Function secrets, 
-                    or enter it below temporarily.
-                  </p>
-                  <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
-                    Get your token at <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="underline">mapbox.com</a>
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Enter your Mapbox public token (pk.xxxxx)"
-                    value={userToken}
-                    onChange={(e) => setUserToken(e.target.value)}
-                    className="text-xs"
-                  />
-                  <Button 
-                    onClick={() => setUserToken(userToken)}
-                    disabled={!userToken.startsWith('pk.')}
-                    size="sm"
-                  >
-                    Use Token
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          )}
-
           <Card className="overflow-hidden shadow-2xl">
             <div className="relative h-[600px] w-full">
-              {(!mapboxToken && !userToken) ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
-                  <div className="text-center space-y-3">
-                    <MapPin className="w-12 h-12 mx-auto text-muted-foreground" />
-                    <p className="text-muted-foreground">Mapbox token required to display interactive map</p>
-                  </div>
-                </div>
-              ) : (
-                <div ref={mapContainer} className="absolute inset-0" />
-              )}
+              <div ref={mapContainer} className="absolute inset-0 rounded-lg" />
               
               {/* Controls */}
-              {(mapboxToken || userToken) && (
-                <div className="absolute top-4 left-4 z-10 flex gap-2">
-                  <Button
-                    onClick={() => setIsAddingPin(!isAddingPin)}
-                    variant={isAddingPin ? "secondary" : "default"}
-                    size="sm"
-                    className="shadow-lg"
-                  >
-                    <Plus className="w-4 h-4 mr-1" />
-                    {isAddingPin ? 'Cancel' : 'Add Pin'}
-                  </Button>
-                  
-                  {isAddingPin && (
-                    <Card className="p-3 bg-background/95 backdrop-blur-sm">
-                      <p className="text-sm text-muted-foreground">
-                        Click anywhere on the map to add your travel suggestion
-                      </p>
-                    </Card>
-                  )}
-                </div>
-              )}
+              <div className="absolute top-4 left-4 z-[1000] flex gap-2">
+                <Button
+                  onClick={() => setIsAddingPin(!isAddingPin)}
+                  variant={isAddingPin ? "secondary" : "default"}
+                  size="sm"
+                  className="shadow-lg"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  {isAddingPin ? 'Cancel' : 'Add Pin'}
+                </Button>
+                
+                {isAddingPin && (
+                  <Card className="p-3 bg-background/95 backdrop-blur-sm">
+                    <p className="text-sm text-muted-foreground">
+                      Click anywhere on the map to add your travel suggestion
+                    </p>
+                  </Card>
+                )}
+              </div>
 
               {/* Legend */}
-              {(mapboxToken || userToken) && (
-                <div className="absolute bottom-4 left-4 z-10">
-                  <Card className="p-3 bg-background/95 backdrop-blur-sm">
-                    <div className="flex items-center gap-2 text-sm">
-                      <div className="w-3 h-3 bg-primary rounded-full"></div>
-                      <span>Travel Suggestions ({travelSuggestions.length})</span>
-                    </div>
-                  </Card>
-                </div>
-              )}
+              <div className="absolute bottom-4 left-4 z-[1000]">
+                <Card className="p-3 bg-background/95 backdrop-blur-sm">
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-3 h-3 bg-primary rounded-full"></div>
+                    <span>Travel Suggestions ({travelSuggestions.length})</span>
+                  </div>
+                </Card>
+              </div>
             </div>
           </Card>
         </div>
@@ -510,7 +395,6 @@ const InteractiveTravelMap = () => {
           </Dialog>
         )}
       </div>
-
     </section>
   );
 };
