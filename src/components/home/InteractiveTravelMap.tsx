@@ -294,7 +294,7 @@ const InteractiveTravelMap = () => {
         {/* Add Suggestion Dialog */}
         {tempMarker && (
           <Dialog open={isAddingPin && tempMarker !== null} onOpenChange={() => cancelAddPin()}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md z-[2000] bg-background border shadow-lg">
               <DialogHeader>
                 <DialogTitle>Share Your Travel Suggestion</DialogTitle>
               </DialogHeader>
