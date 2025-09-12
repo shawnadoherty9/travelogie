@@ -5,7 +5,7 @@ import { MapPin, Search, Globe, Calendar, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import heroImage from "@/assets/hero-travel.jpg";
-import worldMapImage from "@/assets/world-map-hero.jpg";
+import InteractiveTravelMap from "./InteractiveTravelMap";
 const HeroSection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -78,10 +78,10 @@ const HeroSection = () => {
             </div>
           </Card>
 
-          {/* Interactive World Map Teaser */}
-          <div className="relative">
-            <img src={worldMapImage} alt="Interactive world map with travel destinations" className="w-full max-w-3xl mx-auto rounded-lg travel-shadow opacity-90" />
-            <div className="absolute inset-0 flex items-center justify-center">
+          {/* Interactive Travel Map */}
+          <div className="relative h-96 rounded-lg overflow-hidden travel-shadow">
+            <InteractiveTravelMap />
+            <div className="absolute top-4 left-4 z-[5000]">
               <Button variant="wanderlust" size="lg" className="animate-pulse" onClick={handleStartJourney}>
                 <Globe className="w-6 h-6" />
                 Start Your Journey
