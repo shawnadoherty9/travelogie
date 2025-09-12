@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { MapPin, Plus, Heart, MessageCircle, Star, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { MapPin, Plus, Heart, Star, X, Upload, ThumbsUp, Calendar } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Fix Leaflet default marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -19,34 +21,23 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-interface Comment {
-  id: string;
-  author: string;
-  text: string;
-  date: string;
-  avatar?: string;
-}
-
 interface TravelSuggestion {
   id: string;
-  latitude: number;
-  longitude: number;
   title: string;
   description: string;
   author: string;
-  image: string;
-  rating: number;
-  likes: number;
-  comments: Comment[];
   tags: string[];
-  date: string;
+  latitude: number;
+  longitude: number;
+  photo_url?: string;
+  upvotes: number;
+  created_at: string;
 }
 
 const InteractiveTravelMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState<TravelSuggestion | null>(null);
-  const [isFlipped, setIsFlipped] = useState(false);
   const [isEnlarged, setIsEnlarged] = useState(false);
   const [isAddingPin, setIsAddingPin] = useState(false);
   const [newSuggestion, setNewSuggestion] = useState({
@@ -55,65 +46,34 @@ const InteractiveTravelMap = () => {
     author: '',
     tags: ''
   });
+  const [uploadedPhoto, setUploadedPhoto] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [tempMarker, setTempMarker] = useState<L.Marker | null>(null);
   const [suggestionMarkers, setSuggestionMarkers] = useState<L.Marker[]>([]);
+  const [travelSuggestions, setTravelSuggestions] = useState<TravelSuggestion[]>([]);
 
-  // Sample travel suggestions data
-  const [travelSuggestions, setTravelSuggestions] = useState<TravelSuggestion[]>([
-    {
-      id: '1',
-      latitude: 35.6762,
-      longitude: 139.6503,
-      title: 'Hidden Shrine in Shibuya',
-      description: 'A peaceful shrine tucked away behind the busy streets. Perfect for meditation and experiencing traditional Japan.',
-      author: 'Yuki T.',
-      image: '/lovable-uploads/25f8f091-7b7d-4b9a-aa2c-bffc8e9b3b68.png',
-      rating: 4.8,
-      likes: 156,
-      comments: [
-        { id: '1', author: 'Sarah K.', text: 'Amazing place! So peaceful despite being in the middle of Tokyo.', date: '1 day ago' },
-        { id: '2', author: 'Mike L.', text: 'Found this thanks to your suggestion. The traditional architecture is stunning!', date: '2 hours ago' },
-        { id: '3', author: 'Emma R.', text: 'Perfect spot for morning meditation. Thank you for sharing!', date: '30 minutes ago' }
-      ],
-      tags: ['Spiritual', 'Hidden Gem', 'Culture'],
-      date: '2 days ago'
-    },
-    {
-      id: '2',
-      latitude: 41.3851,
-      longitude: 2.1734,
-      title: 'Secret Rooftop Garden',
-      description: 'Amazing views of Sagrada Familia from this hidden rooftop garden. Local artists sell their work here on weekends.',
-      author: 'Carlos M.',
-      image: '/lovable-uploads/4f14a223-57a1-4a7d-bf9a-6bc3e17c25b9.png',
-      rating: 4.9,
-      likes: 203,
-      comments: [
-        { id: '4', author: 'Julia P.', text: 'The sunset views from here are incredible! Got some amazing photos.', date: '3 hours ago' },
-        { id: '5', author: 'David S.', text: 'Met some amazing local artists here. Bought a beautiful painting of the city.', date: '1 day ago' }
-      ],
-      tags: ['Views', 'Art', 'Local'],
-      date: '1 week ago'
-    },
-    {
-      id: '3',
-      latitude: 25.2048,
-      longitude: 82.9454,
-      title: 'Dawn Yoga by the Ganges',
-      description: 'Join locals for sunrise yoga sessions by the holy river. Life-changing spiritual experience.',
-      author: 'Priya S.',
-      image: '/assets/varanasi-temples.jpg',
-      rating: 5.0,
-      likes: 289,
-      comments: [
-        { id: '6', author: 'Alex M.', text: 'Most spiritual experience of my life. The energy here at sunrise is indescribable.', date: '2 days ago' },
-        { id: '7', author: 'Lisa W.', text: 'The yoga instructor was amazing and so welcoming to visitors. Highly recommend!', date: '4 hours ago' },
-        { id: '8', author: 'Tom B.', text: 'Changed my perspective on travel. This is what authentic cultural exchange looks like.', date: '1 hour ago' }
-      ],
-      tags: ['Spiritual', 'Wellness', 'Local'],
-      date: '3 days ago'
+  // Load travel suggestions from database
+  useEffect(() => {
+    loadTravelSuggestions();
+  }, []);
+
+  const loadTravelSuggestions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('travel_suggestions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading travel suggestions:', error);
+        return;
+      }
+
+      setTravelSuggestions(data || []);
+    } catch (error) {
+      console.error('Error loading travel suggestions:', error);
     }
-  ]);
+  };
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -157,77 +117,140 @@ const InteractiveTravelMap = () => {
       }
     });
 
-    // Add existing suggestion markers
-    travelSuggestions.forEach((suggestion) => {
-      addSuggestionMarker(suggestion);
-    });
-
     // Cleanup
     return () => {
       if (map.current) {
         map.current.remove();
       }
     };
-  }, [isAddingPin, travelSuggestions]);
+  }, [isAddingPin]);
 
-  const addSuggestionMarker = (suggestion: TravelSuggestion) => {
+  // Add suggestion markers when suggestions change
+  useEffect(() => {
     if (!map.current) return;
 
-    // Create custom marker icon
-    const customIcon = L.divIcon({
-      className: 'custom-suggestion-marker',
-      html: `<div style="background-color: hsl(var(--primary)); width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center;">
-        <div style="width: 8px; height: 8px; background-color: white; border-radius: 50%; animation: pulse 2s infinite;"></div>
-      </div>`,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
+    // Clear existing markers
+    suggestionMarkers.forEach(marker => {
+      map.current?.removeLayer(marker);
+    });
+    setSuggestionMarkers([]);
+
+    // Add new markers
+    const newMarkers: L.Marker[] = [];
+    travelSuggestions.forEach((suggestion) => {
+      const customIcon = L.divIcon({
+        className: 'custom-suggestion-marker',
+        html: `<div style="background-color: hsl(var(--primary)); width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <div style="width: 8px; height: 8px; background-color: white; border-radius: 50%; animation: pulse 2s infinite;"></div>
+        </div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+
+      const marker = L.marker([suggestion.latitude, suggestion.longitude], {
+        icon: customIcon
+      }).addTo(map.current!);
+
+      // Add click handler to open postcard
+      marker.on('click', () => {
+        setSelectedSuggestion(suggestion);
+      });
+
+      newMarkers.push(marker);
     });
 
-    const marker = L.marker([suggestion.latitude, suggestion.longitude], {
-      icon: customIcon
-    }).addTo(map.current);
+    setSuggestionMarkers(newMarkers);
+  }, [travelSuggestions]);
 
-    // Add click handler to open postcard
-    marker.on('click', () => {
-      setSelectedSuggestion(suggestion);
-    });
+  const handlePhotoUpload = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('travel-photos')
+        .upload(fileName, file);
 
-    setSuggestionMarkers(prev => [...prev, marker]);
+      if (uploadError) {
+        console.error('Error uploading photo:', uploadError);
+        return null;
+      }
+
+      const { data } = supabase.storage
+        .from('travel-photos')
+        .getPublicUrl(fileName);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      return null;
+    }
   };
 
-  const handleAddSuggestion = () => {
+  const handleAddSuggestion = async () => {
     if (!tempMarker || !newSuggestion.title || !newSuggestion.description) {
       toast.error('Please fill in all required fields');
       return;
     }
 
-    const latlng = tempMarker.getLatLng();
-    const suggestion: TravelSuggestion = {
-      id: Date.now().toString(),
-      latitude: latlng.lat,
-      longitude: latlng.lng,
-      title: newSuggestion.title,
-      description: newSuggestion.description,
-      author: newSuggestion.author || 'Anonymous',
-      image: '/assets/hero-travel.jpg', // Default image
-      rating: 0,
-      likes: 0,
-      comments: [],
-      tags: newSuggestion.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      date: 'Just now'
-    };
+    setUploading(true);
 
-    setTravelSuggestions([...travelSuggestions, suggestion]);
-    
-    // Reset form
-    setNewSuggestion({ title: '', description: '', author: '', tags: '' });
-    setIsAddingPin(false);
-    if (map.current && tempMarker) {
-      map.current.removeLayer(tempMarker);
+    try {
+      let photoUrl = null;
+      
+      // Upload photo if provided
+      if (uploadedPhoto) {
+        photoUrl = await handlePhotoUpload(uploadedPhoto);
+        if (!photoUrl) {
+          toast.error('Error uploading photo. Please try again.');
+          setUploading(false);
+          return;
+        }
+      }
+
+      const latlng = tempMarker.getLatLng();
+
+      // Insert suggestion into database
+      const { data, error } = await supabase
+        .from('travel_suggestions')
+        .insert({
+          title: newSuggestion.title,
+          description: newSuggestion.description,
+          author: newSuggestion.author || 'Anonymous',
+          tags: newSuggestion.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+          latitude: latlng.lat,
+          longitude: latlng.lng,
+          photo_url: photoUrl,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error adding suggestion:', error);
+        toast.error('Error adding suggestion. Please try again.');
+        setUploading(false);
+        return;
+      }
+
+      // Add to local state
+      setTravelSuggestions([data, ...travelSuggestions]);
+      
+      // Reset form
+      setNewSuggestion({ title: '', description: '', author: '', tags: '' });
+      setUploadedPhoto(null);
+      setIsAddingPin(false);
+      if (map.current && tempMarker) {
+        map.current.removeLayer(tempMarker);
+      }
+      setTempMarker(null);
+      
+      toast.success('Travel suggestion added successfully!');
+    } catch (error) {
+      console.error('Error adding suggestion:', error);
+      toast.error('Error adding suggestion. Please try again.');
+    } finally {
+      setUploading(false);
     }
-    setTempMarker(null);
-    
-    toast.success('Travel suggestion added successfully!');
   };
 
   const cancelAddPin = () => {
@@ -237,6 +260,39 @@ const InteractiveTravelMap = () => {
       setTempMarker(null);
     }
     setNewSuggestion({ title: '', description: '', author: '', tags: '' });
+    setUploadedPhoto(null);
+  };
+
+  const handleUpvote = async (suggestionId: string) => {
+    try {
+      const userIp = 'user-' + Date.now(); // In a real app, you'd get the actual IP
+      
+      const { data, error } = await supabase.rpc('increment_suggestion_upvotes', {
+        suggestion_id: suggestionId,
+        user_ip: userIp
+      });
+
+      if (error) {
+        console.error('Error upvoting:', error);
+        return;
+      }
+
+      // Type assertion for the RPC response
+      const result = data as { upvotes: number };
+
+      // Update local state
+      setTravelSuggestions(suggestions => 
+        suggestions.map(s => 
+          s.id === suggestionId 
+            ? { ...s, upvotes: result.upvotes }
+            : s
+        )
+      );
+
+      toast.success('Thanks for your upvote!');
+    } catch (error) {
+      console.error('Error upvoting:', error);
+    }
   };
 
   return (
@@ -332,11 +388,47 @@ const InteractiveTravelMap = () => {
                     onChange={(e) => setNewSuggestion({...newSuggestion, tags: e.target.value})}
                   />
                 </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Photo (optional)</label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                    {uploadedPhoto ? (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">{uploadedPhoto.name}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUploadedPhoto(null)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer flex flex-col items-center gap-2">
+                        <Upload className="h-8 w-8 text-gray-400" />
+                        <span className="text-sm text-gray-600">Click to upload a photo</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) setUploadedPhoto(file);
+                          }}
+                        />
+                      </label>
+                    )}
+                  </div>
+                </div>
                 <div className="flex gap-2 pt-4">
-                  <Button onClick={handleAddSuggestion} className="flex-1">
-                    Add Suggestion
+                  <Button 
+                    onClick={handleAddSuggestion} 
+                    className="flex-1"
+                    disabled={uploading}
+                  >
+                    {uploading ? 'Adding...' : 'Add Suggestion'}
                   </Button>
-                  <Button onClick={cancelAddPin} variant="outline">
+                  <Button onClick={cancelAddPin} variant="outline" disabled={uploading}>
                     Cancel
                   </Button>
                 </div>
@@ -349,190 +441,125 @@ const InteractiveTravelMap = () => {
         {selectedSuggestion && (
           <Dialog open={!!selectedSuggestion} onOpenChange={() => {
             setSelectedSuggestion(null);
-            setIsFlipped(false);
             setIsEnlarged(false);
           }}>
-            <DialogContent className={`p-0 overflow-hidden transition-all duration-500 ${
-              isEnlarged ? 'sm:max-w-2xl' : 'sm:max-w-sm'
-            }`}>
+            <DialogContent className={`${isEnlarged ? 'max-w-4xl' : 'max-w-md'} transition-all duration-300 p-0 bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-2xl`}>
               <DialogHeader className="sr-only">
-                <DialogTitle>Travel Postcard</DialogTitle>
+                <DialogTitle>Travel Suggestion Postcard</DialogTitle>
               </DialogHeader>
-              <div 
-                className={`postcard-container relative w-full transition-all duration-500 ${
-                  isEnlarged ? 'h-[600px]' : 'h-[350px]'
-                }`} 
-                style={{ perspective: '1000px' }}
-              >
-                <div 
-                  className={`postcard absolute inset-0 w-full h-full transition-transform duration-700 ${isFlipped ? 'rotate-y-180' : ''}`}
-                  style={{ 
-                    transformStyle: 'preserve-3d',
-                    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
-                  }}
-                >
-                  {/* Front of postcard - Modern Art Style */}
-                  <div 
-                    className="postcard-front absolute inset-0 w-full h-full rounded-2xl overflow-hidden shadow-2xl border"
-                    style={{ backfaceVisibility: 'hidden' }}
-                  >
-                    <div className="relative w-full h-full bg-gradient-to-br from-primary/10 via-background to-secondary/10">
-                      {/* Modern geometric background */}
-                      <div className="absolute inset-0 opacity-30">
-                        <div className="absolute top-0 left-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl"></div>
-                        <div className="absolute bottom-0 right-0 w-40 h-40 bg-secondary/20 rounded-full blur-3xl"></div>
-                        <div className="absolute top-1/2 left-1/2 w-24 h-24 bg-accent/20 rounded-full blur-2xl transform -translate-x-1/2 -translate-y-1/2"></div>
-                      </div>
-
-                      {/* Header with close and enlarge buttons */}
-                      <div className="absolute top-3 right-3 flex gap-2 z-10">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setIsEnlarged(!isEnlarged)}
-                          className="bg-background/80 backdrop-blur-sm hover:bg-background/90"
-                        >
-                          {isEnlarged ? '⤓' : '⤢'}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedSuggestion(null);
-                            setIsFlipped(false);
-                            setIsEnlarged(false);
-                          }}
-                          className="bg-background/80 backdrop-blur-sm hover:bg-background/90"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-
-                      {/* Main content area */}
-                      <div className="relative z-10 p-6 h-full flex flex-col justify-between">
-                        {/* City name with modern typography */}
-                        <div className="text-center">
-                          <h2 className={`font-bold text-foreground tracking-wider uppercase ${
-                            isEnlarged ? 'text-4xl mb-2' : 'text-2xl mb-1'
-                          }`}>
-                            {selectedSuggestion.title.split(' ').slice(-2).join(' ')}
-                          </h2>
-                          <div className="h-1 w-16 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
-                        </div>
-
-                        {/* Minimalist illustration placeholder */}
-                        <div className={`mx-auto ${isEnlarged ? 'w-48 h-32' : 'w-32 h-20'} relative`}>
-                          <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-secondary/30 rounded-lg transform rotate-2"></div>
-                          <div className="absolute inset-0 bg-gradient-to-br from-accent/40 to-primary/40 rounded-lg transform -rotate-1"></div>
-                          <div className="absolute inset-2 bg-background/90 rounded-lg flex items-center justify-center">
-                            <MapPin className={`text-primary ${isEnlarged ? 'w-12 h-12' : 'w-8 h-8'}`} />
-                          </div>
-                        </div>
-
-                        {/* Bottom info */}
-                        <div className="text-center space-y-2">
-                          <p className={`text-muted-foreground ${isEnlarged ? 'text-sm' : 'text-xs'}`}>
-                            {selectedSuggestion.description.substring(0, isEnlarged ? 100 : 60)}...
-                          </p>
-                          <div className="flex items-center justify-center gap-4">
-                            <div className="flex items-center gap-1">
-                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                              <span className="text-xs text-muted-foreground">{selectedSuggestion.rating || 'New'}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Heart className="w-3 h-3 text-red-400" />
-                              <span className="text-xs text-muted-foreground">{selectedSuggestion.likes}</span>
-                            </div>
-                          </div>
-                          <p className="text-xs text-muted-foreground/70">by {selectedSuggestion.author}</p>
-                        </div>
-                      </div>
-
-                      {/* Bottom action bar */}
-                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                        <Button
-                          onClick={() => setIsFlipped(true)}
-                          variant="outline"
-                          size="sm"
-                          className="bg-background/80 backdrop-blur-sm"
-                        >
-                          <MessageCircle className="w-3 h-3 mr-1" />
-                          Comments ({selectedSuggestion.comments.length})
-                        </Button>
-                      </div>
-
-                      {/* Decorative elements */}
-                      <div className="absolute top-4 left-4 w-8 h-8 border-2 border-dashed border-primary/30 rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      </div>
+              
+              <div className="relative overflow-hidden rounded-lg">
+                {/* Postcard Header with geometric pattern */}
+                <div className={`${selectedSuggestion.photo_url ? 'h-48' : 'h-32'} bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 relative overflow-hidden`}>
+                  {selectedSuggestion.photo_url && (
+                    <img 
+                      src={selectedSuggestion.photo_url} 
+                      alt={selectedSuggestion.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-black/20"></div>
+                  <div className="absolute top-4 right-4 flex gap-2">
+                    <Button
+                      onClick={() => setIsEnlarged(!isEnlarged)}
+                      variant="secondary"
+                      size="sm"
+                      className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                    >
+                      {isEnlarged ? 'Minimize' : 'Enlarge'}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setSelectedSuggestion(null);
+                        setIsEnlarged(false);
+                      }}
+                      variant="secondary"
+                      size="sm"
+                      className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  {/* Geometric art elements */}
+                  {!selectedSuggestion.photo_url && (
+                    <div className="absolute inset-0">
+                      <div className="absolute top-2 left-4 w-16 h-16 border-2 border-white/30 rotate-45"></div>
+                      <div className="absolute bottom-2 right-8 w-12 h-12 bg-white/20 rounded-full"></div>
+                      <div className="absolute top-8 right-16 w-8 h-8 bg-white/25 transform rotate-12"></div>
+                    </div>
+                  )}
+                  
+                  <div className="absolute bottom-4 left-6">
+                    <h2 className="text-2xl font-bold text-white drop-shadow-lg">
+                      {selectedSuggestion.title}
+                    </h2>
+                  </div>
+                </div>
+                
+                {/* Postcard Content */}
+                <div className="p-6 bg-white">
+                  <div className="flex items-start gap-4 mb-4">
+                    <Avatar className="w-12 h-12 border-2 border-gray-200">
+                      <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white font-semibold">
+                        {selectedSuggestion.author.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{selectedSuggestion.author}</p>
+                      <p className="text-sm text-gray-500">Travel Explorer</p>
+                    </div>
+                    <div className="flex items-center gap-1 text-blue-600">
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-xs font-medium">
+                        {selectedSuggestion.latitude.toFixed(4)}, {selectedSuggestion.longitude.toFixed(4)}
+                      </span>
                     </div>
                   </div>
-
-                  {/* Back of postcard - Comments */}
-                  <div 
-                    className="postcard-back absolute inset-0 w-full h-full bg-gradient-to-br from-muted/50 to-background rounded-2xl shadow-2xl border"
-                    style={{ 
-                      backfaceVisibility: 'hidden',
-                      transform: 'rotateY(180deg)'
-                    }}
-                  >
-                    <div className="p-6 h-full flex flex-col">
-                      {/* Header */}
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-foreground">Traveler Stories</h3>
-                        <Button
-                          onClick={() => setIsFlipped(false)}
-                          variant="ghost"
-                          size="sm"
+                  
+                  <p className="text-gray-700 leading-relaxed mb-4">
+                    {selectedSuggestion.description}
+                  </p>
+                  
+                  {selectedSuggestion.tags && selectedSuggestion.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {selectedSuggestion.tags.map((tag, index) => (
+                        <Badge 
+                          key={index} 
+                          variant="secondary" 
+                          className="bg-blue-50 text-blue-700 border-blue-200"
                         >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-
-                      {/* Description */}
-                      <div className="mb-4 p-3 bg-primary/5 rounded-lg border-l-4 border-primary">
-                        <p className="text-sm text-muted-foreground italic">
-                          "{selectedSuggestion.description}"
-                        </p>
-                      </div>
-
-                      {/* Comments */}
-                      <div className="flex-1 overflow-y-auto space-y-3">
-                        {selectedSuggestion.comments.map((comment) => (
-                          <div key={comment.id} className="bg-background/60 rounded-lg p-3 border border-border/50">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-medium text-sm text-foreground">{comment.author}</span>
-                              <span className="text-xs text-muted-foreground">{comment.date}</span>
-                            </div>
-                            <p className="text-sm text-muted-foreground">{comment.text}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Tags and stats */}
-                      <div className="mt-4 pt-4 border-t border-border/50">
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {selectedSuggestion.tags.map((tag) => (
-                            <Badge key={tag} variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                        
-                        <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Heart className="w-4 h-4 text-red-400" />
-                            {selectedSuggestion.likes}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <MessageCircle className="w-4 h-4" />
-                            {selectedSuggestion.comments.length}
-                          </div>
-                          <div className="text-xs opacity-70">
-                            {selectedSuggestion.date}
-                          </div>
-                        </div>
-                      </div>
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <Calendar className="w-4 h-4" />
+                      <span className="text-sm">
+                        {new Date(selectedSuggestion.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-blue-600 hover:bg-blue-50"
+                        onClick={() => handleUpvote(selectedSuggestion.id)}
+                      >
+                        <ThumbsUp className="w-4 h-4 mr-1" />
+                        {selectedSuggestion.upvotes || 0}
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-red-500 hover:bg-red-50"
+                      >
+                        <Heart className="w-4 h-4 mr-1" />
+                        Love
+                      </Button>
                     </div>
                   </div>
                 </div>

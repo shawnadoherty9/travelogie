@@ -1079,6 +1079,77 @@ export type Database = {
         }
         Relationships: []
       }
+      travel_suggestion_upvotes: {
+        Row: {
+          created_at: string
+          id: string
+          suggestion_id: string
+          user_ip: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          suggestion_id: string
+          user_ip: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          suggestion_id?: string
+          user_ip?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "travel_suggestion_upvotes_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "travel_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      travel_suggestions: {
+        Row: {
+          author: string | null
+          created_at: string
+          description: string
+          id: string
+          latitude: number
+          longitude: number
+          photo_url: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          upvotes: number | null
+        }
+        Insert: {
+          author?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          latitude: number
+          longitude: number
+          photo_url?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          upvotes?: number | null
+        }
+        Update: {
+          author?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          latitude?: number
+          longitude?: number
+          photo_url?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          upvotes?: number | null
+        }
+        Relationships: []
+      }
       user_languages: {
         Row: {
           created_at: string
@@ -1242,6 +1313,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_suggestion_upvotes: {
+        Args: { suggestion_id: string; user_ip: string }
+        Returns: Json
       }
     }
     Enums: {
