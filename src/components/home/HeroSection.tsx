@@ -2,9 +2,34 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { MapPin, Search, Globe, Calendar, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import heroImage from "@/assets/hero-travel.jpg";
 import worldMapImage from "@/assets/world-map-hero.jpg";
 const HeroSection = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleExploreMap = () => {
+    navigate("/destinations");
+  };
+
+  const handleBookExperience = () => {
+    navigate("/experiences");
+  };
+
+  const handleMeetLocals = () => {
+    navigate("/tours");
+  };
+
+  const handleStartJourney = () => {
+    if (user) {
+      navigate("/dashboard");
+    } else {
+      navigate("/auth");
+    }
+  };
+
   return <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
@@ -37,15 +62,15 @@ const HeroSection = () => {
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button variant="journey" className="h-12">
+                <Button variant="journey" className="h-12" onClick={handleExploreMap}>
                   <MapPin className="w-5 h-5" />
                   Explore Map
                 </Button>
-                <Button variant="cultural" className="h-12">
+                <Button variant="cultural" className="h-12" onClick={handleBookExperience}>
                   <Calendar className="w-5 h-5" />
                   Book Experience
                 </Button>
-                <Button variant="explorer" className="h-12">
+                <Button variant="explorer" className="h-12" onClick={handleMeetLocals}>
                   <Users className="w-5 h-5" />
                   Meet Locals
                 </Button>
@@ -57,7 +82,7 @@ const HeroSection = () => {
           <div className="relative">
             <img src={worldMapImage} alt="Interactive world map with travel destinations" className="w-full max-w-3xl mx-auto rounded-lg travel-shadow opacity-90" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <Button variant="wanderlust" size="lg" className="animate-pulse">
+              <Button variant="wanderlust" size="lg" className="animate-pulse" onClick={handleStartJourney}>
                 <Globe className="w-6 h-6" />
                 Start Your Journey
               </Button>
