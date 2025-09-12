@@ -30,6 +30,8 @@ const InteractiveTravelMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState<string>('');
+  const [tokenError, setTokenError] = useState<boolean>(false);
+  const [userToken, setUserToken] = useState<string>('');
   const [selectedSuggestion, setSelectedSuggestion] = useState<TravelSuggestion | null>(null);
   const [isAddingPin, setIsAddingPin] = useState(false);
   const [newSuggestion, setNewSuggestion] = useState({
@@ -91,11 +93,14 @@ const InteractiveTravelMap = () => {
         const data = await response.json();
         if (data.token) {
           setMapboxToken(data.token);
+          setTokenError(false);
         } else {
           console.error('Failed to fetch Mapbox token:', data.error);
+          setTokenError(true);
         }
       } catch (error) {
         console.error('Error fetching Mapbox token:', error);
+        setTokenError(true);
       }
     };
 
@@ -103,10 +108,11 @@ const InteractiveTravelMap = () => {
   }, []);
 
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken) return;
+    const activeToken = mapboxToken || userToken;
+    if (!mapContainer.current || !activeToken) return;
 
     // Initialize map
-    mapboxgl.accessToken = mapboxToken;
+    mapboxgl.accessToken = activeToken;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -212,7 +218,7 @@ const InteractiveTravelMap = () => {
     return () => {
       map.current?.remove();
     };
-  }, [mapboxToken, travelSuggestions, isAddingPin]);
+  }, [mapboxToken, userToken, travelSuggestions, isAddingPin]);
 
   const addSuggestionMarker = (suggestion: TravelSuggestion) => {
     if (!map.current) return;
@@ -291,40 +297,86 @@ const InteractiveTravelMap = () => {
         </div>
 
         <div className="relative">
+          {/* Token input for fallback */}
+          {tokenError && !userToken && (
+            <Card className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+              <div className="space-y-3">
+                <div>
+                  <h3 className="font-medium text-yellow-800 dark:text-yellow-200">Mapbox Token Required</h3>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                    To display the interactive map, please add your Mapbox public token to Supabase Edge Function secrets, 
+                    or enter it below temporarily.
+                  </p>
+                  <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                    Get your token at <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="underline">mapbox.com</a>
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Enter your Mapbox public token (pk.xxxxx)"
+                    value={userToken}
+                    onChange={(e) => setUserToken(e.target.value)}
+                    className="text-xs"
+                  />
+                  <Button 
+                    onClick={() => setUserToken(userToken)}
+                    disabled={!userToken.startsWith('pk.')}
+                    size="sm"
+                  >
+                    Use Token
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          )}
+
           <Card className="overflow-hidden shadow-2xl">
             <div className="relative h-[600px] w-full">
-              <div ref={mapContainer} className="absolute inset-0" />
+              {(!mapboxToken && !userToken) ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
+                  <div className="text-center space-y-3">
+                    <MapPin className="w-12 h-12 mx-auto text-muted-foreground" />
+                    <p className="text-muted-foreground">Mapbox token required to display interactive map</p>
+                  </div>
+                </div>
+              ) : (
+                <div ref={mapContainer} className="absolute inset-0" />
+              )}
               
               {/* Controls */}
-              <div className="absolute top-4 left-4 z-10 flex gap-2">
-                <Button
-                  onClick={() => setIsAddingPin(!isAddingPin)}
-                  variant={isAddingPin ? "secondary" : "default"}
-                  size="sm"
-                  className="shadow-lg"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  {isAddingPin ? 'Cancel' : 'Add Pin'}
-                </Button>
-                
-                {isAddingPin && (
-                  <Card className="p-3 bg-background/95 backdrop-blur-sm">
-                    <p className="text-sm text-muted-foreground">
-                      Click anywhere on the map to add your travel suggestion
-                    </p>
-                  </Card>
-                )}
-              </div>
+              {(mapboxToken || userToken) && (
+                <div className="absolute top-4 left-4 z-10 flex gap-2">
+                  <Button
+                    onClick={() => setIsAddingPin(!isAddingPin)}
+                    variant={isAddingPin ? "secondary" : "default"}
+                    size="sm"
+                    className="shadow-lg"
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    {isAddingPin ? 'Cancel' : 'Add Pin'}
+                  </Button>
+                  
+                  {isAddingPin && (
+                    <Card className="p-3 bg-background/95 backdrop-blur-sm">
+                      <p className="text-sm text-muted-foreground">
+                        Click anywhere on the map to add your travel suggestion
+                      </p>
+                    </Card>
+                  )}
+                </div>
+              )}
 
               {/* Legend */}
-              <div className="absolute bottom-4 left-4 z-10">
-                <Card className="p-3 bg-background/95 backdrop-blur-sm">
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-3 h-3 bg-primary rounded-full"></div>
-                    <span>Travel Suggestions ({travelSuggestions.length})</span>
-                  </div>
-                </Card>
-              </div>
+              {(mapboxToken || userToken) && (
+                <div className="absolute bottom-4 left-4 z-10">
+                  <Card className="p-3 bg-background/95 backdrop-blur-sm">
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-3 h-3 bg-primary rounded-full"></div>
+                      <span>Travel Suggestions ({travelSuggestions.length})</span>
+                    </div>
+                  </Card>
+                </div>
+              )}
             </div>
           </Card>
         </div>
