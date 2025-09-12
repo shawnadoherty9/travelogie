@@ -355,6 +355,9 @@ const InteractiveTravelMap = () => {
             <DialogContent className={`p-0 overflow-hidden transition-all duration-500 ${
               isEnlarged ? 'sm:max-w-2xl' : 'sm:max-w-sm'
             }`}>
+              <DialogHeader className="sr-only">
+                <DialogTitle>Travel Postcard</DialogTitle>
+              </DialogHeader>
               <div 
                 className={`postcard-container relative w-full transition-all duration-500 ${
                   isEnlarged ? 'h-[600px]' : 'h-[350px]'
