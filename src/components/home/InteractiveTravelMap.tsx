@@ -12,6 +12,7 @@ import { MapPin, Plus, Heart, Star, X, Upload, ThumbsUp, Calendar, Globe, Search
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import heroImage from "@/assets/hero-travel.jpg";
 
 // Fix Leaflet default marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -297,6 +298,12 @@ const InteractiveTravelMap = () => {
 
   return (
     <section className="relative min-h-screen">
+      {/* Hero Background */}
+      <div className="absolute inset-0">
+        <img src={heroImage} alt="Cultural travel experiences around the world" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-200/40 via-amber-300/60 to-orange-200/80" />
+      </div>
+
       {/* Full Background Map */}
       <div className="absolute inset-0">
         <div ref={mapContainer} className="w-full h-full" />
@@ -318,15 +325,15 @@ const InteractiveTravelMap = () => {
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button variant="wanderlust" className="h-14 flex flex-col items-center gap-2">
+                <Button variant="journey" className="h-14 flex flex-col items-center gap-2">
                   <Compass className="w-6 h-6" />
                   <span>Find Tours</span>
                 </Button>
-                <Button variant="wanderlust" className="h-14 flex flex-col items-center gap-2">
+                <Button variant="cultural" className="h-14 flex flex-col items-center gap-2">
                   <MessageSquare className="w-6 h-6" />
                   <span>Learn Languages</span>
                 </Button>
-                <Button variant="wanderlust" className="h-14 flex flex-col items-center gap-2">
+                <Button variant="explorer" className="h-14 flex flex-col items-center gap-2">
                   <Calendar className="w-6 h-6" />
                   <span>Book Experiences</span>
                 </Button>
