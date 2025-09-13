@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { MapPin, Search, Globe, Calendar, Users } from "lucide-react";
+import { MapPin, Search, Globe, Calendar, Users, Compass, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import heroImage from "@/assets/hero-travel.jpg";
@@ -49,34 +49,17 @@ const HeroSection = () => {
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">Connect with locals for personalized tours, language lessons, and cultural authentic experiences that transform travelers into storytellers.</p>
           </div>
 
-          {/* Search Interface */}
-          <Card className="p-6 bg-background/95 backdrop-blur-sm border-travel-ocean/20 travel-shadow">
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-foreground">Where do you want to explore?</h3>
-              
-              {/* Search Bar */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                <Input placeholder="Search destinations, experiences, or locals..." className="pl-10 h-12 text-lg border-travel-ocean/30 focus:border-travel-ocean" />
-              </div>
-
-              {/* Quick Actions */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button variant="journey" className="h-12" onClick={handleExploreMap}>
-                  <MapPin className="w-5 h-5" />
-                  Explore Map
-                </Button>
-                <Button variant="cultural" className="h-12" onClick={handleBookExperience}>
-                  <Calendar className="w-5 h-5" />
-                  Book Experience
-                </Button>
-                <Button variant="explorer" className="h-12" onClick={handleMeetLocals}>
-                  <Users className="w-5 h-5" />
-                  Meet Locals
-                </Button>
-              </div>
+          <div className="text-center mb-16">
+            <div className="bg-background/90 backdrop-blur-sm rounded-lg p-8 border border-travel-ocean/20 travel-shadow inline-block">
+              <h2 className="text-4xl font-bold text-foreground mb-4">
+                Discover & Share Travel Gems
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Explore our interactive world map to discover hidden travel gems shared by fellow adventurers.
+                Click anywhere to add your own travel suggestions!
+              </p>
             </div>
-          </Card>
+          </div>
 
           {/* Interactive Travel Map */}
           <div className="relative h-96 rounded-lg overflow-hidden travel-shadow">

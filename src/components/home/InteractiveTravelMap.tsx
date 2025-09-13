@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MapPin, Plus, Heart, Star, X, Upload, ThumbsUp, Calendar, Globe } from "lucide-react";
+import { MapPin, Plus, Heart, Star, X, Upload, ThumbsUp, Calendar, Globe, Search, Compass, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -305,17 +305,34 @@ const InteractiveTravelMap = () => {
       {/* Content Overlay */}
       <div className="relative z-[1000] py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="bg-background/90 backdrop-blur-sm rounded-lg p-8 border border-travel-ocean/20 travel-shadow inline-block">
-              <h2 className="text-4xl font-bold text-foreground mb-4">
-                Discover & Share Travel Gems
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Explore our interactive world map to discover hidden travel gems shared by fellow adventurers.
-                Click anywhere to add your own travel suggestions!
-              </p>
+          {/* Search Interface */}
+          <Card className="p-6 bg-background/95 backdrop-blur-sm border-travel-ocean/20 travel-shadow">
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-foreground">Where do you want to explore?</h3>
+              
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                <Input placeholder="Search destinations, experiences, or locals..." className="pl-10 h-12 text-lg border-travel-ocean/30 focus:border-travel-ocean" />
+              </div>
+
+              {/* Quick Actions */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Button variant="wanderlust" className="h-14 flex flex-col items-center gap-2">
+                  <Compass className="w-6 h-6" />
+                  <span>Find Tours</span>
+                </Button>
+                <Button variant="wanderlust" className="h-14 flex flex-col items-center gap-2">
+                  <MessageSquare className="w-6 h-6" />
+                  <span>Learn Languages</span>
+                </Button>
+                <Button variant="wanderlust" className="h-14 flex flex-col items-center gap-2">
+                  <Calendar className="w-6 h-6" />
+                  <span>Book Experiences</span>
+                </Button>
+              </div>
             </div>
-          </div>
+          </Card>
 
           {/* Controls */}
           <div className="flex justify-center gap-2 mb-8">
