@@ -82,9 +82,13 @@ const HeroSection = () => {
           <div className="relative h-96 rounded-lg overflow-hidden travel-shadow">
             <InteractiveTravelMap />
             <div className="absolute top-4 left-4 z-[5000]">
-              <Button variant="wanderlust" size="lg" className="animate-pulse" onClick={handleStartJourney}>
-                <Globe className="w-6 h-6" />
-                Start Your Journey
+              <Button 
+                variant="default" 
+                size="lg" 
+                className="animate-pulse bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <MapPin className="w-6 h-6" />
+                Add Your Pin
               </Button>
             </div>
           </div>

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MapPin, Plus, Heart, Star, X, Upload, ThumbsUp, Calendar } from "lucide-react";
+import { MapPin, Plus, Heart, Star, X, Upload, ThumbsUp, Calendar, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -320,13 +320,12 @@ const InteractiveTravelMap = () => {
           {/* Controls */}
           <div className="flex justify-center gap-2 mb-8">
             <Button
-              onClick={() => setIsAddingPin(!isAddingPin)}
-              variant={isAddingPin ? "secondary" : "default"}
-              size="sm"
+              variant="wanderlust"
+              size="lg"
               className="bg-background/90 backdrop-blur-sm shadow-lg"
             >
-              <Plus className="w-4 h-4 mr-1" />
-              {isAddingPin ? 'Cancel' : 'Add Pin'}
+              <Globe className="w-6 h-6" />
+              Start Your Journey
             </Button>
             
             {isAddingPin && (
