@@ -296,56 +296,59 @@ const InteractiveTravelMap = () => {
   };
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-br from-background via-background/80 to-primary/5">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            Discover & Share Travel Gems
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Explore our interactive world map to discover hidden travel gems shared by fellow adventurers.
-            Click anywhere to add your own travel suggestions!
-          </p>
-        </div>
-
-        <div className="relative">
-          <Card className="overflow-hidden shadow-2xl">
-            <div className="relative h-[600px] w-full">
-              <div ref={mapContainer} className="absolute inset-0 rounded-lg" />
-              
-              {/* Controls */}
-              <div className="absolute top-4 left-4 z-[1000] flex gap-2">
-                <Button
-                  onClick={() => setIsAddingPin(!isAddingPin)}
-                  variant={isAddingPin ? "secondary" : "default"}
-                  size="sm"
-                  className="shadow-lg"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  {isAddingPin ? 'Cancel' : 'Add Pin'}
-                </Button>
-                
-                {isAddingPin && (
-                  <Card className="p-3 bg-background/95 backdrop-blur-sm">
-                    <p className="text-sm text-muted-foreground">
-                      Click anywhere on the map to add your travel suggestion
-                    </p>
-                  </Card>
-                )}
-              </div>
-
-              {/* Legend */}
-              <div className="absolute bottom-4 left-4 z-[1000]">
-                <Card className="p-3 bg-background/95 backdrop-blur-sm">
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-3 h-3 bg-primary rounded-full"></div>
-                    <span>Travel Suggestions ({travelSuggestions.length})</span>
-                  </div>
-                </Card>
-              </div>
+    <section className="relative min-h-screen">
+      {/* Full Background Map */}
+      <div className="absolute inset-0">
+        <div ref={mapContainer} className="w-full h-full" />
+      </div>
+      
+      {/* Content Overlay */}
+      <div className="relative z-[1000] py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="bg-background/90 backdrop-blur-sm rounded-lg p-8 border border-travel-ocean/20 travel-shadow inline-block">
+              <h2 className="text-4xl font-bold text-foreground mb-4">
+                Discover & Share Travel Gems
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Explore our interactive world map to discover hidden travel gems shared by fellow adventurers.
+                Click anywhere to add your own travel suggestions!
+              </p>
             </div>
-          </Card>
+          </div>
+
+          {/* Controls */}
+          <div className="flex justify-center gap-2 mb-8">
+            <Button
+              onClick={() => setIsAddingPin(!isAddingPin)}
+              variant={isAddingPin ? "secondary" : "default"}
+              size="sm"
+              className="bg-background/90 backdrop-blur-sm shadow-lg"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              {isAddingPin ? 'Cancel' : 'Add Pin'}
+            </Button>
+            
+            {isAddingPin && (
+              <Card className="p-3 bg-background/95 backdrop-blur-sm">
+                <p className="text-sm text-muted-foreground">
+                  Click anywhere on the map to add your travel suggestion
+                </p>
+              </Card>
+            )}
+          </div>
+
+          {/* Legend */}
+          <div className="flex justify-center">
+            <Card className="p-3 bg-background/95 backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-3 h-3 bg-primary rounded-full"></div>
+                <span>Travel Suggestions ({travelSuggestions.length})</span>
+              </div>
+            </Card>
+          </div>
         </div>
+      </div>
 
         {/* Add Suggestion Dialog */}
         {tempMarker && (
@@ -567,7 +570,6 @@ const InteractiveTravelMap = () => {
             </DialogContent>
           </Dialog>
         )}
-      </div>
     </section>
   );
 };

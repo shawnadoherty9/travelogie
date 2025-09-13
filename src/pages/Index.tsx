@@ -13,7 +13,6 @@ const Index = () => {
       <main>
         <HeroSection />
         <UserTypeSelection />
-        <InteractiveTravelMap />
         <TravelExperiencesShowcase />
         <ExperienceShowcase />
       </main>
