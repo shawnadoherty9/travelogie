@@ -305,12 +305,12 @@ const InteractiveTravelMap = () => {
       </div>
 
       {/* Full Background Map */}
-      <div className="absolute inset-0 z-10">
+      <div className="absolute inset-0 z-5">
         <div ref={mapContainer} className="w-full h-full" />
       </div>
       
       {/* Content Overlay */}
-      <div className="relative z-20 py-20 px-4">
+      <div className="relative z-30 py-20 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Search Interface */}
           <Card className="p-6 bg-background/95 backdrop-blur-sm border-travel-ocean/20 travel-shadow">
