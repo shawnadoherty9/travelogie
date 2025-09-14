@@ -312,26 +312,6 @@ const InteractiveTravelMap = () => {
       {/* Content Overlay */}
       <div className="relative z-20 py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Discover & Share Travel Gems */}
-          <Card className="p-6 bg-background/95 backdrop-blur-sm border-travel-ocean/20 travel-shadow text-center mb-8">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Discover & Share Travel Gems
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore our interactive world map to discover hidden travel gems shared by fellow adventurers.
-              Click anywhere to add your own travel suggestions!
-            </p>
-            <div className="mt-4">
-              <Button 
-                variant="default" 
-                size="lg" 
-                className="animate-pulse bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <MapPin className="w-6 h-6" />
-                Add Your Pin
-              </Button>
-            </div>
-          </Card>
 
           {/* Controls */}
           <div className="flex justify-center gap-2 mb-8">

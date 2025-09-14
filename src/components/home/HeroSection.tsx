@@ -49,6 +49,29 @@ const HeroSection = () => {
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">Connect with locals for personalized tours, language lessons, and cultural authentic experiences that transform travelers into storytellers.</p>
           </div>
 
+          {/* Discover & Share Travel Gems section */}
+          <div className="text-center mb-16">
+            <div className="bg-background/90 backdrop-blur-sm rounded-lg p-8 border border-travel-ocean/20 travel-shadow inline-block">
+              <h2 className="text-4xl font-bold text-foreground mb-4">
+                Discover & Share Travel Gems
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Explore our interactive world map to discover hidden travel gems shared by fellow adventurers.
+                Click anywhere to add your own travel suggestions!
+              </p>
+              <div className="mt-4">
+                <Button 
+                  variant="default" 
+                  size="lg" 
+                  className="animate-pulse bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <MapPin className="w-6 h-6" />
+                  Add Your Pin
+                </Button>
+              </div>
+            </div>
+          </div>
+
           {/* Where do you want to explore section */}
           <div className="text-center mb-16">
             <div className="bg-background/90 backdrop-blur-sm rounded-lg p-8 border border-travel-ocean/20 travel-shadow inline-block">
