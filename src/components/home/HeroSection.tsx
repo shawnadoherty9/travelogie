@@ -49,7 +49,13 @@ const HeroSection = () => {
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">Connect with locals for personalized tours, language lessons, and cultural authentic experiences that transform travelers into storytellers.</p>
           </div>
 
-          <div className="text-center mb-16">
+          {/* Interactive Travel Map - Positioned behind content */}
+          <div className="relative h-96 rounded-lg overflow-hidden travel-shadow">
+            <InteractiveTravelMap />
+          </div>
+
+          {/* Content overlay */}
+          <div className="relative -mt-96 z-20 text-center mb-16">
             <div className="bg-background/90 backdrop-blur-sm rounded-lg p-8 border border-travel-ocean/20 travel-shadow inline-block">
               <h2 className="text-4xl font-bold text-foreground mb-4">
                 Discover & Share Travel Gems
@@ -59,11 +65,6 @@ const HeroSection = () => {
                 Click anywhere to add your own travel suggestions!
               </p>
             </div>
-          </div>
-
-          {/* Interactive Travel Map */}
-          <div className="relative h-96 rounded-lg overflow-hidden travel-shadow">
-            <InteractiveTravelMap />
             <div className="absolute top-4 left-4 z-[5000]">
               <Button 
                 variant="default" 
