@@ -312,32 +312,24 @@ const InteractiveTravelMap = () => {
       {/* Content Overlay */}
       <div className="relative z-20 py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Search Interface */}
-          <Card className="p-6 bg-background/95 backdrop-blur-sm border-travel-ocean/20 travel-shadow">
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-foreground">Where do you want to explore?</h3>
-              
-              {/* Search Bar */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                <Input placeholder="Search destinations, experiences, or locals..." className="pl-10 h-12 text-lg border-travel-ocean/30 focus:border-travel-ocean" />
-              </div>
-
-              {/* Quick Actions */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button variant="journey" className="h-14 flex flex-col items-center gap-2">
-                  <Compass className="w-6 h-6" />
-                  <span>Find Tours</span>
-                </Button>
-                <Button variant="cultural" className="h-14 flex flex-col items-center gap-2">
-                  <MessageSquare className="w-6 h-6" />
-                  <span>Learn Languages</span>
-                </Button>
-                <Button variant="explorer" className="h-14 flex flex-col items-center gap-2">
-                  <Calendar className="w-6 h-6" />
-                  <span>Book Experiences</span>
-                </Button>
-              </div>
+          {/* Discover & Share Travel Gems */}
+          <Card className="p-6 bg-background/95 backdrop-blur-sm border-travel-ocean/20 travel-shadow text-center mb-8">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              Discover & Share Travel Gems
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Explore our interactive world map to discover hidden travel gems shared by fellow adventurers.
+              Click anywhere to add your own travel suggestions!
+            </p>
+            <div className="mt-4">
+              <Button 
+                variant="default" 
+                size="lg" 
+                className="animate-pulse bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <MapPin className="w-6 h-6" />
+                Add Your Pin
+              </Button>
             </div>
           </Card>
 
