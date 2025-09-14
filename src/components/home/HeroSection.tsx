@@ -72,6 +72,11 @@ const HeroSection = () => {
             </div>
           </div>
 
+          {/* Interactive Travel Map - Positioned under Discover & Share */}
+          <div className="relative h-96 rounded-lg overflow-hidden travel-shadow mb-16">
+            <InteractiveTravelMap />
+          </div>
+
           {/* Where do you want to explore section */}
           <div className="text-center mb-16">
             <div className="bg-background/90 backdrop-blur-sm rounded-lg p-8 border border-travel-ocean/20 travel-shadow inline-block">
@@ -101,11 +106,6 @@ const HeroSection = () => {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Interactive Travel Map - Positioned behind content */}
-          <div className="relative h-96 rounded-lg overflow-hidden travel-shadow">
-            <InteractiveTravelMap />
           </div>
 
           {/* Trust Indicators */}
