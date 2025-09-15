@@ -2,6 +2,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Heart, MessageCircle, Star } from "lucide-react";
+import japaneseTeasCeremony from "@/assets/japanese-tea-ceremony.jpg";
+import barcelonaArtsScene from "@/assets/barcelona-arts-scene.jpg";
+import varanasiTemples from "@/assets/varanasi-temples.jpg";
 
 const TravelExperiencesShowcase = () => {
   const experiences = [
@@ -10,7 +13,7 @@ const TravelExperiencesShowcase = () => {
       location: "Kyoto, Japan",
       title: "Hidden Temple Discovery",
       author: "Sakura T.",
-      image: "/src/assets/japanese-tea-ceremony.jpg",
+      image: japaneseTeasCeremony,
       rating: 4.9,
       likes: 127,
       comments: 23,
@@ -23,7 +26,7 @@ const TravelExperiencesShowcase = () => {
       location: "Barcelona, Spain",
       title: "Secret Rooftop Markets",
       author: "Carlos M.",
-      image: "/src/assets/barcelona-arts-scene.jpg",
+      image: barcelonaArtsScene,
       rating: 4.7,
       likes: 89,
       comments: 15,
@@ -36,7 +39,7 @@ const TravelExperiencesShowcase = () => {
       location: "Varanasi, India",
       title: "Dawn River Meditation",
       author: "Priya S.",
-      image: "/src/assets/varanasi-temples.jpg",
+      image: varanasiTemples,
       rating: 5.0,
       likes: 203,
       comments: 31,
