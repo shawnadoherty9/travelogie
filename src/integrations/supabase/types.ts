@@ -1180,6 +1180,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_privacy_settings: {
+        Row: {
+          allow_location_sharing: boolean | null
+          created_at: string | null
+          id: string
+          show_location_in_posts: boolean | null
+          show_travel_history: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          allow_location_sharing?: boolean | null
+          created_at?: string | null
+          id?: string
+          show_location_in_posts?: boolean | null
+          show_travel_history?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          allow_location_sharing?: boolean | null
+          created_at?: string | null
+          id?: string
+          show_location_in_posts?: boolean | null
+          show_travel_history?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1242,6 +1272,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_public_posts_safe: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          approximate_location: string
+          content: string
+          created_at: string
+          id: string
+          location_name: string
+          media_urls: string[]
+          post_type: string
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+        }[]
+      }
       get_public_profile: {
         Args: { profile_user_id: string }
         Returns: {
@@ -1299,6 +1345,23 @@ export type Database = {
         Returns: {
           contact_email: string
           contact_phone: string
+        }[]
+      }
+      get_user_posts_with_location: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          content: string
+          coordinates: unknown
+          created_at: string
+          id: string
+          is_public: boolean
+          location_name: string
+          media_urls: string[]
+          post_type: string
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
         }[]
       }
       get_user_roles: {
