@@ -5,6 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import UserTypeSelection from "@/components/registration/UserTypeSelection";
 import TravelerRegistration from "@/components/registration/TravelerRegistration";
+import TourOperatorForm from "@/components/registration/TourOperatorForm";
+import LanguageTeacherForm from "@/components/registration/LanguageTeacherForm";
+import CulturalExperienceForm from "@/components/registration/CulturalExperienceForm";
+import EventVenueForm from "@/components/registration/EventVenueForm";
 import Header from "@/components/layout/Header";
 
 const Registration = () => {
@@ -79,25 +83,34 @@ const Registration = () => {
       <main className="pt-20">
         {!selectedUserType ? (
           <UserTypeSelection onSelectType={handleUserTypeSelection} />
-        ) : selectedUserType === 'traveler' ? (
-          <TravelerRegistration 
-            onComplete={handleRegistrationComplete}
-            onBack={handleBack}
-          />
         ) : (
-          <div className="max-w-4xl mx-auto p-6 text-center">
-            <h2 className="text-2xl font-bold mb-4">
-              {selectedUserType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} Registration
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Registration form for {selectedUserType} is coming soon!
-            </p>
-            <button 
-              onClick={handleBack}
-              className="text-primary hover:underline"
-            >
-              ← Back to User Types
-            </button>
+          <div className="container mx-auto px-4">
+            <div className="mb-6">
+              <button 
+                onClick={handleBack}
+                className="text-primary hover:underline mb-4"
+              >
+                ← Back to User Types
+              </button>
+            </div>
+            {selectedUserType === 'traveler' && (
+              <TravelerRegistration 
+                onComplete={handleRegistrationComplete}
+                onBack={handleBack}
+              />
+            )}
+            {selectedUserType === 'tour_operator' && (
+              <TourOperatorForm />
+            )}
+            {selectedUserType === 'language_teacher' && (
+              <LanguageTeacherForm />
+            )}
+            {selectedUserType === 'cultural_experience' && (
+              <CulturalExperienceForm />
+            )}
+            {selectedUserType === 'event_venue' && (
+              <EventVenueForm />
+            )}
           </div>
         )}
       </main>
