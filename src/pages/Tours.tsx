@@ -275,6 +275,8 @@ const Tours = () => {
     "Cultural Stories": Globe
   };
   const handlePersonalizedRequest = () => {
+    console.log("Personalized tour button clicked!", { location, interests });
+    
     if (!location || !interests) {
       toast({
         title: "Please fill all fields",
@@ -284,6 +286,7 @@ const Tours = () => {
       return;
     }
 
+    console.log("Starting workflow...");
     // Start the new workflow
     setShowWorkflow(true);
     toast({
