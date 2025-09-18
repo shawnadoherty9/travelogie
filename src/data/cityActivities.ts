@@ -282,7 +282,26 @@ export const cityActivities: Record<string, Activity[]> = {
 };
 
 export const getCityActivities = (cityName: string): Activity[] => {
-  const cityKey = cityName.toLowerCase().replace(/\s+/g, '-');
+  // Normalize the city name for better matching
+  let cityKey = cityName.toLowerCase().replace(/\s+/g, '-');
+  
+  // Handle common variations
+  const cityMappings: Record<string, string> = {
+    'newyork': 'new-york',
+    'new-york-city': 'new-york',
+    'nyc': 'new-york',
+    'ny': 'new-york',
+    'mumbai': 'mumbai',
+    'bombay': 'mumbai',
+    'tokyo': 'tokyo',
+    'japan': 'tokyo'
+  };
+  
+  // Check if we have a mapping for this city
+  if (cityMappings[cityKey]) {
+    cityKey = cityMappings[cityKey];
+  }
+  
   return cityActivities[cityKey] || [];
 };
 

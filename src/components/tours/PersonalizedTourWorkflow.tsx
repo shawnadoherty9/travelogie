@@ -80,10 +80,19 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
   const availableGuides = getTourGuidesByCity(cityId);
   
   // Debug logging
+  console.log('=== DEBUGGING CITY ACTIVITIES ===');
   console.log('Location input:', location);
-  console.log('City ID:', cityId);
+  console.log('City ID generated:', cityId);
   console.log('City activities found:', cityActivities.length);
   console.log('Available guides:', availableGuides.length);
+  
+  // Test what getCityActivities returns for our location
+  const testActivities = getCityActivities(location);
+  console.log('Direct getCityActivities result:', testActivities.length, 'activities');
+  if (testActivities.length > 0) {
+    console.log('Sample activity:', testActivities[0]);
+  }
+  console.log('=== END DEBUG ===');
 
   // Get city center coordinates
   const getCityCenter = (locationName: string) => {
@@ -273,6 +282,24 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
               </div>
             )}
             
+            {/* Show message if no activities found */}
+            {cityActivities.length === 0 && (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-6">
+                <h4 className="font-medium text-yellow-800 mb-2">No activities found for "{location}"</h4>
+                <p className="text-yellow-700 text-sm mb-3">
+                  We currently have detailed activities for these cities:
+                </p>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <Badge variant="outline" className="text-yellow-700">New York</Badge>
+                  <Badge variant="outline" className="text-yellow-700">Tokyo</Badge>
+                  <Badge variant="outline" className="text-yellow-700">Mumbai</Badge>
+                </div>
+                <p className="text-yellow-700 text-sm">
+                  Try searching for one of these cities, or we'll create a general itinerary for your destination.
+                </p>
+              </div>
+            )}
+            
             <ActivityCategorySelector selectedCity={location} selectedCategories={selectedCategories} onCategoryToggle={handleCategoryToggle} />
 
             <div className="mt-6 flex justify-between items-center">
@@ -282,7 +309,7 @@ export const PersonalizedTourWorkflow: React.FC<PersonalizedTourWorkflowProps> =
                   <span className="ml-2 text-primary">• Near your location</span>
                 )}
               </div>
-              <Button onClick={handleNextStep} disabled={selectedCategories.length === 0} className="bg-gradient-wanderlust hover:opacity-90 bg-sky-600 hover:bg-sky-500">
+              <Button onClick={handleNextStep} disabled={selectedCategories.length === 0} className="bg-gradient-to-r from-travel-sunset to-travel-ocean hover:opacity-90 text-white">
                 Choose Activities
               </Button>
             </div>
