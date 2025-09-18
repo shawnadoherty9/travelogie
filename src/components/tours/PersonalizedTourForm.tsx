@@ -62,8 +62,8 @@ export const PersonalizedTourForm = ({
           
           <Button 
             onClick={onSubmit}
-            disabled={!location || !interests || isLoading}
-            className="w-full bg-gradient-wanderlust hover:opacity-90 text-lg py-6"
+            disabled={!location?.trim() || !interests?.trim() || isLoading}
+            className="w-full bg-gradient-to-r from-travel-sunset to-travel-ocean hover:opacity-90 text-lg py-6 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
             {isLoading ? (
               <>
