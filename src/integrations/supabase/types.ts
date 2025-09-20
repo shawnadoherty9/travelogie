@@ -1381,6 +1381,10 @@ export type Database = {
         Args: { suggestion_id: string; user_ip: string }
         Returns: Json
       }
+      make_admin: {
+        Args: { admin_email: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role:
