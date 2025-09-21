@@ -76,7 +76,7 @@ const AtlasVoiceInterface: React.FC<AtlasVoiceInterfaceProps> = ({ isEnabled, on
   const speakText = async (text: string) => {
     try {
       setIsPlaying(true);
-      
+
       const { data, error } = await supabase.functions.invoke('text-to-speech', {
         body: {
           text,
@@ -85,32 +85,51 @@ const AtlasVoiceInterface: React.FC<AtlasVoiceInterfaceProps> = ({ isEnabled, on
         }
       });
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
+      if (!data) throw new Error('No response from text-to-speech service');
+      if ((data as any).error) throw new Error((data as any).error);
 
       if (data.audioContent) {
-        const audioBlob = new Blob([
-          Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))
-        ], { type: 'audio/mpeg' });
-        
-        const audioUrl = URL.createObjectURL(audioBlob);
-        
+        const contentType = data.contentType || 'audio/mpeg';
+        const base64 = data.audioContent as string;
+
         if (audioRef.current) {
-          audioRef.current.src = audioUrl;
-          audioRef.current.onended = () => {
-            setIsPlaying(false);
-            URL.revokeObjectURL(audioUrl);
-          };
-          await audioRef.current.play();
+          // Ensure best playback compatibility (iOS/Android)
+          audioRef.current.setAttribute('playsinline', 'true');
+          audioRef.current.preload = 'auto';
+
+          // Prefer data URL to avoid blob decoding issues, with blob fallback
+          const dataUrl = `data:${contentType};base64,${base64}`;
+          try {
+            audioRef.current.src = dataUrl;
+            await audioRef.current.play();
+          } catch (playErr) {
+            console.warn('Data URL play failed, trying Blob fallback', playErr);
+            const binaryString = atob(base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+            const audioBlob = new Blob([bytes], { type: contentType });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioRef.current.src = audioUrl;
+            audioRef.current.onended = () => {
+              setIsPlaying(false);
+              URL.revokeObjectURL(audioUrl);
+            };
+            await audioRef.current.play();
+          }
         }
+      } else {
+        throw new Error('No audio content received');
       }
     } catch (error) {
       console.error('Error with text-to-speech:', error);
-      setIsPlaying(false);
       toast({
-        title: "Audio Error",
-        description: "Could not play Atlas response",
-        variant: "destructive",
+        title: 'Audio Error',
+        description: error instanceof Error ? error.message : 'Could not play Atlas response',
+        variant: 'destructive',
       });
+    } finally {
+      setIsPlaying(false);
     }
   };
 
