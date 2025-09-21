@@ -18,14 +18,15 @@ serve(async (req) => {
       throw new Error('Text is required');
     }
 
-    const elevenLabsApiKey = Deno.env.get('ELEVENLABS_API_KEY');
+    const elevenLabsApiKey = (Deno.env.get('ELEVENLABS_API_KEY') || '').trim();
     if (!elevenLabsApiKey) {
-      throw new Error('Eleven Labs API key not configured');
+      throw new Error('ElevenLabs API key not configured');
     }
 
     console.log('Generating speech for text:', text.substring(0, 50) + '...');
     console.log('Using voice ID:', voiceId);
     console.log('Using model:', model);
+    console.log('ElevenLabs key length:', elevenLabsApiKey.length);
 
     // Generate speech using Eleven Labs API
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
