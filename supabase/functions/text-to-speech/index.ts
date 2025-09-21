@@ -49,7 +49,14 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Eleven Labs API error:', response.status, errorText);
-      throw new Error(`Eleven Labs API error: ${response.status} ${errorText}`);
+      return new Response(
+        JSON.stringify({
+          error: 'ElevenLabs request failed',
+          status: response.status,
+          detail: errorText,
+        }),
+        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Convert audio to base64
