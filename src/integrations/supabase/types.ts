@@ -1310,7 +1310,6 @@ export type Database = {
           last_name: string
           location: string
           profile_image_url: string
-          user_type: string
         }[]
       }
       get_public_tour_operators: {
