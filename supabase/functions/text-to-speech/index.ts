@@ -5,6 +5,23 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Validation constants
+const MAX_TEXT_LENGTH = 5000;
+const ALLOWED_VOICE_IDS = [
+  '9BWtsMINqrJLrRacOk9x', 'CwhRBWXzGAHq8TQ4Fs17', 'EXAVITQu4vr4xnSDxMaL',
+  'FGY2WhTYpPnrIDTdsKH5', 'IKne3meq5aSn9XLyUdCD', 'JBFqnCBsd6RMkjVDRZzb',
+  'N2lVS1w4EtoT3dr4eOWO', 'SAz9YHcvj6GT2YYXdXww', 'TX3LPaxmHKxFdv7VOQHJ',
+  'XB0fDUnXU5powFXDhCwa', 'Xb7hH8MSUJpSbSDYk0k2', 'XrExE9yKIg1WjnnlVkGX',
+  'bIHbv24MWmeRgasZH58o', 'cgSgspJ2msm6clMCkdW9', 'cjVigY5qzO86Huf0OWal',
+  'iP95p4xoKVk53GoZ742B', 'nPczCjzI2devNBz1zQrb', 'onwK4e9ZLuTAKqWW03F9',
+  'pFZP5JQG7iQjIQuC4Bku', 'pqHfZKP75CvOlQylNhV4'
+];
+const ALLOWED_MODELS = [
+  'eleven_multilingual_v2', 'eleven_turbo_v2_5', 'eleven_turbo_v2',
+  'eleven_multilingual_v1', 'eleven_multilingual_sts_v2',
+  'eleven_monolingual_v1', 'eleven_english_sts_v2'
+];
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -14,8 +31,33 @@ serve(async (req) => {
   try {
     const { text, voiceId = '9BWtsMINqrJLrRacOk9x', model = 'eleven_multilingual_v2' } = await req.json();
 
-    if (!text) {
-      throw new Error('Text is required');
+    // Input validation
+    if (!text || typeof text !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Valid text is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (text.length > MAX_TEXT_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Text must be less than ${MAX_TEXT_LENGTH} characters` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!ALLOWED_VOICE_IDS.includes(voiceId)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid voice ID' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!ALLOWED_MODELS.includes(model)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid model' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const elevenLabsApiKey = (Deno.env.get('ELEVENLABS_API_KEY') || '').trim();
@@ -23,10 +65,7 @@ serve(async (req) => {
       throw new Error('ElevenLabs API key not configured');
     }
 
-    console.log('Generating speech for text:', text.substring(0, 50) + '...');
-    console.log('Using voice ID:', voiceId);
-    console.log('Using model:', model);
-    console.log('ElevenLabs key length:', elevenLabsApiKey.length);
+    console.log('Generating speech for text length:', text.length, 'chars');
 
     // Generate speech using Eleven Labs API
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
@@ -47,15 +86,10 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Eleven Labs API error:', response.status, errorText);
+      console.error('Eleven Labs API error:', response.status);
       return new Response(
-        JSON.stringify({
-          error: 'ElevenLabs request failed',
-          status: response.status,
-          detail: errorText,
-        }),
-        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Failed to generate speech' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -78,7 +112,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Text-to-speech error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'An error occurred processing your request' }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
