@@ -3,10 +3,18 @@ import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+// Restrict CORS to your domain only
+const ALLOWED_ORIGINS = [
+  'https://travelogie.io',
+  'https://www.travelogie.io',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+
+const corsHeaders = (origin: string | null) => ({
+  'Access-Control-Allow-Origin': origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+});
 
 // Validation constants
 const MAX_NAME_LENGTH = 100;
@@ -41,9 +49,12 @@ function sanitizeText(text: string, maxLength: number): string {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  const origin = req.headers.get('origin');
+  const headers = corsHeaders(origin);
+
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers });
   }
 
   try {
@@ -59,7 +70,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (!guideName || !guideEmail || !clientName || !clientEmail || !tourDetails) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        { status: 400, headers: { "Content-Type": "application/json", ...headers } }
       );
     }
 
@@ -69,24 +80,24 @@ const handler = async (req: Request): Promise<Response> => {
     
     if (sanitizedGuideName.length === 0 || sanitizedClientName.length === 0) {
       return new Response(
-        JSON.stringify({ error: 'Invalid name format' }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        JSON.stringify({ error: 'Invalid input' }),
+        { status: 400, headers: { "Content-Type": "application/json", ...headers } }
       );
     }
 
     // Validate emails
     if (!validateEmail(guideEmail) || !validateEmail(clientEmail)) {
       return new Response(
-        JSON.stringify({ error: 'Invalid email address' }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        JSON.stringify({ error: 'Invalid input' }),
+        { status: 400, headers: { "Content-Type": "application/json", ...headers } }
       );
     }
 
     // Validate tour details
     if (!tourDetails.location || !tourDetails.date || !tourDetails.duration) {
       return new Response(
-        JSON.stringify({ error: 'Invalid tour details' }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        JSON.stringify({ error: 'Invalid input' }),
+        { status: 400, headers: { "Content-Type": "application/json", ...headers } }
       );
     }
 
@@ -97,8 +108,8 @@ const handler = async (req: Request): Promise<Response> => {
     // Validate experiences array
     if (!Array.isArray(tourDetails.experiences) || tourDetails.experiences.length > MAX_EXPERIENCES_COUNT) {
       return new Response(
-        JSON.stringify({ error: 'Invalid experiences list' }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        JSON.stringify({ error: 'Invalid input' }),
+        { status: 400, headers: { "Content-Type": "application/json", ...headers } }
       );
     }
 
@@ -109,15 +120,15 @@ const handler = async (req: Request): Promise<Response> => {
     // Validate prices
     if (typeof tourDetails.totalPrice !== 'number' || tourDetails.totalPrice <= 0 || tourDetails.totalPrice > 1000000) {
       return new Response(
-        JSON.stringify({ error: 'Invalid price' }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        JSON.stringify({ error: 'Invalid input' }),
+        { status: 400, headers: { "Content-Type": "application/json", ...headers } }
       );
     }
 
     if (typeof tourDetails.guideRate !== 'number' || tourDetails.guideRate <= 0 || tourDetails.guideRate > 1000000) {
       return new Response(
-        JSON.stringify({ error: 'Invalid guide rate' }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        JSON.stringify({ error: 'Invalid input' }),
+        { status: 400, headers: { "Content-Type": "application/json", ...headers } }
       );
     }
 
@@ -183,16 +194,16 @@ Visit: https://travelogie.io
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        ...corsHeaders,
+        ...headers,
       },
     });
   } catch (error: any) {
     console.error("Error in send-booking-email function:", error);
     return new Response(
-      JSON.stringify({ error: 'Failed to send booking email' }),
+      JSON.stringify({ error: 'An error occurred' }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { "Content-Type": "application/json", ...headers },
       }
     );
   }

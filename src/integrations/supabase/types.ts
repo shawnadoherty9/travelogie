@@ -602,7 +602,7 @@ export type Database = {
       posts: {
         Row: {
           content: string | null
-          coordinates: unknown | null
+          coordinates: unknown
           created_at: string
           id: string
           is_public: boolean | null
@@ -616,7 +616,7 @@ export type Database = {
         }
         Insert: {
           content?: string | null
-          coordinates?: unknown | null
+          coordinates?: unknown
           created_at?: string
           id?: string
           is_public?: boolean | null
@@ -630,7 +630,7 @@ export type Database = {
         }
         Update: {
           content?: string | null
-          coordinates?: unknown | null
+          coordinates?: unknown
           created_at?: string
           id?: string
           is_public?: boolean | null
@@ -1236,7 +1236,7 @@ export type Database = {
       }
       visited_places: {
         Row: {
-          coordinates: unknown | null
+          coordinates: unknown
           country: string
           created_at: string
           id: string
@@ -1246,7 +1246,7 @@ export type Database = {
           visit_date: string | null
         }
         Insert: {
-          coordinates?: unknown | null
+          coordinates?: unknown
           country: string
           created_at?: string
           id?: string
@@ -1256,7 +1256,7 @@ export type Database = {
           visit_date?: string | null
         }
         Update: {
-          coordinates?: unknown | null
+          coordinates?: unknown
           country?: string
           created_at?: string
           id?: string
@@ -1273,9 +1273,8 @@ export type Database = {
     }
     Functions: {
       get_public_posts_safe: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
-          approximate_location: string
           content: string
           created_at: string
           id: string
@@ -1284,8 +1283,6 @@ export type Database = {
           post_type: string
           tags: string[]
           title: string
-          updated_at: string
-          user_id: string
         }[]
       }
       get_public_profile: {
@@ -1304,16 +1301,14 @@ export type Database = {
         Returns: {
           bio: string
           first_name: string
-          id: string
-          is_verified: boolean
           languages: string[]
           last_name: string
-          location: string
           profile_image_url: string
+          user_type: string
         }[]
       }
       get_public_tour_operators: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           background_checked: boolean
           business_name: string
@@ -1347,7 +1342,7 @@ export type Database = {
         }[]
       }
       get_user_posts_with_location: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           content: string
           coordinates: unknown
@@ -1380,10 +1375,7 @@ export type Database = {
         Args: { suggestion_id: string; user_ip: string }
         Returns: Json
       }
-      make_admin: {
-        Args: { admin_email: string }
-        Returns: boolean
-      }
+      make_admin: { Args: { user_email: string }; Returns: undefined }
     }
     Enums: {
       app_role:
