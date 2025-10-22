@@ -193,8 +193,6 @@ export type Database = {
           service_type: string
           start_time: string
           status: string
-          stripe_payment_intent_id: string | null
-          stripe_session_id: string | null
           total_amount: number
           updated_at: string
         }
@@ -214,8 +212,6 @@ export type Database = {
           service_type: string
           start_time: string
           status?: string
-          stripe_payment_intent_id?: string | null
-          stripe_session_id?: string | null
           total_amount: number
           updated_at?: string
         }
@@ -235,8 +231,6 @@ export type Database = {
           service_type?: string
           start_time?: string
           status?: string
-          stripe_payment_intent_id?: string | null
-          stripe_session_id?: string | null
           total_amount?: number
           updated_at?: string
         }
@@ -524,6 +518,60 @@ export type Database = {
           },
         ]
       }
+      payment_transactions: {
+        Row: {
+          amount: number
+          booking_id: string | null
+          created_at: string
+          currency: string
+          id: string
+          payment_status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          tour_booking_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          booking_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          payment_status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tour_booking_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          payment_status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tour_booking_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_tour_booking_id_fkey"
+            columns: ["tour_booking_id"]
+            isOneToOne: false
+            referencedRelation: "tour_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       personalized_tours: {
         Row: {
           city_id: string | null
@@ -805,8 +853,6 @@ export type Database = {
           payment_status: string
           platform_fee: number | null
           special_requests: string | null
-          stripe_payment_intent_id: string | null
-          stripe_session_id: string | null
           total_amount: number
           tour_id: string | null
           tour_operator_id: string | null
@@ -826,8 +872,6 @@ export type Database = {
           payment_status?: string
           platform_fee?: number | null
           special_requests?: string | null
-          stripe_payment_intent_id?: string | null
-          stripe_session_id?: string | null
           total_amount: number
           tour_id?: string | null
           tour_operator_id?: string | null
@@ -847,8 +891,6 @@ export type Database = {
           payment_status?: string
           platform_fee?: number | null
           special_requests?: string | null
-          stripe_payment_intent_id?: string | null
-          stripe_session_id?: string | null
           total_amount?: number
           tour_id?: string | null
           tour_operator_id?: string | null
@@ -1272,6 +1314,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_booking_payment_status: {
+        Args: { booking_id_param: string }
+        Returns: {
+          amount: number
+          currency: string
+          payment_status: string
+        }[]
+      }
       get_public_posts_safe: {
         Args: never
         Returns: {
@@ -1332,6 +1382,14 @@ export type Database = {
           specialties: string[]
           updated_at: string
           website_url: string
+        }[]
+      }
+      get_tour_booking_payment_status: {
+        Args: { tour_booking_id_param: string }
+        Returns: {
+          amount: number
+          currency: string
+          payment_status: string
         }[]
       }
       get_tour_operator_contact: {
