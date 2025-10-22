@@ -57,6 +57,15 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers });
   }
 
+  // Reject if origin not allowed
+  if (!origin || !ALLOWED_ORIGINS.includes(origin)) {
+    console.error('Blocked request from unauthorized origin:', origin);
+    return new Response(
+      JSON.stringify({ error: 'Access denied' }),
+      { status: 403, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const { 
       guideName, 
