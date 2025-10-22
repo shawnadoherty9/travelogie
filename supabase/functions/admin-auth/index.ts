@@ -42,27 +42,20 @@ serve(async (req) => {
         );
       }
 
-      // Check if user has admin role
-      const { data: profile, error: profileError } = await supabaseClient
-        .from('profiles')
-        .select('user_type, email')
-        .eq('user_id', user.id)
-        .single();
+      // Check if user has admin role using RBAC
+      const { data: userRoles, error: rolesError } = await supabaseClient
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id);
 
-      if (profileError || !profile) {
+      if (rolesError) {
         return new Response(
-          JSON.stringify({ error: 'Profile not found' }),
-          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: 'Failed to verify permissions' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      // For now, check if user is admin by email (you can create a proper admin role system)
-      const adminEmails = [
-        'admin@travelogie.io',
-        // Add more admin emails as needed
-      ];
-
-      const isAdmin = adminEmails.includes(profile.email) || profile.user_type === 'admin';
+      const isAdmin = userRoles?.some(roleRow => roleRow.role === 'admin') || false;
 
       if (!isAdmin) {
         return new Response(

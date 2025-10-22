@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Upload, X, Plus, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { travelerFormSchema, languageSchema, customInterestSchema, sanitizeTextInput } from "@/utils/validation";
 
 interface Language {
   code: string;
@@ -79,9 +80,18 @@ const TravelerForm: React.FC = () => {
   };
 
   const addCustomInterest = () => {
-    if (newCustomInterest.trim() && !customInterests.includes(newCustomInterest.trim())) {
-      setCustomInterests(prev => [...prev, newCustomInterest.trim()]);
-      setNewCustomInterest('');
+    try {
+      const validated = customInterestSchema.parse(newCustomInterest);
+      if (!customInterests.includes(validated)) {
+        setCustomInterests(prev => [...prev, validated]);
+        setNewCustomInterest('');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Invalid Interest",
+        description: error.errors?.[0]?.message || "Please enter a valid interest",
+        variant: "destructive"
+      });
     }
   };
 
@@ -90,13 +100,20 @@ const TravelerForm: React.FC = () => {
   };
 
   const addLanguage = () => {
-    if (newLanguage.code && newLanguage.name) {
+    try {
+      const validated = languageSchema.parse(newLanguage);
       const language: Language = {
-        ...newLanguage,
+        ...validated,
         isPrimary: languages.length === 0
       };
       setLanguages(prev => [...prev, language]);
       setNewLanguage({ code: '', name: '', fluency: 'beginner' });
+    } catch (error: any) {
+      toast({
+        title: "Invalid Language",
+        description: error.errors?.[0]?.message || "Please enter valid language details",
+        variant: "destructive"
+      });
     }
   };
 
@@ -117,29 +134,37 @@ const TravelerForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    if (!formData.firstName || !formData.lastName || !formData.birthdate) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (languages.length === 0) {
-      toast({
-        title: "Language Required",
-        description: "Please add at least one language.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
-      // Here you would submit to your backend
+      // Validate form data
+      const validatedData = travelerFormSchema.parse({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        birthdate: formData.birthdate,
+        homeCity: formData.homeCity || undefined,
+        upcomingTravel: formData.upcomingTravel || undefined,
+        bio: formData.bio || undefined,
+      });
+
+      if (languages.length === 0) {
+        toast({
+          title: "Language Required",
+          description: "Please add at least one language.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Sanitize text inputs
+      const sanitizedData = {
+        ...validatedData,
+        homeCity: validatedData.homeCity ? sanitizeTextInput(validatedData.homeCity) : '',
+        upcomingTravel: validatedData.upcomingTravel ? sanitizeTextInput(validatedData.upcomingTravel, 5000) : '',
+        bio: validatedData.bio ? sanitizeTextInput(validatedData.bio, 2000) : '',
+      };
+
+      // Submit to backend
       console.log('Traveler form data:', {
-        ...formData,
+        ...sanitizedData,
         languages,
         interests: [...interests, ...customInterests],
         socialMedia,
@@ -150,10 +175,10 @@ const TravelerForm: React.FC = () => {
         title: "Profile Created!",
         description: "Welcome to Travelogie! Your traveler profile has been created successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "Error",
-        description: "Failed to create profile. Please try again.",
+        title: "Validation Error",
+        description: error.errors?.[0]?.message || "Please check your input and try again.",
         variant: "destructive"
       });
     }

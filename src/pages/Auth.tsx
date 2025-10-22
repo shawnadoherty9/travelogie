@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Plane, Users, MapPin, GraduationCap, Building, Heart } from 'lucide-react';
-// Removed import of RegistrationFormRenderer as we're using the new registration flow
+import { authSignUpSchema, authSignInSchema } from '@/utils/validation';
 
 const Auth = () => {
   const { user, loading, signIn, signUp } = useAuth();
@@ -47,12 +47,23 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    const { error } = await signIn(signInForm.email, signInForm.password);
-    
-    if (error) {
+    try {
+      // Validate input
+      const validatedData = authSignInSchema.parse(signInForm);
+      
+      const { error } = await signIn(validatedData.email, validatedData.password);
+      
+      if (error) {
+        toast({
+          title: "Sign In Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
       toast({
-        title: "Sign In Failed",
-        description: error.message,
+        title: "Validation Error",
+        description: error.errors?.[0]?.message || "Please check your input",
         variant: "destructive",
       });
     }
@@ -64,24 +75,35 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    const { error } = await signUp(
-      signUpForm.email,
-      signUpForm.password,
-      signUpForm.userType,
-      signUpForm.firstName,
-      signUpForm.lastName
-    );
-    
-    if (error) {
+    try {
+      // Validate input
+      const validatedData = authSignUpSchema.parse(signUpForm);
+      
+      const { error } = await signUp(
+        validatedData.email,
+        validatedData.password,
+        signUpForm.userType,
+        validatedData.firstName,
+        validatedData.lastName
+      );
+      
+      if (error) {
+        toast({
+          title: "Sign Up Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Check your email",
+          description: "We've sent you a confirmation link to complete your registration.",
+        });
+      }
+    } catch (error: any) {
       toast({
-        title: "Sign Up Failed",
-        description: error.message,
+        title: "Validation Error",
+        description: error.errors?.[0]?.message || "Please check your input",
         variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Check your email",
-        description: "We've sent you a confirmation link to complete your registration.",
       });
     }
     
