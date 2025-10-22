@@ -101,9 +101,20 @@ const TravelerForm: React.FC = () => {
 
   const addLanguage = () => {
     try {
+      if (!newLanguage.code || !newLanguage.name) {
+        toast({
+          title: "Missing Information",
+          description: "Please select a language and fluency level",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       const validated = languageSchema.parse(newLanguage);
       const language: Language = {
-        ...validated,
+        code: validated.code,
+        name: validated.name,
+        fluency: validated.fluency,
         isPrimary: languages.length === 0
       };
       setLanguages(prev => [...prev, language]);
