@@ -20,6 +20,10 @@ function getCorsHeaders(origin: string | null): HeadersInit {
   return {};
 }
 
+// Rate limit configuration: 5 requests per 15 minutes per IP (strict for admin endpoint)
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const RATE_LIMIT_WINDOW_MINUTES = 15;
+
 serve(async (req) => {
   const origin = req.headers.get('origin');
   const corsHeaders = getCorsHeaders(origin);
@@ -49,6 +53,28 @@ serve(async (req) => {
         }
       }
     );
+
+    // Get identifier for rate limiting (use IP for admin endpoint to prevent brute force)
+    const identifier = req.headers.get('x-forwarded-for')?.split(',')[0] || 'anonymous';
+
+    // Check rate limit before processing
+    const { data: allowed, error: rateLimitError } = await supabaseClient.rpc('check_rate_limit', {
+      p_identifier: identifier,
+      p_endpoint: 'admin-auth-rbac',
+      p_max_requests: RATE_LIMIT_MAX_REQUESTS,
+      p_window_minutes: RATE_LIMIT_WINDOW_MINUTES
+    });
+
+    if (rateLimitError) {
+      console.error('Rate limit check error:', rateLimitError);
+      // Continue if rate limit check fails (fail open for availability)
+    } else if (!allowed) {
+      console.warn('Rate limit exceeded for admin-auth-rbac, identifier:', identifier);
+      return new Response(
+        JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Get the authorization header from the request
     const authHeader = req.headers.get('Authorization');
@@ -89,6 +115,8 @@ serve(async (req) => {
       }
 
       const hasAdminRole = userRoles?.some(roleRow => roleRow.role === 'admin') || false;
+
+      console.log('Admin verification for user:', user.id, 'hasAdminRole:', hasAdminRole);
 
       return new Response(
         JSON.stringify({
