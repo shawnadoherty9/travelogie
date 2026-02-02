@@ -773,6 +773,33 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          identifier: string
+          request_count: number
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          identifier: string
+          request_count?: number
+          window_start?: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          identifier?: string
+          request_count?: number
+          window_start?: string
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           cancellation_policy: string | null
@@ -1317,6 +1344,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_rate_limit: {
+        Args: {
+          p_endpoint: string
+          p_identifier: string
+          p_max_requests: number
+          p_window_minutes: number
+        }
+        Returns: boolean
+      }
       get_booking_payment_status: {
         Args: { booking_id_param: string }
         Returns: {
@@ -1432,9 +1468,10 @@ export type Database = {
         }
         Returns: boolean
       }
-      increment_suggestion_upvotes:
-        | { Args: { suggestion_id: string }; Returns: Json }
-        | { Args: { suggestion_id: string; user_ip: string }; Returns: Json }
+      increment_suggestion_upvotes: {
+        Args: { suggestion_id: string }
+        Returns: Json
+      }
       make_admin: { Args: { user_email: string }; Returns: undefined }
     }
     Enums: {
