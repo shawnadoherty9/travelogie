@@ -1126,18 +1126,21 @@ export type Database = {
           created_at: string
           id: string
           suggestion_id: string
+          user_id: string | null
           user_ip: string
         }
         Insert: {
           created_at?: string
           id?: string
           suggestion_id: string
+          user_id?: string | null
           user_ip: string
         }
         Update: {
           created_at?: string
           id?: string
           suggestion_id?: string
+          user_id?: string | null
           user_ip?: string
         }
         Relationships: [
@@ -1429,10 +1432,9 @@ export type Database = {
         }
         Returns: boolean
       }
-      increment_suggestion_upvotes: {
-        Args: { suggestion_id: string; user_ip: string }
-        Returns: Json
-      }
+      increment_suggestion_upvotes:
+        | { Args: { suggestion_id: string }; Returns: Json }
+        | { Args: { suggestion_id: string; user_ip: string }; Returns: Json }
       make_admin: { Args: { user_email: string }; Returns: undefined }
     }
     Enums: {
