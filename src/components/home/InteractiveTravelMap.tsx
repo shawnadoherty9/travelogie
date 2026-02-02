@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import heroImage from "@/assets/hero-travel.jpg";
-
+import { useAuth } from "@/hooks/useAuth";
 // Fix Leaflet default marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -36,6 +36,7 @@ interface TravelSuggestion {
 }
 
 const InteractiveTravelMap = () => {
+  const { user } = useAuth();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState<TravelSuggestion | null>(null);
@@ -52,11 +53,21 @@ const InteractiveTravelMap = () => {
   const [tempMarker, setTempMarker] = useState<L.Marker | null>(null);
   const [suggestionMarkers, setSuggestionMarkers] = useState<L.Marker[]>([]);
   const [travelSuggestions, setTravelSuggestions] = useState<TravelSuggestion[]>([]);
+  const [userUpvotes, setUserUpvotes] = useState<Set<string>>(new Set());
 
   // Load travel suggestions from database
   useEffect(() => {
     loadTravelSuggestions();
   }, []);
+
+  // Load user's upvotes when authenticated
+  useEffect(() => {
+    if (user) {
+      loadUserUpvotes();
+    } else {
+      setUserUpvotes(new Set());
+    }
+  }, [user]);
 
   const loadTravelSuggestions = async () => {
     try {
@@ -73,6 +84,26 @@ const InteractiveTravelMap = () => {
       setTravelSuggestions(data || []);
     } catch (error) {
       console.error('Error loading travel suggestions:', error);
+    }
+  };
+
+  const loadUserUpvotes = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('travel_suggestion_upvotes')
+        .select('suggestion_id')
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error loading user upvotes:', error);
+        return;
+      }
+
+      setUserUpvotes(new Set(data?.map(u => u.suggestion_id) || []));
+    } catch (error) {
+      console.error('Error loading user upvotes:', error);
     }
   };
 
@@ -189,6 +220,12 @@ const InteractiveTravelMap = () => {
   };
 
   const handleAddSuggestion = async () => {
+    // Require authentication
+    if (!user) {
+      toast.error('Please sign in to add travel suggestions');
+      return;
+    }
+
     if (!tempMarker || !newSuggestion.title || !newSuggestion.description) {
       toast.error('Please fill in all required fields');
       return;
@@ -228,7 +265,11 @@ const InteractiveTravelMap = () => {
 
       if (error) {
         console.error('Error adding suggestion:', error);
-        toast.error('Error adding suggestion. Please try again.');
+        if (error.code === '42501') {
+          toast.error('Please sign in to add travel suggestions');
+        } else {
+          toast.error('Error adding suggestion. Please try again.');
+        }
         setUploading(false);
         return;
       }
@@ -265,21 +306,35 @@ const InteractiveTravelMap = () => {
   };
 
   const handleUpvote = async (suggestionId: string) => {
+    // Require authentication
+    if (!user) {
+      toast.error('Please sign in to upvote suggestions');
+      return;
+    }
+
+    // Check if already upvoted locally
+    if (userUpvotes.has(suggestionId)) {
+      toast.info('You have already upvoted this suggestion');
+      return;
+    }
+
     try {
-      const userIp = 'user-' + Date.now(); // In a real app, you'd get the actual IP
-      
       const { data, error } = await supabase.rpc('increment_suggestion_upvotes', {
-        suggestion_id: suggestionId,
-        user_ip: userIp
+        suggestion_id: suggestionId
       });
 
       if (error) {
         console.error('Error upvoting:', error);
+        if (error.message?.includes('Authentication required')) {
+          toast.error('Please sign in to upvote suggestions');
+        } else {
+          toast.error('Error upvoting. Please try again.');
+        }
         return;
       }
 
       // Type assertion for the RPC response
-      const result = data as { upvotes: number };
+      const result = data as { upvotes: number; already_voted?: boolean };
 
       // Update local state
       setTravelSuggestions(suggestions => 
@@ -290,9 +345,17 @@ const InteractiveTravelMap = () => {
         )
       );
 
-      toast.success('Thanks for your upvote!');
+      // Track user's upvote locally
+      setUserUpvotes(prev => new Set([...prev, suggestionId]));
+
+      if (result.already_voted) {
+        toast.info('You have already upvoted this suggestion');
+      } else {
+        toast.success('Thanks for your upvote!');
+      }
     } catch (error) {
       console.error('Error upvoting:', error);
+      toast.error('Error upvoting. Please try again.');
     }
   };
 
