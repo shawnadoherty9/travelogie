@@ -274,45 +274,53 @@ export const useExploreLocations = () => {
         }
       }
 
-      // Fetch OpenStreetMap places
+      // Fetch OpenStreetMap places - only when zoomed in enough (max 5 degrees)
       if (filters.sourceTypes.includes('osm_places') && filters.boundingBox) {
-        try {
-          const { north, south, east, west } = filters.boundingBox;
-          const osmUrl = new URL('https://rmtjtpaytixcfiwjlhkt.supabase.co/functions/v1/overpass-places');
-          osmUrl.searchParams.set('north', north.toString());
-          osmUrl.searchParams.set('south', south.toString());
-          osmUrl.searchParams.set('east', east.toString());
-          osmUrl.searchParams.set('west', west.toString());
-          osmUrl.searchParams.set('limit', '50');
-          
-          const osmResponse = await fetch(osmUrl.toString());
-          if (osmResponse.ok) {
-            const osmData = await osmResponse.json();
-            if (osmData.places && Array.isArray(osmData.places)) {
-              allLocations.push(...osmData.places.map((place: any) => ({
-                id: place.id,
-                name: place.name,
-                description: place.description,
-                short_description: place.category ? `${place.category.charAt(0).toUpperCase() + place.category.slice(1)} site` : null,
-                latitude: place.latitude,
-                longitude: place.longitude,
-                source_type: 'osm_places' as LocationSourceType,
-                category_id: null,
-                category_name: place.category ? place.category.charAt(0).toUpperCase() + place.category.slice(1) : 'Cultural',
-                tags: place.tags || [],
-                price_from: null,
-                price_to: null,
-                currency: 'USD',
-                rating: null,
-                review_count: null,
-                image_urls: place.image_url ? [place.image_url] : null,
-                address: place.address,
-              })));
+        const { north, south, east, west } = filters.boundingBox;
+        const latSpan = Math.abs(north - south);
+        const lngSpan = Math.abs(east - west);
+        
+        // Only fetch if bounding box is within the 5 degree limit
+        if (latSpan <= 5 && lngSpan <= 5) {
+          try {
+            const osmUrl = new URL('https://rmtjtpaytixcfiwjlhkt.supabase.co/functions/v1/overpass-places');
+            osmUrl.searchParams.set('north', north.toString());
+            osmUrl.searchParams.set('south', south.toString());
+            osmUrl.searchParams.set('east', east.toString());
+            osmUrl.searchParams.set('west', west.toString());
+            osmUrl.searchParams.set('limit', '50');
+            
+            const osmResponse = await fetch(osmUrl.toString());
+            if (osmResponse.ok) {
+              const osmData = await osmResponse.json();
+              if (osmData.places && Array.isArray(osmData.places)) {
+                allLocations.push(...osmData.places.map((place: any) => ({
+                  id: place.id,
+                  name: place.name,
+                  description: place.description,
+                  short_description: place.category ? `${place.category.charAt(0).toUpperCase() + place.category.slice(1)} site` : null,
+                  latitude: place.latitude,
+                  longitude: place.longitude,
+                  source_type: 'osm_places' as LocationSourceType,
+                  category_id: null,
+                  category_name: place.category ? place.category.charAt(0).toUpperCase() + place.category.slice(1) : 'Cultural',
+                  tags: place.tags || [],
+                  price_from: null,
+                  price_to: null,
+                  currency: 'USD',
+                  rating: null,
+                  review_count: null,
+                  image_urls: place.image_url ? [place.image_url] : null,
+                  address: place.address,
+                })));
+              }
             }
+          } catch (osmError) {
+            console.error('Error fetching OSM places:', osmError);
+            // Don't fail the whole request if OSM fails
           }
-        } catch (osmError) {
-          console.error('Error fetching OSM places:', osmError);
-          // Don't fail the whole request if OSM fails
+        } else {
+          console.log('Skipping OSM fetch - zoom in to see heritage sites (current span:', latSpan.toFixed(1), 'x', lngSpan.toFixed(1), 'degrees)');
         }
       }
 
