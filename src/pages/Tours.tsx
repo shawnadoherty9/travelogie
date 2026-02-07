@@ -17,6 +17,7 @@ import { TourModeSelection } from "@/components/tours/TourModeSelection";
 import { PersonalizedTourForm } from "@/components/tours/PersonalizedTourForm";
 import { TourGuidesGrid } from "@/components/tours/TourGuidesGrid";
 import { LanguageInstructorsSection } from "@/components/tours/LanguageInstructorsSection";
+import { ExploreMap } from "@/components/explore/ExploreMap";
 
 // Import profile images for instructors
 import mayaPatelProfile from "@/assets/maya-patel-profile.jpg";
@@ -288,6 +289,19 @@ const Tours = () => {
       <Header />
       <main className="pt-16">
         <TourHeroSection />
+        
+        {/* Explore Map Section */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-2">Explore the World</h2>
+              <p className="text-muted-foreground">
+                Discover activities, events, and experiences near you or plan your next adventure
+              </p>
+            </div>
+            <ExploreMap className="h-[700px]" />
+          </div>
+        </section>
         
         <TourModeSelection 
           selectedMode={selectedMode}
