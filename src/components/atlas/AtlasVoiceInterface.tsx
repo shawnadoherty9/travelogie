@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 import { Mic, MicOff, Volume2, VolumeX, Send, MessageSquare } from 'lucide-react';
 
 interface AtlasVoiceInterfaceProps {
@@ -12,13 +13,46 @@ interface AtlasVoiceInterfaceProps {
 }
 
 const AtlasVoiceInterface: React.FC<AtlasVoiceInterfaceProps> = ({ isEnabled, onToggle }) => {
-  const [isListening, setIsListening] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [message, setMessage] = useState('');
   const [conversation, setConversation] = useState<Array<{role: 'user' | 'atlas', content: string}>>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const { toast } = useToast();
   const audioRef = useRef<HTMLAudioElement>(null);
+  
+  // Mozilla Web Speech API for voice input
+  const { 
+    transcript, 
+    isListening, 
+    isSupported: speechSupported,
+    startListening, 
+    stopListening,
+    resetTranscript 
+  } = useSpeechRecognition();
+
+  // Update message when speech is recognized
+  useEffect(() => {
+    if (transcript) {
+      setMessage(transcript);
+    }
+  }, [transcript]);
+
+  // Auto-send when speech recognition stops with a transcript
+  useEffect(() => {
+    if (!isListening && transcript && message === transcript) {
+      handleSendMessage();
+      resetTranscript();
+    }
+  }, [isListening, transcript]);
+
+  const toggleListening = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      resetTranscript();
+      startListening();
+    }
+  };
 
   const navigationResponses = {
     home: "Welcome to Travelogie! I'm Atlas, your cultural travel guide. From here you can explore destinations, book personalized tours, or connect with local guides.",
@@ -203,10 +237,21 @@ const AtlasVoiceInterface: React.FC<AtlasVoiceInterfaceProps> = ({ isEnabled, on
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask Atlas about Travelogie..."
-                className="min-h-[40px] resize-none"
+                placeholder={isListening ? "Listening..." : "Ask Atlas about Travelogie..."}
+                className={`min-h-[40px] resize-none ${isListening ? 'border-primary animate-pulse' : ''}`}
                 rows={1}
               />
+              {speechSupported && (
+                <Button
+                  onClick={toggleListening}
+                  variant={isListening ? "destructive" : "outline"}
+                  size="icon"
+                  className="min-w-[40px]"
+                  title={isListening ? "Stop listening" : "Start voice input"}
+                >
+                  {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                </Button>
+              )}
               <Button
                 onClick={handleSendMessage}
                 disabled={!message.trim() || isPlaying}
