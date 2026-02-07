@@ -71,18 +71,18 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-primary-foreground/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="text-sm opacity-80">
+        <div className="border-t border-primary-foreground/20 mt-8 pt-8 flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+          <div className="text-sm opacity-80 text-center md:text-left">
             © 2024 Travelogie. All rights reserved.
           </div>
           
-          <div className="flex items-center space-x-6 text-sm">
-            <a href="#" className="opacity-80 hover:opacity-100 transition-opacity">Privacy Policy</a>
-            <a href="#" className="opacity-80 hover:opacity-100 transition-opacity">Terms of Service</a>
-            <a href="#" className="opacity-80 hover:opacity-100 transition-opacity">Cookie Policy</a>
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm">
+            <a href="#" className="opacity-80 hover:opacity-100 transition-opacity">Privacy</a>
+            <a href="#" className="opacity-80 hover:opacity-100 transition-opacity">Terms</a>
+            <a href="#" className="opacity-80 hover:opacity-100 transition-opacity">Cookies</a>
           </div>
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center justify-center gap-2 sm:gap-3">
             <Button variant="secondary" size="sm">
               Global
             </Button>
