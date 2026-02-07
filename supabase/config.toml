@@ -64,3 +64,6 @@ verify_jwt = false
 
 [functions.foursquare-places]
 verify_jwt = false
+
+[functions.overpass-places]
+verify_jwt = false
