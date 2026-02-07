@@ -55,3 +55,9 @@ verify_jwt = true
 
 [functions.text-to-speech]
 verify_jwt = false
+
+[functions.send-booking-email]
+verify_jwt = false
+
+[functions.apify-webhook]
+verify_jwt = false
