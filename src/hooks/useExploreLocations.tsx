@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-export type LocationSourceType = 'activities' | 'events' | 'tour_operators' | 'user_suggestions';
+export type LocationSourceType = 'activities' | 'events' | 'tour_operators' | 'user_suggestions' | 'osm_places';
 
 export interface ExploreLocation {
   id: string;
@@ -71,7 +71,7 @@ export const useExploreLocations = () => {
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   const [filters, setFilters] = useState<ExploreFilters>({
-    sourceTypes: ['activities', 'events', 'tour_operators', 'user_suggestions'],
+    sourceTypes: ['activities', 'events', 'tour_operators', 'user_suggestions', 'osm_places'],
     categoryIds: [],
     interestTagIds: [],
     searchQuery: '',
@@ -271,6 +271,48 @@ export const useExploreLocations = () => {
             image_urls: item.photo_url ? [item.photo_url] : null,
             address: null,
           })));
+        }
+      }
+
+      // Fetch OpenStreetMap places
+      if (filters.sourceTypes.includes('osm_places') && filters.boundingBox) {
+        try {
+          const { north, south, east, west } = filters.boundingBox;
+          const osmUrl = new URL('https://rmtjtpaytixcfiwjlhkt.supabase.co/functions/v1/overpass-places');
+          osmUrl.searchParams.set('north', north.toString());
+          osmUrl.searchParams.set('south', south.toString());
+          osmUrl.searchParams.set('east', east.toString());
+          osmUrl.searchParams.set('west', west.toString());
+          osmUrl.searchParams.set('limit', '50');
+          
+          const osmResponse = await fetch(osmUrl.toString());
+          if (osmResponse.ok) {
+            const osmData = await osmResponse.json();
+            if (osmData.places && Array.isArray(osmData.places)) {
+              allLocations.push(...osmData.places.map((place: any) => ({
+                id: place.id,
+                name: place.name,
+                description: place.description,
+                short_description: place.category ? `${place.category.charAt(0).toUpperCase() + place.category.slice(1)} site` : null,
+                latitude: place.latitude,
+                longitude: place.longitude,
+                source_type: 'osm_places' as LocationSourceType,
+                category_id: null,
+                category_name: place.category ? place.category.charAt(0).toUpperCase() + place.category.slice(1) : 'Cultural',
+                tags: place.tags || [],
+                price_from: null,
+                price_to: null,
+                currency: 'USD',
+                rating: null,
+                review_count: null,
+                image_urls: place.image_url ? [place.image_url] : null,
+                address: place.address,
+              })));
+            }
+          }
+        } catch (osmError) {
+          console.error('Error fetching OSM places:', osmError);
+          // Don't fail the whole request if OSM fails
         }
       }
 

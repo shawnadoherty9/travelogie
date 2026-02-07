@@ -56,6 +56,7 @@ const SOURCE_TYPE_CONFIG: Record<LocationSourceType, { label: string; icon: Reac
   events: { label: 'Events', icon: <Calendar className="w-4 h-4" />, color: 'bg-green-500' },
   tour_operators: { label: 'Tour Guides', icon: <Users className="w-4 h-4" />, color: 'bg-orange-500' },
   user_suggestions: { label: 'User Tips', icon: <Heart className="w-4 h-4" />, color: 'bg-red-500' },
+  osm_places: { label: 'Heritage Sites', icon: <MapPin className="w-4 h-4" />, color: 'bg-purple-500' },
 };
 
 export const ExploreMapFilters: React.FC<ExploreMapFiltersProps> = ({
@@ -96,7 +97,7 @@ export const ExploreMapFilters: React.FC<ExploreMapFiltersProps> = ({
 
   const clearAllFilters = () => {
     onFiltersChange({
-      sourceTypes: ['activities', 'events', 'tour_operators', 'user_suggestions'],
+      sourceTypes: ['activities', 'events', 'tour_operators', 'user_suggestions', 'osm_places'],
       categoryIds: [],
       interestTagIds: [],
       searchQuery: '',
@@ -107,7 +108,7 @@ export const ExploreMapFilters: React.FC<ExploreMapFiltersProps> = ({
     filters.categoryIds.length > 0 || 
     filters.interestTagIds.length > 0 || 
     filters.searchQuery || 
-    filters.sourceTypes.length < 4;
+    filters.sourceTypes.length < 5;
 
   // Group interest tags by category
   const tagsByCategory = interestTags.reduce((acc, tag) => {

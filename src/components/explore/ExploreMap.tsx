@@ -29,6 +29,7 @@ const SOURCE_COLORS: Record<LocationSourceType, string> = {
   events: '#22C55E',          // Green
   tour_operators: '#F97316',  // Orange
   user_suggestions: '#EF4444', // Red
+  osm_places: '#8B5CF6',      // Purple (temples, monuments, heritage)
 };
 
 const SOURCE_ICONS: Record<LocationSourceType, string> = {
@@ -36,6 +37,7 @@ const SOURCE_ICONS: Record<LocationSourceType, string> = {
   events: '📅',
   tour_operators: '👤',
   user_suggestions: '💡',
+  osm_places: '🏛️',
 };
 
 interface ExploreMapProps {
