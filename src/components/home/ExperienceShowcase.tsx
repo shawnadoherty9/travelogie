@@ -100,49 +100,49 @@ const ExperienceShowcase = () => {
   ];
 
   return (
-    <section className="py-20">
-      <div className="container mx-auto px-4">
-        <div className="text-center space-y-4 mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+    <section className="py-12 sm:py-16 md:py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center space-y-3 sm:space-y-4 mb-8 sm:mb-12 md:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
             Authentic Cultural Experiences
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
             Immerse yourself in local traditions and create memories that last a lifetime
           </p>
         </div>
 
-        {/* Featured Experience */}
-        <div className="relative mb-16 rounded-2xl overflow-hidden travel-shadow">
+        {/* Featured Experience - Mobile optimized */}
+        <div className="relative mb-8 sm:mb-12 md:mb-16 rounded-xl sm:rounded-2xl overflow-hidden travel-shadow">
           <img 
             src={cultureImage} 
             alt="Cultural experiences collage" 
-            className="w-full h-80 md:h-96 object-cover"
+            className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-100/90 via-yellow-50/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-100/95 via-yellow-50/80 to-transparent sm:from-amber-100/90 sm:via-yellow-50/70" />
           <div className="absolute inset-0 flex items-center">
-            <div className="container mx-auto px-4">
-              <div className="max-w-lg space-y-6">
-                <Badge variant="secondary" className="bg-travel-sunset/20 text-travel-sunset border-travel-sunset/30">
+            <div className="container mx-auto px-4 sm:px-6">
+              <div className="max-w-lg space-y-3 sm:space-y-4 md:space-y-6">
+                <Badge variant="secondary" className="bg-travel-sunset/20 text-travel-sunset border-travel-sunset/30 text-xs sm:text-sm">
                   Featured Experience
                 </Badge>
-                <h3 className="text-2xl md:text-3xl font-bold text-foreground">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
                   Sacred River Ceremony with Hindu Monk
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground line-clamp-2 sm:line-clamp-none">
                   Join Pandit Sharma for a spiritual journey along the Ganges, 
                   learning ancient rituals and meditation practices at sunrise.
                 </p>
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                   <div className="flex items-center space-x-1">
-                    <MapPin className="w-4 h-4 text-travel-ocean" />
-                    <span className="text-sm">Varanasi, India</span>
+                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-travel-ocean" />
+                    <span className="text-xs sm:text-sm">Varanasi, India</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-travel-sunset fill-current" />
-                    <span className="text-sm font-medium">5.0 (156)</span>
+                    <Star className="w-3 h-3 sm:w-4 sm:h-4 text-travel-sunset fill-current" />
+                    <span className="text-xs sm:text-sm font-medium">5.0 (156)</span>
                   </div>
                 </div>
-                <Button variant="wanderlust" size="lg">
+                <Button variant="wanderlust" size="default" className="w-full sm:w-auto">
                   Book This Experience
                 </Button>
               </div>
@@ -151,7 +151,7 @@ const ExperienceShowcase = () => {
         </div>
 
         {/* Experience Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {experiences.map((experience) => (
             <Card key={experience.id} className="group hover:transform hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden border-border hover:border-travel-ocean/50">
               <div className="aspect-video relative overflow-hidden">
