@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, MapPin, ExternalLink, Star, Clock, DollarSign } from 'lucide-react';
+import { Loader2, MapPin, ExternalLink, Star, Clock, DollarSign, ZoomIn } from 'lucide-react';
 import { toast } from 'sonner';
 import { useExploreLocations, ExploreLocation, LocationSourceType } from '@/hooks/useExploreLocations';
 import { ExploreMapFilters } from './ExploreMapFilters';
@@ -61,6 +61,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const [selectedLocation, setSelectedLocation] = useState<ExploreLocation | null>(null);
   const [isNearMeMode, setIsNearMeMode] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
+  const [needsZoomForHeritage, setNeedsZoomForHeritage] = useState(true);
 
   const {
     locations,
@@ -157,6 +158,9 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       moveTimeout = setTimeout(() => {
         if (map.current && !isFittingBounds.current) {
           const bounds = map.current.getBounds();
+          const latSpan = Math.abs(bounds.getNorth() - bounds.getSouth());
+          const lngSpan = Math.abs(bounds.getEast() - bounds.getWest());
+          setNeedsZoomForHeritage(latSpan > 5 || lngSpan > 5);
           setBoundingBox({
             north: bounds.getNorth(),
             south: bounds.getSouth(),
@@ -293,6 +297,14 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 <Loader2 className="w-5 h-5 animate-spin" />
                 <span>{gettingLocation ? 'Getting your location...' : 'Loading...'}</span>
               </div>
+            </div>
+          )}
+
+          {/* Zoom hint for heritage sites */}
+          {needsZoomForHeritage && !isNearMeMode && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-card/95 backdrop-blur-sm border border-border rounded-full px-4 py-2 shadow-lg text-sm text-muted-foreground">
+              <ZoomIn className="w-4 h-4 text-[#8B5CF6]" />
+              <span>Zoom in to discover <span className="font-medium text-[#8B5CF6]">🏛️ Heritage Sites</span></span>
             </div>
           )}
 
