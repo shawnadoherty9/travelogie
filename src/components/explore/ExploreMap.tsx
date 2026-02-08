@@ -4,7 +4,14 @@ import 'leaflet/dist/leaflet.css';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, MapPin, ExternalLink, Star, Clock, DollarSign, ZoomIn } from 'lucide-react';
+import { Loader2, MapPin, ExternalLink, Star, Clock, DollarSign, ZoomIn, Navigation2 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useExploreLocations, ExploreLocation, LocationSourceType } from '@/hooks/useExploreLocations';
 import { ExploreMapFilters } from './ExploreMapFilters';
@@ -45,6 +52,21 @@ interface ExploreMapProps {
   defaultCenter?: { lat: number; lng: number };
   defaultZoom?: number;
 }
+
+const QUICK_CITIES = [
+  { name: 'Tokyo', lat: 35.6895, lng: 139.6917 },
+  { name: 'Paris', lat: 48.8566, lng: 2.3522 },
+  { name: 'Mumbai', lat: 19.0760, lng: 72.8777 },
+  { name: 'Barcelona', lat: 41.3874, lng: 2.1686 },
+  { name: 'Bangkok', lat: 13.7563, lng: 100.5018 },
+  { name: 'Istanbul', lat: 41.0082, lng: 28.9784 },
+  { name: 'Marrakech', lat: 31.6295, lng: -7.9811 },
+  { name: 'Rome', lat: 41.9028, lng: 12.4964 },
+  { name: 'Kyoto', lat: 35.0116, lng: 135.7681 },
+  { name: 'Varanasi', lat: 25.3176, lng: 83.0068 },
+  { name: 'Seville', lat: 37.3891, lng: -5.9845 },
+  { name: 'Cairo', lat: 30.0444, lng: 31.2357 },
+];
 
 export const ExploreMap: React.FC<ExploreMapProps> = ({
   className = 'h-[600px]',
@@ -289,6 +311,28 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
         {/* Map Container */}
         <div className="flex-1 relative rounded-lg overflow-hidden border border-border">
           <div ref={mapContainer} className="w-full h-full" />
+
+          {/* Go to City dropdown */}
+          <div className="absolute top-4 right-4 z-20">
+            <Select onValueChange={(value) => {
+              const city = QUICK_CITIES.find(c => c.name === value);
+              if (city && map.current) {
+                map.current.setView([city.lat, city.lng], 12, { animate: true });
+              }
+            }}>
+              <SelectTrigger className="w-[180px] bg-card border-border shadow-lg">
+                <Navigation2 className="w-4 h-4 mr-2 text-muted-foreground" />
+                <SelectValue placeholder="Go to City" />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border shadow-xl z-50">
+                {QUICK_CITIES.map(city => (
+                  <SelectItem key={city.name} value={city.name}>
+                    {city.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           
           {/* Loading overlay */}
           {(loading || gettingLocation) && (
