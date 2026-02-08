@@ -20,7 +20,7 @@ const AtlasVoiceInterface: React.FC<AtlasVoiceInterfaceProps> = ({ isEnabled, on
   const { toast } = useToast();
   const audioRef = useRef<HTMLAudioElement>(null);
   
-  // Mozilla Web Speech API for voice input
+  // Web Speech API for voice input
   const { 
     transcript, 
     isListening, 
