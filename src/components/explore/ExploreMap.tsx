@@ -55,6 +55,8 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const map = useRef<L.Map | null>(null);
   const markersLayer = useRef<L.LayerGroup | null>(null);
   const userMarker = useRef<L.Marker | null>(null);
+  const isFittingBounds = useRef(false);
+  const hasInitialFit = useRef(false);
   
   const [selectedLocation, setSelectedLocation] = useState<ExploreLocation | null>(null);
   const [isNearMeMode, setIsNearMeMode] = useState(false);
@@ -153,7 +155,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
     map.current.on('moveend', () => {
       clearTimeout(moveTimeout);
       moveTimeout = setTimeout(() => {
-        if (map.current && !isNearMeMode) {
+        if (map.current && !isFittingBounds.current) {
           const bounds = map.current.getBounds();
           setBoundingBox({
             north: bounds.getNorth(),
@@ -198,12 +200,15 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       marker.addTo(markersLayer.current!);
     });
 
-    // Fit bounds to show all markers (only in explore mode with results)
-    if (locations.length > 0 && !isNearMeMode && map.current.getZoom() < 4) {
+    // Fit bounds to show all markers only once on initial load
+    if (locations.length > 0 && !isNearMeMode && !hasInitialFit.current && map.current.getZoom() < 4) {
+      hasInitialFit.current = true;
       const group = L.featureGroup(
         locations.map(loc => L.marker([loc.latitude, loc.longitude]))
       );
+      isFittingBounds.current = true;
       map.current.fitBounds(group.getBounds().pad(0.1));
+      setTimeout(() => { isFittingBounds.current = false; }, 1500);
     }
   }, [locations, isNearMeMode]);
 
