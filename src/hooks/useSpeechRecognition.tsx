@@ -9,7 +9,7 @@ interface SpeechRecognitionHook {
   resetTranscript: () => void;
 }
 
-// Web Speech API types (Mozilla-standardized)
+// Web Speech API types
 interface SpeechRecognitionEvent extends Event {
   resultIndex: number;
   results: SpeechRecognitionResultList;
@@ -65,7 +65,7 @@ export const useSpeechRecognition = (): SpeechRecognitionHook => {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
-    // Check for Web Speech API support (Mozilla-standardized, works in Chrome, Edge, Safari)
+    // Check for Web Speech API support
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     
     if (SpeechRecognitionAPI) {
