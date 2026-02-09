@@ -8,8 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, MapPin, Clock, Users, BookOpen, Trophy } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { DragDropLesson } from "@/components/language/DragDropLesson";
-import { languageLessons, getLessonsByLanguage } from "@/data/languageLessons";
+import { useLanguageLessons } from "@/hooks/useLanguageLessons";
 import { toast } from "sonner";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 // Import images
 import osakaStreetFoodBackground from "@/assets/osaka-street-food-background.jpg";
@@ -54,11 +55,14 @@ import davidCohenProfile from "@/assets/david-cohen-profile.jpg";
 import sarahGoldbergProfile from "@/assets/sarah-goldberg-profile.jpg";
 
 const Languages = () => {
+  const { lessons: dbLessons, languages: dbLanguages, isLoading: lessonsLoading } = useLanguageLessons();
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
 
-  const languages = ["English", "Spanish", "French", "Italian", "Portuguese", "Japanese", "Chinese", "Thai", "Khmer", "Hindi", "Arabic", "Hebrew"];
+  // Combine DB languages with instructor languages for complete list
+  const instructorLanguages = ["English", "Spanish", "French", "Italian", "Portuguese", "Japanese", "Chinese", "Thai", "Khmer", "Hindi", "Arabic", "Hebrew"];
+  const languages = [...new Set([...dbLanguages, ...instructorLanguages])].sort();
 
   const languageInstructors = [
     // English Instructors
@@ -776,9 +780,28 @@ const Languages = () => {
     ? languageInstructors.filter(instructor => instructor.languages.includes(selectedLanguage))
     : languageInstructors.slice(0, 8); // Show first 8 if no language selected
 
-  const filteredLessons = selectedLanguage 
-    ? getLessonsByLanguage(selectedLanguage)
-    : languageLessons.slice(0, 6); // Show first 6 if no language selected
+  // Transform DB lessons to DragDropLesson format
+  const transformedLessons = dbLessons.map(lesson => ({
+    id: lesson.id,
+    language: lesson.language,
+    title: lesson.title,
+    level: lesson.level,
+    vocabularyItems: (lesson.vocabulary_items || []).map(v => ({
+      id: v.id,
+      word: v.word,
+      phonetic: v.phonetic,
+      translation: v.translation,
+      category: v.category,
+    })),
+    targetSentence: lesson.target_sentence,
+    targetPhonetic: lesson.target_phonetic,
+    targetTranslation: lesson.target_translation,
+    culturalNote: lesson.cultural_note,
+  }));
+
+  const filteredLessons = selectedLanguage
+    ? transformedLessons.filter(l => l.language === selectedLanguage)
+    : transformedLessons.slice(0, 6);
 
   const handleLessonComplete = (lessonId: string) => {
     setCompletedLessons(prev => [...prev, lessonId]);
@@ -852,7 +875,11 @@ const Languages = () => {
               Practice real conversations with drag-and-drop vocabulary lessons designed by native speakers
             </p>
 
-            {activeLesson ? (
+            {lessonsLoading ? (
+              <div className="flex justify-center py-12">
+                <LoadingSpinner />
+              </div>
+            ) : activeLesson ? (
               <div className="mb-8">
                 <DragDropLesson
                   key={activeLesson}
