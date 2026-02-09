@@ -55,7 +55,7 @@ serve(async (req) => {
   }
 
   try {
-    const FOURSQUARE_API_KEY = Deno.env.get('FOURSQUARE_API_KEY');
+    const FOURSQUARE_API_KEY = Deno.env.get('FOURSQUARE_API_KEY')?.trim();
     if (!FOURSQUARE_API_KEY) {
       throw new Error('FOURSQUARE_API_KEY is not configured');
     }
@@ -84,7 +84,10 @@ serve(async (req) => {
         searchParams.set('limit', String(limit));
         searchParams.set('fields', 'fsq_id,name,geocodes,location,categories,description,rating,photos,hours,price,website,tel');
 
-        const response = await fetch(`${baseUrl}/places/search?${searchParams}`, { headers: fsqHeaders });
+        const fullUrl = `${baseUrl}/places/search?${searchParams}`;
+        console.log(`Fetching: ${fullUrl}`);
+        console.log(`Auth header: ${fsqHeaders['Authorization']?.substring(0, 20)}...`);
+        const response = await fetch(fullUrl, { headers: fsqHeaders });
 
         if (!response.ok) {
           const errorBody = await response.text();
