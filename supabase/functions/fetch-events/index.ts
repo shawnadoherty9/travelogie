@@ -618,6 +618,61 @@ Deno.serve(async (req) => {
           console.log(`  [${source.name}] Got ${events.length} normalized events`)
 
           for (const evt of events) {
+            // Foursquare places → activities table (permanent attractions)
+            if (source.name === 'foursquare') {
+              // Dedup by name in activities
+              const { data: existingActivity } = await supabase
+                .from('activities')
+                .select('id')
+                .ilike('name', evt.name)
+                .limit(1)
+
+              if (existingActivity && existingActivity.length > 0) {
+                summary[source.name].skipped++
+                continue
+              }
+
+              // Geocode if needed
+              let lat = evt.latitude
+              let lon = evt.longitude
+              if (!lat || !lon) {
+                const geo = await geocodeAddress(evt.address || `${cityInfo.name}, ${cityInfo.country_name}`)
+                if (geo) { lat = geo.lat; lon = geo.lon }
+              }
+
+              const categoryId = matchCategory(
+                `${evt.name} ${evt.description || ''} ${evt.event_type || ''}`
+              )
+
+              const { error: insertError } = await supabase.from('activities').insert({
+                name: evt.name,
+                description: evt.description,
+                short_description: evt.short_description,
+                address: evt.address,
+                latitude: lat,
+                longitude: lon,
+                price_from: evt.price_from,
+                price_to: evt.price_to,
+                currency: evt.currency || 'USD',
+                image_urls: evt.image_urls,
+                tags: [...(evt.tags || []), 'foursquare'],
+                external_booking_url: evt.ticket_url,
+                category_id: categoryId,
+                city_id: cityInfo.id || null,
+                is_active: true,
+              })
+
+              if (insertError) {
+                console.error(`[foursquare] Insert activity error for "${evt.name}":`, insertError.message)
+                summary[source.name].errors++
+              } else {
+                summary[source.name].added++
+                totalAdded++
+              }
+              continue
+            }
+
+            // Non-Foursquare sources → events table (time-based events)
             // Dedup by name + date
             const { data: existing } = await supabase
               .from('events')
@@ -631,18 +686,16 @@ Deno.serve(async (req) => {
               continue
             }
 
-            // Also check activities for Foursquare dedup
-            if (source.name !== 'foursquare') {
-              const { data: existingActivity } = await supabase
-                .from('activities')
-                .select('id')
-                .ilike('name', `%${evt.name}%`)
-                .limit(1)
+            // Check activities for cross-table dedup
+            const { data: existingActivity } = await supabase
+              .from('activities')
+              .select('id')
+              .ilike('name', `%${evt.name}%`)
+              .limit(1)
 
-              if (existingActivity && existingActivity.length > 0) {
-                summary[source.name].skipped++
-                continue
-              }
+            if (existingActivity && existingActivity.length > 0) {
+              summary[source.name].skipped++
+              continue
             }
 
             // Geocode if needed
@@ -657,7 +710,6 @@ Deno.serve(async (req) => {
               `${evt.name} ${evt.description || ''} ${evt.event_type || ''}`
             )
 
-            // Insert into events table (Foursquare also goes as events now for consistency)
             const { error: insertError } = await supabase.from('events').insert({
               name: evt.name,
               description: evt.description,
