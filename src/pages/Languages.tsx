@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/home/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, MapPin, Clock, Users, BookOpen, Trophy } from "lucide-react";
+import { Star, MapPin, Clock, Users, BookOpen, Trophy, Search, SlidersHorizontal } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { DragDropLesson } from "@/components/language/DragDropLesson";
 import { useLanguageLessons } from "@/hooks/useLanguageLessons";
+import { getLessonThumbnail } from "@/data/lessonThumbnails";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
@@ -59,6 +61,9 @@ const Languages = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
+  const [sortBy, setSortBy] = useState<"language" | "level" | "title">("language");
 
   // Combine DB languages with instructor languages for complete list
   const instructorLanguages = ["English", "Spanish", "French", "Italian", "Portuguese", "Japanese", "Chinese", "Thai", "Khmer", "Hindi", "Arabic", "Hebrew"];
@@ -799,11 +804,37 @@ const Languages = () => {
     culturalNote: lesson.cultural_note,
   }));
 
-  const filteredLessons = selectedLanguage
-    ? transformedLessons.filter(l => l.language === selectedLanguage)
-    : transformedLessons.slice(0, 6);
+  const filteredLessons = useMemo(() => {
+    let result = transformedLessons;
+    
+    if (selectedLanguage) {
+      result = result.filter(l => l.language === selectedLanguage);
+    }
+    if (selectedLevel) {
+      result = result.filter(l => l.level === selectedLevel);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(l =>
+        l.title.toLowerCase().includes(q) ||
+        l.language.toLowerCase().includes(q) ||
+        l.targetTranslation.toLowerCase().includes(q) ||
+        l.culturalNote.toLowerCase().includes(q)
+      );
+    }
+    
+    result.sort((a, b) => {
+      if (sortBy === "language") return a.language.localeCompare(b.language);
+      if (sortBy === "level") {
+        const order = { Beginner: 0, Intermediate: 1, Advanced: 2 };
+        return (order[a.level as keyof typeof order] || 0) - (order[b.level as keyof typeof order] || 0);
+      }
+      return a.title.localeCompare(b.title);
+    });
+    
+    return result;
+  }, [transformedLessons, selectedLanguage, selectedLevel, searchQuery, sortBy]);
 
-  const handleLessonComplete = (lessonId: string) => {
     setCompletedLessons(prev => [...prev, lessonId]);
     setActiveLesson(null);
     toast.success("Lesson completed! Great job! 🎉");
@@ -843,35 +874,75 @@ const Languages = () => {
           </div>
         </section>
 
-        {/* Language Selector */}
-        <section className="py-12 bg-muted/30">
+        {/* Language Selector & Filters */}
+        <section className="py-8 bg-muted/30">
           <div className="container mx-auto px-4">
-            <div className="max-w-md mx-auto">
-              <Label htmlFor="language-select" className="block text-center mb-4 text-lg font-semibold">
-                Choose a language to learn:
-              </Label>
-              <select
-                id="language-select"
-                className="w-full p-4 border rounded-lg bg-background text-lg"
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-              >
-                <option value="">All Languages</option>
-                {languages.map((language) => (
-                  <option key={language} value={language}>{language}</option>
-                ))}
-              </select>
+            <div className="max-w-4xl mx-auto space-y-4">
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="Search lessons by title, language, or topic..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 h-12 text-base"
+                />
+              </div>
+              
+              {/* Filter Row */}
+              <div className="flex flex-wrap gap-3 items-center">
+                <div className="flex items-center gap-2">
+                  <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-muted-foreground">Filters:</span>
+                </div>
+                
+                <select
+                  className="px-3 py-2 border rounded-lg bg-background text-sm"
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                >
+                  <option value="">All Languages</option>
+                  {languages.map((language) => (
+                    <option key={language} value={language}>{language}</option>
+                  ))}
+                </select>
+                
+                <select
+                  className="px-3 py-2 border rounded-lg bg-background text-sm"
+                  value={selectedLevel}
+                  onChange={(e) => setSelectedLevel(e.target.value)}
+                >
+                  <option value="">All Levels</option>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
+                
+                <select
+                  className="px-3 py-2 border rounded-lg bg-background text-sm"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as "language" | "level" | "title")}
+                >
+                  <option value="language">Sort by Language</option>
+                  <option value="level">Sort by Level</option>
+                  <option value="title">Sort by Title</option>
+                </select>
+                
+                <span className="text-sm text-muted-foreground ml-auto">
+                  {filteredLessons.length} lesson{filteredLessons.length !== 1 ? 's' : ''}
+                </span>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Interactive Language Lessons */}
-        <section className="py-16">
+        <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-4">
+            <h2 className="text-3xl font-bold text-center mb-2">
               {selectedLanguage ? `${selectedLanguage} Interactive Lessons` : 'Interactive Language Lessons'}
             </h2>
-            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+            <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
               Practice real conversations with drag-and-drop vocabulary lessons designed by native speakers
             </p>
 
@@ -901,71 +972,73 @@ const Languages = () => {
                   </Button>
                 </div>
               </div>
+            ) : filteredLessons.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-lg text-muted-foreground">No lessons found matching your criteria.</p>
+                <Button variant="outline" className="mt-4" onClick={() => { setSearchQuery(""); setSelectedLanguage(""); setSelectedLevel(""); }}>
+                  Clear Filters
+                </Button>
+              </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredLessons.map((lesson) => (
-                  <Card key={lesson.id} className="hover:travel-shadow transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <Badge variant="outline">{lesson.level}</Badge>
-                        <div className="flex items-center gap-2">
-                          {completedLessons.includes(lesson.id) && (
-                            <Badge variant="secondary" className="bg-green-100 text-green-800">
-                              <Trophy className="w-3 h-3 mr-1" />
-                              Completed
+                  <Card key={lesson.id} className="hover:travel-shadow transition-all duration-300 overflow-hidden">
+                    {/* Thumbnail */}
+                    <div className="relative h-40 overflow-hidden">
+                      <img
+                        src={getLessonThumbnail(lesson.language)}
+                        alt={`${lesson.language} lesson`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                        <Badge className="bg-background/90 text-foreground">{lesson.language}</Badge>
+                        <Badge variant="outline" className="bg-background/90 text-foreground">{lesson.level}</Badge>
+                      </div>
+                      {completedLessons.includes(lesson.id) && (
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-primary text-primary-foreground">
+                            <Trophy className="w-3 h-3 mr-1" />
+                            Completed
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <CardContent className="p-4">
+                      <h3 className="font-bold text-base mb-2 line-clamp-1">{lesson.title}</h3>
+                      
+                      <div className="space-y-2 mb-3">
+                        <p className="text-sm font-medium text-primary line-clamp-1">
+                          {lesson.targetSentence}
+                        </p>
+                        <p className="text-xs text-muted-foreground italic line-clamp-1">
+                          "{lesson.targetTranslation}"
+                        </p>
+                        
+                        <div className="flex flex-wrap gap-1">
+                          {lesson.vocabularyItems.slice(0, 3).map((item) => (
+                            <Badge key={item.id} variant="secondary" className="text-xs">
+                              {item.word}
+                            </Badge>
+                          ))}
+                          {lesson.vocabularyItems.length > 3 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{lesson.vocabularyItems.length - 3}
                             </Badge>
                           )}
-                          <Badge variant="secondary">{lesson.language}</Badge>
-                        </div>
-                      </div>
-                      
-                      <h3 className="font-bold text-lg mb-3">{lesson.title}</h3>
-                      
-                      <div className="space-y-3 mb-4">
-                        <div>
-                          <Label className="text-xs font-semibold">Target Sentence:</Label>
-                          <p className="text-sm font-medium text-primary mt-1">
-                            {lesson.targetSentence}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {lesson.targetPhonetic}
-                          </p>
-                          <p className="text-xs text-muted-foreground italic">
-                            "{lesson.targetTranslation}"
-                          </p>
-                        </div>
-                        
-                        <div>
-                          <Label className="text-xs font-semibold">Vocabulary ({lesson.vocabularyItems.length} words):</Label>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {lesson.vocabularyItems.slice(0, 3).map((item) => (
-                              <Badge key={item.id} variant="secondary" className="text-xs">
-                                {item.word}
-                              </Badge>
-                            ))}
-                            {lesson.vocabularyItems.length > 3 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{lesson.vocabularyItems.length - 3} more
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <Label className="text-xs font-semibold">Cultural Note:</Label>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {lesson.culturalNote}
-                          </p>
                         </div>
                       </div>
                       
                       <Button 
                         className="w-full bg-gradient-wanderlust hover:opacity-90 flex items-center gap-2"
+                        size="sm"
                         onClick={() => startLesson(lesson.id)}
                         disabled={completedLessons.includes(lesson.id)}
                       >
                         <BookOpen className="w-4 h-4" />
-                        {completedLessons.includes(lesson.id) ? 'Lesson Completed' : 'Start Interactive Lesson'}
+                        {completedLessons.includes(lesson.id) ? 'Completed' : 'Start Lesson'}
                       </Button>
                     </CardContent>
                   </Card>
