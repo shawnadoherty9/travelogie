@@ -835,6 +835,7 @@ const Languages = () => {
     return result;
   }, [transformedLessons, selectedLanguage, selectedLevel, searchQuery, sortBy]);
 
+  const handleLessonComplete = (lessonId: string) => {
     setCompletedLessons(prev => [...prev, lessonId]);
     setActiveLesson(null);
     toast.success("Lesson completed! Great job! 🎉");
