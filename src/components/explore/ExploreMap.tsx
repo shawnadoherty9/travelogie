@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useExploreLocations, ExploreLocation, LocationSourceType } from '@/hooks/useExploreLocations';
+import { EventBookingModal } from '@/components/events/EventBookingModal';
 import { useFetchEvents } from '@/hooks/useFetchEvents';
 import { ExploreMapFilters } from './ExploreMapFilters';
 import {
@@ -85,6 +86,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const hasInitialFit = useRef(false);
   
   const [selectedLocation, setSelectedLocation] = useState<ExploreLocation | null>(null);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const [isNearMeMode, setIsNearMeMode] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
   const [needsZoomForHeritage, setNeedsZoomForHeritage] = useState(true);
@@ -552,9 +554,20 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 
                 {/* Actions */}
                 <div className="flex gap-2 pt-4">
-                  <Button className="flex-1">
-                    Book Now
-                  </Button>
+                  {selectedLocation.source_type === 'events' && (
+                    <Button
+                      className="flex-1"
+                      variant="wanderlust"
+                      onClick={() => setBookingOpen(true)}
+                    >
+                      {(!selectedLocation.price_from || selectedLocation.price_from === 0) ? 'RSVP Now' : 'Reserve Tickets'}
+                    </Button>
+                  )}
+                  {selectedLocation.source_type !== 'events' && (
+                    <Button className="flex-1">
+                      Book Now
+                    </Button>
+                  )}
                   <Button variant="outline" size="icon">
                     <ExternalLink className="w-4 h-4" />
                   </Button>
@@ -564,6 +577,25 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Event Booking Modal */}
+      {selectedLocation && selectedLocation.source_type === 'events' && (
+        <EventBookingModal
+          open={bookingOpen}
+          onOpenChange={setBookingOpen}
+          event={{
+            id: selectedLocation.id,
+            name: selectedLocation.name,
+            start_date: selectedLocation.start_date,
+            end_date: selectedLocation.end_date,
+            venue_name: selectedLocation.venue_name,
+            address: selectedLocation.address,
+            price_from: selectedLocation.price_from,
+            price_to: selectedLocation.price_to,
+            currency: selectedLocation.currency,
+          }}
+        />
+      )}
     </div>
   );
 };
