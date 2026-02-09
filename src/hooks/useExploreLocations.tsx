@@ -24,6 +24,7 @@ export interface ExploreLocation {
   // Event-specific fields
   start_date?: string;
   end_date?: string;
+  venue_name?: string;
   // Tour operator specific
   business_name?: string;
   specialties?: string[];
@@ -188,7 +189,7 @@ export const useExploreLocations = () => {
           .select(`
             id, name, description, short_description, latitude, longitude,
             category_id, tags, price_from, price_to, currency,
-            image_urls, address, start_date, end_date
+            image_urls, address, start_date, end_date, venue_name
           `)
           .eq('is_active', true)
           .not('latitude', 'is', null)
