@@ -6,7 +6,7 @@ interface TourHeroSectionProps {
 }
 
 export const TourHeroSection = ({ 
-  title = "Discover Your Perfect Tour",
+  title = "Learn with Locals",
   subtitle = "Connect with passionate local guides for authentic cultural experiences"
 }: TourHeroSectionProps) => {
   return (
