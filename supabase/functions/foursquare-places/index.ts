@@ -9,15 +9,21 @@ const corsHeaders = {
 // Detect key type and use correct base URL + auth headers
 function getFoursquareConfig(apiKey: string) {
   const isServiceKey = apiKey.startsWith('fsq3');
+  console.log(`Key is service key: ${isServiceKey}, building headers...`);
+  const headers: Record<string, string> = {
+    'Accept': 'application/json',
+  };
+  if (isServiceKey) {
+    headers['Authorization'] = `Bearer ${apiKey}`;
+    headers['X-Places-Api-Version'] = '2025-06-17';
+  } else {
+    headers['Authorization'] = apiKey;
+  }
   return {
     baseUrl: isServiceKey
-      ? 'https://places-api.foursquare.com'       // New Places API
-      : 'https://api.foursquare.com/v3',           // Legacy v3
-    headers: {
-      'Authorization': isServiceKey ? `Bearer ${apiKey}` : apiKey,
-      'Accept': 'application/json',
-      ...(isServiceKey ? { 'X-Places-Api-Version': '2025-06-17' } : {}),
-    },
+      ? 'https://places-api.foursquare.com'
+      : 'https://api.foursquare.com/v3',
+    headers,
   };
 }
 
@@ -61,7 +67,7 @@ serve(async (req) => {
     }
 
     const { baseUrl, headers: fsqHeaders } = getFoursquareConfig(FOURSQUARE_API_KEY);
-    console.log(`Using Foursquare base URL: ${baseUrl}`);
+    console.log(`Using Foursquare base URL: ${baseUrl}, key prefix: ${FOURSQUARE_API_KEY.substring(0, 8)}..., key length: ${FOURSQUARE_API_KEY.length}`);
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const { action, ...params } = await req.json();
