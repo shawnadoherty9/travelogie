@@ -6,18 +6,18 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Support both old (v3) and new (places-api) Foursquare endpoints
-// Old API keys use: Authorization: <key> on api.foursquare.com/v3
-// New service keys use: Authorization: Bearer <key> on places-api.foursquare.com
-const FOURSQUARE_API_URL = 'https://api.foursquare.com/v3';
-
-function getFoursquareHeaders(apiKey: string) {
-  // If key starts with 'fsq3' it's a new service key, use Bearer
+// Detect key type and use correct base URL + auth headers
+function getFoursquareConfig(apiKey: string) {
   const isServiceKey = apiKey.startsWith('fsq3');
   return {
-    'Authorization': isServiceKey ? `Bearer ${apiKey}` : apiKey,
-    'Accept': 'application/json',
-    ...(isServiceKey ? { 'X-Places-Api-Version': '2025-06-17' } : {}),
+    baseUrl: isServiceKey
+      ? 'https://places-api.foursquare.com'       // New Places API
+      : 'https://api.foursquare.com/v3',           // Legacy v3
+    headers: {
+      'Authorization': isServiceKey ? `Bearer ${apiKey}` : apiKey,
+      'Accept': 'application/json',
+      ...(isServiceKey ? { 'X-Places-Api-Version': '2025-06-17' } : {}),
+    },
   };
 }
 
@@ -44,7 +44,6 @@ interface FoursquarePlace {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -57,21 +56,20 @@ serve(async (req) => {
 
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error('Supabase configuration missing');
     }
 
+    const { baseUrl, headers: fsqHeaders } = getFoursquareConfig(FOURSQUARE_API_KEY);
+    console.log(`Using Foursquare base URL: ${baseUrl}`);
+
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const { action, ...params } = await req.json();
-
     console.log(`Foursquare API action: ${action}`, params);
 
     switch (action) {
       case 'search': {
-        // Real-time place search
         const { query, ll, radius = 5000, categories, limit = 20 } = params;
-        
         const searchParams = new URLSearchParams();
         if (query) searchParams.set('query', query);
         if (ll) searchParams.set('ll', ll);
@@ -80,18 +78,11 @@ serve(async (req) => {
         searchParams.set('limit', String(limit));
         searchParams.set('fields', 'fsq_id,name,geocodes,location,categories,description,rating,photos,hours,price,website,tel');
 
-        const response = await fetch(
-          `${FOURSQUARE_API_URL}/places/search?${searchParams}`,
-          {
-            headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
-          }
-        );
+        const response = await fetch(`${baseUrl}/places/search?${searchParams}`, { headers: fsqHeaders });
 
         if (!response.ok) {
           const errorBody = await response.text();
-          const hdrs = Object.fromEntries(response.headers.entries());
-          console.error('Foursquare search error:', response.status, errorBody, JSON.stringify(hdrs));
-          console.error('Request headers used:', JSON.stringify(getFoursquareHeaders(FOURSQUARE_API_KEY.slice(0, 8) + '...')));
+          console.error('Foursquare search error:', response.status, errorBody);
           throw new Error(`Foursquare API error: ${response.status} - ${errorBody}`);
         }
 
@@ -108,20 +99,13 @@ serve(async (req) => {
       }
 
       case 'getDetails': {
-        // Get detailed place info including tips and photos
         const { fsq_id } = params;
         if (!fsq_id) throw new Error('fsq_id is required');
 
         const [placeRes, tipsRes, photosRes] = await Promise.all([
-          fetch(`${FOURSQUARE_API_URL}/places/${fsq_id}?fields=fsq_id,name,geocodes,location,categories,description,rating,hours,price,website,tel,stats`, {
-            headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
-          }),
-          fetch(`${FOURSQUARE_API_URL}/places/${fsq_id}/tips?limit=10`, {
-            headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
-          }),
-          fetch(`${FOURSQUARE_API_URL}/places/${fsq_id}/photos?limit=5`, {
-            headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
-          }),
+          fetch(`${baseUrl}/places/${fsq_id}?fields=fsq_id,name,geocodes,location,categories,description,rating,hours,price,website,tel,stats`, { headers: fsqHeaders }),
+          fetch(`${baseUrl}/places/${fsq_id}/tips?limit=10`, { headers: fsqHeaders }),
+          fetch(`${baseUrl}/places/${fsq_id}/photos?limit=5`, { headers: fsqHeaders }),
         ]);
 
         const place = await placeRes.json();
@@ -139,9 +123,7 @@ serve(async (req) => {
       }
 
       case 'import': {
-        // Import places to database for caching
         const { ll, radius = 10000, categories, cityId } = params;
-        
         if (!ll) throw new Error('ll (latitude,longitude) is required');
 
         const searchParams = new URLSearchParams();
@@ -151,10 +133,7 @@ serve(async (req) => {
         searchParams.set('limit', '50');
         searchParams.set('fields', 'fsq_id,name,geocodes,location,categories,description,rating,photos,hours,price,website');
 
-        const response = await fetch(
-          `${FOURSQUARE_API_URL}/places/search?${searchParams}`,
-          { headers: getFoursquareHeaders(FOURSQUARE_API_KEY) }
-        );
+        const response = await fetch(`${baseUrl}/places/search?${searchParams}`, { headers: fsqHeaders });
 
         if (!response.ok) {
           throw new Error(`Foursquare API error: ${response.status}`);
@@ -162,7 +141,6 @@ serve(async (req) => {
 
         const data = await response.json();
         const places: FoursquarePlace[] = data.results || [];
-
         console.log(`Importing ${places.length} places from Foursquare`);
 
         // Map Foursquare categories to our activity categories
@@ -278,11 +256,7 @@ serve(async (req) => {
       }
 
       case 'categories': {
-        // Get Foursquare category taxonomy
-        const response = await fetch(`${FOURSQUARE_API_URL}/places/categories`, {
-          headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
-        });
-
+        const response = await fetch(`${baseUrl}/places/categories`, { headers: fsqHeaders });
         const data = await response.json();
 
         return new Response(JSON.stringify({
