@@ -970,8 +970,9 @@ const Languages = () => {
                   targetSentence={filteredLessons.find(l => l.id === activeLesson)?.targetSentence || ''}
                   targetPhonetic={filteredLessons.find(l => l.id === activeLesson)?.targetPhonetic || ''}
                   targetTranslation={filteredLessons.find(l => l.id === activeLesson)?.targetTranslation || ''}
-                  onComplete={() => handleLessonComplete(activeLesson)}
-                />
+                   onComplete={() => handleLessonComplete(activeLesson)}
+                   onMarkComplete={() => handleLessonComplete(activeLesson)}
+                 />
                 <div className="flex justify-center mt-6">
                   <Button 
                     variant="outline" 
