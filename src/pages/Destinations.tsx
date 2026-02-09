@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Globe, Users, Calendar } from "lucide-react";
+import { Search, MapPin, Globe, Users, Calendar, Navigation } from "lucide-react";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from "@/integrations/supabase/client";
+import { LiveEventsSection } from "@/components/events/LiveEventsSection";
+import { useFetchEvents } from "@/hooks/useFetchEvents";
 
 // Import background image
 import kumbhMelaBackground from "@/assets/kumbh-mela-destinations-background.jpg";
@@ -28,6 +30,9 @@ const Destinations = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [mapboxToken, setMapboxToken] = useState("");
   const [isLoadingToken, setIsLoadingToken] = useState(true);
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const { fetchEventsForCity, fetching: fetchingEvents } = useFetchEvents();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const popularDestinations = [{
@@ -194,9 +199,31 @@ const Destinations = () => {
       map.current?.remove();
     };
   }, [mapboxToken]);
-  const handleDestinationClick = (destination: typeof popularDestinations[0]) => {
-    const cityId = destination.name.toLowerCase().split(',')[0].replace(/\s+/g, '');
+  const handleDestinationClick = async (destination: typeof popularDestinations[0]) => {
+    const cityName = destination.name.split(',')[0].trim();
+    const countryName = destination.name.split(',')[1]?.trim() || '';
+    setSelectedCity(cityName);
+    
+    // Trigger on-demand event fetch for the selected city
+    fetchEventsForCity(cityName, countryName);
+    
+    const cityId = cityName.toLowerCase().replace(/\s+/g, '');
     navigate(`/destinations/${cityId}`);
+  };
+
+  const handleNearMe = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setSelectedCity(null);
+        if (map.current) {
+          map.current.flyTo({ center: [pos.coords.longitude, pos.coords.latitude], zoom: 10 });
+        }
+      },
+      () => console.error('Geolocation denied'),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   };
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -253,6 +280,10 @@ const Destinations = () => {
                 </div>
                 <Button type="submit" size="lg" className="bg-gradient-wanderlust hover:opacity-90 text-slate-50 bg-sky-500 hover:bg-sky-400" disabled={isSearching}>
                   {isSearching ? "Searching..." : "Explore"}
+                </Button>
+                <Button type="button" size="lg" variant="outline" onClick={handleNearMe} className="gap-2">
+                  <Navigation className="w-4 h-4" />
+                  Near Me
                 </Button>
               </form>
             </div>
@@ -423,6 +454,32 @@ const Destinations = () => {
             </div>
           </div>
         </section>
+
+        {/* Live Events Section */}
+        {selectedCity && (
+          <LiveEventsSection 
+            city={selectedCity} 
+            title={`Upcoming Events in ${selectedCity}`}
+            limit={6}
+          />
+        )}
+
+        {userCoords && !selectedCity && (
+          <LiveEventsSection
+            latitude={userCoords.lat}
+            longitude={userCoords.lng}
+            radiusKm={100}
+            title="Events Near You"
+            limit={6}
+          />
+        )}
+
+        {!selectedCity && !userCoords && (
+          <LiveEventsSection
+            title="Upcoming Events Worldwide"
+            limit={6}
+          />
+        )}
 
         <Footer />
       </main>

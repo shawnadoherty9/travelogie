@@ -5,6 +5,7 @@ import ExperienceShowcase from "@/components/home/ExperienceShowcase";
 import InteractiveTravelMap from "@/components/home/InteractiveTravelMap";
 import TravelExperiencesShowcase from "@/components/home/TravelExperiencesShowcase";
 import Footer from "@/components/home/Footer";
+import { LiveEventsSection } from "@/components/events/LiveEventsSection";
 
 const Index = () => {
   return (
@@ -14,6 +15,7 @@ const Index = () => {
         <HeroSection />
         <UserTypeSelection />
         <TravelExperiencesShowcase />
+        <LiveEventsSection title="Upcoming Events Around the World" limit={6} />
         <ExperienceShowcase />
       </main>
       <Footer />

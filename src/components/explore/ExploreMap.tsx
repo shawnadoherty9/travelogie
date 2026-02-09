@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useExploreLocations, ExploreLocation, LocationSourceType } from '@/hooks/useExploreLocations';
+import { useFetchEvents } from '@/hooks/useFetchEvents';
 import { ExploreMapFilters } from './ExploreMapFilters';
 import {
   Sheet,
@@ -54,18 +55,18 @@ interface ExploreMapProps {
 }
 
 const QUICK_CITIES = [
-  { name: 'Tokyo', lat: 35.6895, lng: 139.6917 },
-  { name: 'Paris', lat: 48.8566, lng: 2.3522 },
-  { name: 'Mumbai', lat: 19.0760, lng: 72.8777 },
-  { name: 'Barcelona', lat: 41.3874, lng: 2.1686 },
-  { name: 'Bangkok', lat: 13.7563, lng: 100.5018 },
-  { name: 'Istanbul', lat: 41.0082, lng: 28.9784 },
-  { name: 'Marrakech', lat: 31.6295, lng: -7.9811 },
-  { name: 'Rome', lat: 41.9028, lng: 12.4964 },
-  { name: 'Kyoto', lat: 35.0116, lng: 135.7681 },
-  { name: 'Varanasi', lat: 25.3176, lng: 83.0068 },
-  { name: 'Seville', lat: 37.3891, lng: -5.9845 },
-  { name: 'Cairo', lat: 30.0444, lng: 31.2357 },
+  { name: 'Tokyo', lat: 35.6895, lng: 139.6917, country: 'Japan' },
+  { name: 'Paris', lat: 48.8566, lng: 2.3522, country: 'France' },
+  { name: 'Mumbai', lat: 19.0760, lng: 72.8777, country: 'India' },
+  { name: 'Barcelona', lat: 41.3874, lng: 2.1686, country: 'Spain' },
+  { name: 'Bangkok', lat: 13.7563, lng: 100.5018, country: 'Thailand' },
+  { name: 'Istanbul', lat: 41.0082, lng: 28.9784, country: 'Turkey' },
+  { name: 'Marrakech', lat: 31.6295, lng: -7.9811, country: 'Morocco' },
+  { name: 'Rome', lat: 41.9028, lng: 12.4964, country: 'Italy' },
+  { name: 'Kyoto', lat: 35.0116, lng: 135.7681, country: 'Japan' },
+  { name: 'Varanasi', lat: 25.3176, lng: 83.0068, country: 'India' },
+  { name: 'Seville', lat: 37.3891, lng: -5.9845, country: 'Spain' },
+  { name: 'Cairo', lat: 30.0444, lng: 31.2357, country: 'Egypt' },
 ];
 
 export const ExploreMap: React.FC<ExploreMapProps> = ({
@@ -85,6 +86,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const [gettingLocation, setGettingLocation] = useState(false);
   const [needsZoomForHeritage, setNeedsZoomForHeritage] = useState(true);
 
+  const { fetchEventsForCity, fetching: fetchingEvents } = useFetchEvents();
   const {
     locations,
     categories,
@@ -314,10 +316,27 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 
           {/* Go to City dropdown */}
           <div className="absolute top-4 right-4 z-20">
-            <Select onValueChange={(value) => {
+            <Select onValueChange={async (value) => {
               const city = QUICK_CITIES.find(c => c.name === value);
               if (city && map.current) {
                 map.current.setView([city.lat, city.lng], 12, { animate: true });
+                // Trigger on-demand event fetching for this city
+                const result = await fetchEventsForCity(city.name, city.country || '');
+                if (result && result.events_added > 0) {
+                  toast.success(`Found ${result.events_added} new events in ${city.name}`);
+                  // Refetch explore locations to show the new events
+                  setTimeout(() => {
+                    const bounds = map.current?.getBounds();
+                    if (bounds) {
+                      setBoundingBox({
+                        north: bounds.getNorth(),
+                        south: bounds.getSouth(),
+                        east: bounds.getEast(),
+                        west: bounds.getWest(),
+                      });
+                    }
+                  }, 500);
+                }
               }
             }}>
               <SelectTrigger className="w-[180px] bg-card border-border shadow-lg">
