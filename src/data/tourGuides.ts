@@ -1,3 +1,5 @@
+import { resolveAvatar } from "./tourGuideAvatars";
+
 export interface TourGuide {
   id: string;
   name: string;
@@ -537,7 +539,9 @@ export const tourGuides: TourGuide[] = [
 ];
 
 export const getTourGuidesByCity = (cityId: string): TourGuide[] => {
-  return tourGuides.filter(guide => guide.cityId.toLowerCase() === cityId.toLowerCase());
+  return tourGuides
+    .filter(guide => guide.cityId.toLowerCase() === cityId.toLowerCase())
+    .map(guide => ({ ...guide, avatar: resolveAvatar(guide.avatar) }));
 };
 
 export const getTourGuidesBySpecialty = (cityId: string, specialties: string[]): TourGuide[] => {
@@ -550,4 +554,8 @@ export const getTourGuidesBySpecialty = (cityId: string, specialties: string[]):
       )
     )
   );
+};
+
+export const getAllTourGuidesResolved = (): TourGuide[] => {
+  return tourGuides.map(guide => ({ ...guide, avatar: resolveAvatar(guide.avatar) }));
 };

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getLessonThumbnail } from "@/data/lessonThumbnails";
 
 export interface DBVocabularyItem {
   id: string;
@@ -74,7 +75,7 @@ export function useLanguageLessons() {
     level: lesson.level,
     duration: lesson.duration || "15 min",
     instructor: lesson.instructor_name || "Local Expert",
-    image: lesson.image_url || "",
+    image: lesson.image_url || getLessonThumbnail(lesson.language),
     vocabulary: lesson.vocabulary_items?.map(v => v.word) || [],
     phrases: [lesson.target_sentence],
     culturalNotes: lesson.cultural_note,
