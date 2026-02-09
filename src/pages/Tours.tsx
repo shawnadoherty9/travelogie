@@ -10,6 +10,7 @@ import { useTours } from "@/hooks/useTours";
 import { useTourOperators } from "@/hooks/useTourOperators";
 import { PersonalizedTourWorkflow } from "@/components/tours/PersonalizedTourWorkflow";
 import { getTourGuidesByCity } from "@/data/tourGuides";
+import { useLanguageLessons } from "@/hooks/useLanguageLessons";
 
 // New refactored components
 import { TourHeroSection } from "@/components/tours/TourHeroSection";
@@ -25,13 +26,6 @@ import carlosRodriguezProfile from "@/assets/carlos-rodriguez-profile.jpg";
 import yukiTanakaProfile from "@/assets/yuki-tanaka-profile.jpg";
 import amaraOkaforProfile from "@/assets/amara-okafor-profile.jpg";
 
-// Import lesson images
-import englishHotelLesson from "@/assets/english-hotel-lesson.jpg";
-import hindiKumbhMelaLesson from "@/assets/hindi-kumbh-mela-lesson.jpg";
-import japaneseStreetFoodLesson from "@/assets/japanese-street-food-lesson.jpg";
-import frenchCafeLesson from "@/assets/french-cafe-lesson.jpg";
-import spanishDanceLesson from "@/assets/spanish-dance-lesson.jpg";
-
 const Tours = () => {
   const [selectedMode, setSelectedMode] = useState<'personalized' | 'preorganized' | null>(null);
   const [location, setLocation] = useState("");
@@ -39,6 +33,7 @@ const Tours = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [showWorkflow, setShowWorkflow] = useState(false);
   const { toast } = useToast();
+  const { sampleLessons, languages } = useLanguageLessons();
 
   const {
     tours,
@@ -140,70 +135,8 @@ const Tours = () => {
     }
   ], []);
 
-  const sampleLessons = useMemo(() => [
-    {
-      id: 1,
-      title: "Hotel Check-in in English",
-      language: "English",
-      level: "Beginner",
-      duration: "30 minutes",
-      instructor: "Sarah Johnson",
-      image: englishHotelLesson,
-      vocabulary: ["reservation", "check-in", "passport", "room key", "receipt"],
-      phrases: ["I have a reservation under [name]", "Could I have a room with a view?", "What time is checkout?", "Is breakfast included?", "Could you call a taxi for me?"],
-      culturalNotes: "In English-speaking countries, it's polite to say 'please' and 'thank you' frequently during hotel interactions."
-    },
-    {
-      id: 2,
-      title: "Kumbh Mela Festival Traditions",
-      language: "Hindi",
-      level: "Intermediate",
-      duration: "45 minutes",
-      instructor: "Priya Sharma",
-      image: hindiKumbhMelaLesson,
-      vocabulary: ["स्नान (snaan)", "पूजा (pooja)", "साधु (sadhu)", "मेला (mela)", "तीर्थ (teerth)"],
-      phrases: ["कुंभ मेला कब है? (Kumbh mela kab hai?)", "स्नान का समय क्या है? (Snaan ka samay kya hai?)", "यह बहुत पवित्र है (Yah bahut pavitra hai)", "गंगा आरती देखना है (Ganga aarti dekhna hai)"],
-      culturalNotes: "Kumbh Mela is the world's largest peaceful gathering. Respect for elders and spiritual leaders is paramount."
-    },
-    {
-      id: 3,
-      title: "Ordering Street Food in Japanese",
-      language: "Japanese",
-      level: "Beginner",
-      duration: "25 minutes",
-      instructor: "Takeshi Yamamoto",
-      image: japaneseStreetFoodLesson,
-      vocabulary: ["ラーメン (raamen)", "やきとり (yakitori)", "おいしい (oishii)", "ください (kudasai)", "いくら (ikura)"],
-      phrases: ["ラーメンをください (Raamen wo kudasai)", "辛くないですか？ (Karakunai desu ka?)", "おいしいです (Oishii desu)", "いくらですか？ (Ikura desu ka?)", "ありがとうございます (Arigatou gozaimasu)"],
-      culturalNotes: "Bowing slightly when ordering and saying 'itadakimasu' before eating shows respect for the food and chef."
-    },
-    {
-      id: 4,
-      title: "French Café Conversations",
-      language: "French",
-      level: "Beginner",
-      duration: "35 minutes",
-      instructor: "Marie Dubois",
-      image: frenchCafeLesson,
-      vocabulary: ["café", "croissant", "addition", "terrasse", "bonjour"],
-      phrases: ["Un café, s'il vous plaît", "L'addition, s'il vous plaît", "C'est délicieux!", "Pourriez-vous recommander quelque chose?", "Merci beaucoup"],
-      culturalNotes: "French café culture values taking time to enjoy your drink. It's common to sit for hours with just one coffee."
-    },
-    {
-      id: 5,
-      title: "Spanish Dance Expressions",
-      language: "Spanish",
-      level: "Intermediate",
-      duration: "40 minutes",
-      instructor: "Carlos Mendez",
-      image: spanishDanceLesson,
-      vocabulary: ["baile", "flamenco", "compás", "palmas", "zapateado"],
-      phrases: ["¿Sabes bailar flamenco?", "El ritmo es muy importante", "Siente la música", "¡Qué arte tienes!", "Vamos a practicar juntos"],
-      culturalNotes: "Flamenco is deeply emotional. Each movement tells a story, and improvisation is valued over perfection."
-    }
-  ], []);
 
-  const languages = ["English", "Hindi", "Japanese", "French", "Spanish"];
+
 
   // Memoized tour guides for better performance
   const displayGuides = useMemo(() => {

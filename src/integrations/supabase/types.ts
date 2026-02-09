@@ -536,6 +536,60 @@ export type Database = {
         }
         Relationships: []
       }
+      language_lessons: {
+        Row: {
+          created_at: string
+          cultural_note: string
+          duration: string | null
+          id: string
+          image_url: string | null
+          instructor_name: string | null
+          is_active: boolean
+          language: string
+          level: string
+          sort_order: number | null
+          target_phonetic: string
+          target_sentence: string
+          target_translation: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cultural_note: string
+          duration?: string | null
+          id?: string
+          image_url?: string | null
+          instructor_name?: string | null
+          is_active?: boolean
+          language: string
+          level?: string
+          sort_order?: number | null
+          target_phonetic: string
+          target_sentence: string
+          target_translation: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cultural_note?: string
+          duration?: string | null
+          id?: string
+          image_url?: string | null
+          instructor_name?: string | null
+          is_active?: boolean
+          language?: string
+          level?: string
+          sort_order?: number | null
+          target_phonetic?: string
+          target_sentence?: string
+          target_translation?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lesson_recordings: {
         Row: {
           booking_id: string
@@ -1400,6 +1454,47 @@ export type Database = {
           visit_date?: string | null
         }
         Relationships: []
+      }
+      vocabulary_items: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          lesson_id: string
+          phonetic: string
+          sort_order: number | null
+          translation: string
+          word: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          lesson_id: string
+          phonetic: string
+          sort_order?: number | null
+          translation: string
+          word: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          phonetic?: string
+          sort_order?: number | null
+          translation?: string
+          word?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vocabulary_items_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "language_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
