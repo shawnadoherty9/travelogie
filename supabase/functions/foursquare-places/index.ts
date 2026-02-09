@@ -88,9 +88,11 @@ serve(async (req) => {
         );
 
         if (!response.ok) {
-          const error = await response.text();
-          console.error('Foursquare search error:', error);
-          throw new Error(`Foursquare API error: ${response.status}`);
+          const errorBody = await response.text();
+          const hdrs = Object.fromEntries(response.headers.entries());
+          console.error('Foursquare search error:', response.status, errorBody, JSON.stringify(hdrs));
+          console.error('Request headers used:', JSON.stringify(getFoursquareHeaders(FOURSQUARE_API_KEY.slice(0, 8) + '...')));
+          throw new Error(`Foursquare API error: ${response.status} - ${errorBody}`);
         }
 
         const data = await response.json();
