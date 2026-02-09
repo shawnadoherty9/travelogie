@@ -98,6 +98,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
     setNearMeMode,
     setExploreMode,
     setBoundingBox,
+    refetch,
   } = useExploreLocations();
 
   // Create custom marker icon
@@ -320,22 +321,29 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
               const city = QUICK_CITIES.find(c => c.name === value);
               if (city && map.current) {
                 map.current.setView([city.lat, city.lng], 12, { animate: true });
+                
+                // Always update bounding box to sync map markers with new viewport
+                const updateMapBounds = () => {
+                  const bounds = map.current?.getBounds();
+                  if (bounds) {
+                    setBoundingBox({
+                      north: bounds.getNorth(),
+                      south: bounds.getSouth(),
+                      east: bounds.getEast(),
+                      west: bounds.getWest(),
+                    });
+                  }
+                };
+                
+                // Sync map immediately for the new viewport
+                setTimeout(updateMapBounds, 500);
+                
                 // Trigger on-demand event fetching for this city
                 const result = await fetchEventsForCity(city.name, city.country || '');
                 if (result && result.events_added > 0) {
                   toast.success(`Found ${result.events_added} new events in ${city.name}`);
-                  // Refetch explore locations to show the new events
-                  setTimeout(() => {
-                    const bounds = map.current?.getBounds();
-                    if (bounds) {
-                      setBoundingBox({
-                        north: bounds.getNorth(),
-                        south: bounds.getSouth(),
-                        east: bounds.getEast(),
-                        west: bounds.getWest(),
-                      });
-                    }
-                  }, 500);
+                  // Refetch to pick up newly scraped events
+                  refetch();
                 }
               }
             }}>
