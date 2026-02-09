@@ -1144,7 +1144,7 @@ const Languages = () => {
                             </div>
                           </div>
                           <div className="flex gap-2 mt-4">
-                            <Button size="sm" className="flex-1 bg-gradient-wanderlust hover:opacity-90">Book Session</Button>
+                            <Button size="sm" className="flex-1 bg-sky-600 hover:bg-sky-500 text-white">Book Session</Button>
                             <Button size="sm" variant="outline" className="flex-1">View Profile</Button>
                           </div>
                         </div>
