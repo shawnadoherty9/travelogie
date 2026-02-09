@@ -1034,7 +1034,7 @@ const Languages = () => {
                           </div>
                         </div>
                         <Button 
-                          className="w-full bg-gradient-wanderlust hover:opacity-90 flex items-center gap-2"
+                          className="w-full bg-sky-600 hover:bg-sky-500 text-white flex items-center gap-2"
                           size="sm"
                           onClick={() => startLesson(lesson.id)}
                           disabled={completedLessonIds.includes(lesson.id)}
