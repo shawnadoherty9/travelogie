@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, MapPin, Languages, CheckCircle, Clock, Play } from "lucide-react";
+import { Star, MapPin, Languages, CheckCircle, Clock, Play, ChevronDown } from "lucide-react";
 
 // Import background image
 import languageInstructorsBackground from "@/assets/language-instructors-background.jpg";
@@ -46,6 +46,8 @@ interface LanguageInstructorsSectionProps {
   languages: string[];
 }
 
+const INITIAL_LESSON_COUNT = 5;
+
 export const LanguageInstructorsSection = ({
   instructors,
   sampleLessons,
@@ -53,6 +55,15 @@ export const LanguageInstructorsSection = ({
   onLanguageSelect,
   languages
 }: LanguageInstructorsSectionProps) => {
+  const [showAll, setShowAll] = useState(false);
+
+  const filteredLessons = useMemo(() => 
+    sampleLessons.filter(lesson => selectedLanguage === "" || lesson.language === selectedLanguage),
+    [sampleLessons, selectedLanguage]
+  );
+
+  const visibleLessons = showAll ? filteredLessons : filteredLessons.slice(0, INITIAL_LESSON_COUNT);
+  const hasMore = filteredLessons.length > INITIAL_LESSON_COUNT;
   return (
     <section 
       className="py-16 relative overflow-hidden text-white"
@@ -139,7 +150,7 @@ export const LanguageInstructorsSection = ({
             <Button
               variant={selectedLanguage === "" ? "default" : "outline"}
               size="sm"
-              onClick={() => onLanguageSelect("")}
+              onClick={() => { onLanguageSelect(""); setShowAll(false); }}
               className={selectedLanguage === "" ? "bg-white text-black" : "bg-white/20 text-white border-white/30 hover:bg-white/30"}
             >
               All Languages
@@ -149,7 +160,7 @@ export const LanguageInstructorsSection = ({
                 key={lang}
                 variant={selectedLanguage === lang ? "default" : "outline"}
                 size="sm"
-                onClick={() => onLanguageSelect(lang)}
+                onClick={() => { onLanguageSelect(lang); setShowAll(false); }}
                 className={selectedLanguage === lang ? "bg-white text-black" : "bg-white/20 text-white border-white/30 hover:bg-white/30"}
               >
                 {lang}
@@ -159,15 +170,14 @@ export const LanguageInstructorsSection = ({
           
           {/* Lessons Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sampleLessons
-              .filter(lesson => selectedLanguage === "" || lesson.language === selectedLanguage)
-              .map((lesson) => (
+            {visibleLessons.map((lesson) => (
                 <Card key={lesson.id} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all duration-300">
-                  <div className="aspect-video relative overflow-hidden rounded-t-lg">
+                  <div className="aspect-video relative overflow-hidden rounded-t-lg bg-gradient-to-br from-primary/30 to-accent/30">
                     <img 
                       src={lesson.image} 
                       alt={lesson.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     />
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
                       <Play className="w-12 h-12 text-white" />
@@ -208,6 +218,31 @@ export const LanguageInstructorsSection = ({
                 </Card>
               ))}
           </div>
+
+          {/* Show More / Show Less */}
+          {hasMore && !showAll && (
+            <div className="text-center mt-8">
+              <Button
+                onClick={() => setShowAll(true)}
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30 gap-2"
+                variant="outline"
+              >
+                Show More Lessons ({filteredLessons.length - INITIAL_LESSON_COUNT} more)
+                <ChevronDown className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
+          {showAll && hasMore && (
+            <div className="text-center mt-8">
+              <Button
+                onClick={() => setShowAll(false)}
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30 gap-2"
+                variant="outline"
+              >
+                Show Less
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </section>
