@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/home/Footer";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { useLanguageLessons } from "@/hooks/useLanguageLessons";
 import { getLessonThumbnail } from "@/data/lessonThumbnails";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useLessonProgress } from "@/hooks/useLessonProgress";
 
 // Import images
 import osakaStreetFoodBackground from "@/assets/osaka-street-food-background.jpg";
@@ -58,9 +59,9 @@ import sarahGoldbergProfile from "@/assets/sarah-goldberg-profile.jpg";
 
 const Languages = () => {
   const { lessons: dbLessons, languages: dbLanguages, isLoading: lessonsLoading } = useLanguageLessons();
+  const { completedLessonIds, completeLesson, isAuthenticated } = useLessonProgress();
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
-  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("");
   const [sortBy, setSortBy] = useState<"language" | "level" | "title">("language");
@@ -835,11 +836,19 @@ const Languages = () => {
     return result;
   }, [transformedLessons, selectedLanguage, selectedLevel, searchQuery, sortBy]);
 
-  const handleLessonComplete = (lessonId: string) => {
-    setCompletedLessons(prev => [...prev, lessonId]);
+  const handleLessonComplete = useCallback(async (lessonId: string) => {
     setActiveLesson(null);
-    toast.success("Lesson completed! Great job! 🎉");
-  };
+    if (isAuthenticated) {
+      try {
+        await completeLesson(lessonId);
+        toast.success("Lesson completed and progress saved! 🎉");
+      } catch {
+        toast.error("Could not save progress. Please log in.");
+      }
+    } else {
+      toast.success("Lesson completed! Log in to save your progress.");
+    }
+  }, [isAuthenticated, completeLesson]);
 
   const startLesson = (lessonId: string) => {
     setActiveLesson(lessonId);
@@ -997,7 +1006,7 @@ const Languages = () => {
                         <Badge className="bg-background/90 text-foreground">{lesson.language}</Badge>
                         <Badge variant="outline" className="bg-background/90 text-foreground">{lesson.level}</Badge>
                       </div>
-                      {completedLessons.includes(lesson.id) && (
+                      {completedLessonIds.includes(lesson.id) && (
                         <div className="absolute top-3 right-3">
                           <Badge className="bg-primary text-primary-foreground">
                             <Trophy className="w-3 h-3 mr-1" />
@@ -1036,10 +1045,10 @@ const Languages = () => {
                         className="w-full bg-gradient-wanderlust hover:opacity-90 flex items-center gap-2"
                         size="sm"
                         onClick={() => startLesson(lesson.id)}
-                        disabled={completedLessons.includes(lesson.id)}
+                        disabled={completedLessonIds.includes(lesson.id)}
                       >
                         <BookOpen className="w-4 h-4" />
-                        {completedLessons.includes(lesson.id) ? 'Completed' : 'Start Lesson'}
+                        {completedLessonIds.includes(lesson.id) ? 'Completed' : 'Start Lesson'}
                       </Button>
                     </CardContent>
                   </Card>
