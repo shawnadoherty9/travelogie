@@ -65,6 +65,8 @@ const Languages = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("");
   const [sortBy, setSortBy] = useState<"language" | "level" | "title">("language");
+  const [showAllLessons, setShowAllLessons] = useState(false);
+  const INITIAL_LESSON_COUNT = 5;
 
   // Combine DB languages with instructor languages for complete list
   const instructorLanguages = ["English", "Spanish", "French", "Italian", "Portuguese", "Japanese", "Chinese", "Thai", "Khmer", "Hindi", "Arabic", "Hebrew"];
@@ -909,7 +911,7 @@ const Languages = () => {
                 <select
                   className="px-3 py-2 border rounded-lg bg-background text-sm"
                   value={selectedLanguage}
-                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  onChange={(e) => { setSelectedLanguage(e.target.value); setShowAllLessons(false); }}
                 >
                   <option value="">All Languages</option>
                   {languages.map((language) => (
@@ -920,7 +922,7 @@ const Languages = () => {
                 <select
                   className="px-3 py-2 border rounded-lg bg-background text-sm"
                   value={selectedLevel}
-                  onChange={(e) => setSelectedLevel(e.target.value)}
+                  onChange={(e) => { setSelectedLevel(e.target.value); setShowAllLessons(false); }}
                 >
                   <option value="">All Levels</option>
                   <option value="Beginner">Beginner</option>
@@ -946,7 +948,7 @@ const Languages = () => {
           </div>
         </section>
 
-        {/* Interactive Language Lessons */}
+        {/* Interactive Language Lessons - Show 5 initially */}
         <section className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-2">
@@ -970,9 +972,9 @@ const Languages = () => {
                   targetSentence={filteredLessons.find(l => l.id === activeLesson)?.targetSentence || ''}
                   targetPhonetic={filteredLessons.find(l => l.id === activeLesson)?.targetPhonetic || ''}
                   targetTranslation={filteredLessons.find(l => l.id === activeLesson)?.targetTranslation || ''}
-                   onComplete={() => handleLessonComplete(activeLesson)}
-                   onMarkComplete={() => handleLessonComplete(activeLesson)}
-                 />
+                  onComplete={() => handleLessonComplete(activeLesson)}
+                  onMarkComplete={() => handleLessonComplete(activeLesson)}
+                />
                 <div className="flex justify-center mt-6">
                   <Button 
                     variant="outline" 
@@ -986,83 +988,85 @@ const Languages = () => {
             ) : filteredLessons.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-lg text-muted-foreground">No lessons found matching your criteria.</p>
-                <Button variant="outline" className="mt-4" onClick={() => { setSearchQuery(""); setSelectedLanguage(""); setSelectedLevel(""); }}>
+                <Button variant="outline" className="mt-4" onClick={() => { setSearchQuery(""); setSelectedLanguage(""); setSelectedLevel(""); setShowAllLessons(false); }}>
                   Clear Filters
                 </Button>
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredLessons.map((lesson) => (
-                  <Card key={lesson.id} className="hover:travel-shadow transition-all duration-300 overflow-hidden">
-                    {/* Thumbnail */}
-                    <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary/30 to-accent/30">
-                      <img
-                        src={getLessonThumbnail(lesson.language, lesson.title)}
-                        alt={`${lesson.language} lesson`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                        <Badge className="bg-background/90 text-foreground">{lesson.language}</Badge>
-                        <Badge variant="outline" className="bg-background/90 text-foreground">{lesson.level}</Badge>
-                      </div>
-                      {completedLessonIds.includes(lesson.id) && (
-                        <div className="absolute top-3 right-3">
-                          <Badge className="bg-primary text-primary-foreground">
-                            <Trophy className="w-3 h-3 mr-1" />
-                            Completed
-                          </Badge>
+              <>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {(showAllLessons ? filteredLessons : filteredLessons.slice(0, INITIAL_LESSON_COUNT)).map((lesson) => (
+                    <Card key={lesson.id} className="hover:travel-shadow transition-all duration-300 overflow-hidden">
+                      <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary/30 to-accent/30">
+                        <img
+                          src={getLessonThumbnail(lesson.language, lesson.title)}
+                          alt={`${lesson.language} lesson`}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                          <Badge className="bg-background/90 text-foreground">{lesson.language}</Badge>
+                          <Badge variant="outline" className="bg-background/90 text-foreground">{lesson.level}</Badge>
                         </div>
-                      )}
-                    </div>
-                    
-                    <CardContent className="p-4">
-                      <h3 className="font-bold text-base mb-2 line-clamp-1">{lesson.title}</h3>
-                      
-                      <div className="space-y-2 mb-3">
-                        <p className="text-sm font-medium text-primary line-clamp-1">
-                          {lesson.targetSentence}
-                        </p>
-                        <p className="text-xs text-muted-foreground italic line-clamp-1">
-                          "{lesson.targetTranslation}"
-                        </p>
-                        
-                        <div className="flex flex-wrap gap-1">
-                          {lesson.vocabularyItems.slice(0, 3).map((item) => (
-                            <Badge key={item.id} variant="secondary" className="text-xs">
-                              {item.word}
+                        {completedLessonIds.includes(lesson.id) && (
+                          <div className="absolute top-3 right-3">
+                            <Badge className="bg-primary text-primary-foreground">
+                              <Trophy className="w-3 h-3 mr-1" />
+                              Completed
                             </Badge>
-                          ))}
-                          {lesson.vocabularyItems.length > 3 && (
-                            <Badge variant="secondary" className="text-xs">
-                              +{lesson.vocabularyItems.length - 3}
-                            </Badge>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
-                      
-                      <Button 
-                        className="w-full bg-gradient-wanderlust hover:opacity-90 flex items-center gap-2"
-                        size="sm"
-                        onClick={() => startLesson(lesson.id)}
-                        disabled={completedLessonIds.includes(lesson.id)}
-                      >
-                        <BookOpen className="w-4 h-4" />
-                        {completedLessonIds.includes(lesson.id) ? 'Completed' : 'Start Lesson'}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                      <CardContent className="p-4">
+                        <h3 className="font-bold text-base mb-2 line-clamp-1">{lesson.title}</h3>
+                        <div className="space-y-2 mb-3">
+                          <p className="text-sm font-medium text-primary line-clamp-1">{lesson.targetSentence}</p>
+                          <p className="text-xs text-muted-foreground italic line-clamp-1">"{lesson.targetTranslation}"</p>
+                          <div className="flex flex-wrap gap-1">
+                            {lesson.vocabularyItems.slice(0, 3).map((item) => (
+                              <Badge key={item.id} variant="secondary" className="text-xs">{item.word}</Badge>
+                            ))}
+                            {lesson.vocabularyItems.length > 3 && (
+                              <Badge variant="secondary" className="text-xs">+{lesson.vocabularyItems.length - 3}</Badge>
+                            )}
+                          </div>
+                        </div>
+                        <Button 
+                          className="w-full bg-gradient-wanderlust hover:opacity-90 flex items-center gap-2"
+                          size="sm"
+                          onClick={() => startLesson(lesson.id)}
+                          disabled={completedLessonIds.includes(lesson.id)}
+                        >
+                          <BookOpen className="w-4 h-4" />
+                          {completedLessonIds.includes(lesson.id) ? 'Completed' : 'Start Lesson'}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {filteredLessons.length > INITIAL_LESSON_COUNT && (
+                  <div className="text-center mt-8">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowAllLessons(!showAllLessons)}
+                      className="px-8 gap-2"
+                    >
+                      {showAllLessons 
+                        ? 'Show Less' 
+                        : `Show More Lessons (${filteredLessons.length - INITIAL_LESSON_COUNT} more)`
+                      }
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </section>
 
-        {/* Language Instructors */}
+        {/* Language Instructors - right after sample lessons */}
         <section 
           className="py-16 relative overflow-hidden"
           style={{
@@ -1094,19 +1098,15 @@ const Languages = () => {
                         <div className="flex items-center gap-2 mb-2">
                           <h3 className="font-bold text-xl">{instructor.name}</h3>
                           {instructor.verified && (
-                            <Badge variant="secondary" className="text-xs">
-                              ✓ Verified
-                            </Badge>
+                            <Badge variant="secondary" className="text-xs">✓ Verified</Badge>
                           )}
                         </div>
                         
                         <div className="flex items-center gap-4 mb-3">
                           <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                             <span className="font-semibold">{instructor.rating}</span>
-                            <span className="text-muted-foreground text-sm">
-                              ({instructor.reviews} reviews)
-                            </span>
+                            <span className="text-muted-foreground text-sm">({instructor.reviews} reviews)</span>
                           </div>
                           <div className="flex items-center gap-1 text-sm text-muted-foreground">
                             <MapPin className="w-3 h-3" />
@@ -1121,18 +1121,14 @@ const Languages = () => {
                             <Label className="text-xs font-semibold">Expertise</Label>
                             <p className="text-sm text-travel-ocean">{instructor.expertise}</p>
                           </div>
-                          
                           <div>
                             <Label className="text-xs font-semibold">Specializations</Label>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {instructor.specializations.map((spec, index) => (
-                                <Badge key={index} variant="outline" className="text-xs">
-                                  {spec}
-                                </Badge>
+                                <Badge key={index} variant="outline" className="text-xs">{spec}</Badge>
                               ))}
                             </div>
                           </div>
-                          
                           <div className="grid grid-cols-3 gap-4 text-sm">
                             <div>
                               <Label className="text-xs font-semibold">Rate</Label>
@@ -1144,17 +1140,12 @@ const Languages = () => {
                             </div>
                             <div>
                               <Label className="text-xs font-semibold">Status</Label>
-                              <p className="text-green-600 text-xs">{instructor.availability}</p>
+                              <p className="text-emerald-600 text-xs">{instructor.availability}</p>
                             </div>
                           </div>
-                          
                           <div className="flex gap-2 mt-4">
-                            <Button size="sm" className="flex-1 bg-gradient-wanderlust hover:opacity-90">
-                              Book Session
-                            </Button>
-                            <Button size="sm" variant="outline" className="flex-1">
-                              View Profile
-                            </Button>
+                            <Button size="sm" className="flex-1 bg-gradient-wanderlust hover:opacity-90">Book Session</Button>
+                            <Button size="sm" variant="outline" className="flex-1">View Profile</Button>
                           </div>
                         </div>
                       </div>
