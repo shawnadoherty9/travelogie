@@ -590,6 +590,41 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_progress: {
+        Row: {
+          attempts: number
+          completed_at: string
+          id: string
+          lesson_id: string
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          completed_at?: string
+          id?: string
+          lesson_id: string
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          completed_at?: string
+          id?: string
+          lesson_id?: string
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "language_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_recordings: {
         Row: {
           booking_id: string
