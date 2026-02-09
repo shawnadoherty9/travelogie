@@ -40,9 +40,24 @@ import varansiTemples from "@/assets/varanasi-temples.jpg";
 import mumbaiDestination from "@/assets/mumbai-destination.jpg";
 import bangkokDestination from "@/assets/bangkok-destination.jpg";
 import baliMonkeyForest from "@/assets/bali-monkey-forest.jpg";
-import osakaStreetFood from "@/assets/osaka-street-food-background.jpg";
 import barcelonaArchitecture from "@/assets/barcelona-architecture-tour.jpg";
 import parisCulture from "@/assets/paris-culture-scene.jpg";
+
+// Newly generated content-specific images
+import amharicMerkato from "@/assets/lessons/lesson-amharic-merkato.jpg";
+import amharicKitchen from "@/assets/lessons/lesson-amharic-kitchen.jpg";
+import greekBoat from "@/assets/lessons/lesson-greek-boat.jpg";
+import greekKafeneio from "@/assets/lessons/lesson-greek-kafeneio.jpg";
+import koreanGwangjang from "@/assets/lessons/lesson-korean-gwangjang.jpg";
+import koreanDining from "@/assets/lessons/lesson-korean-dining.jpg";
+import malayMamak from "@/assets/lessons/lesson-malay-mamak.jpg";
+import malayPasar from "@/assets/lessons/lesson-malay-pasar.jpg";
+import swahiliSafari from "@/assets/lessons/lesson-swahili-safari.jpg";
+import swahiliMarket from "@/assets/lessons/lesson-swahili-market.jpg";
+import turkishBazaar from "@/assets/lessons/lesson-turkish-bazaar.jpg";
+import turkishSimit from "@/assets/lessons/lesson-turkish-simit.jpg";
+import vietnamesePho from "@/assets/lessons/lesson-vietnamese-pho.jpg";
+import vietnameseMarket from "@/assets/lessons/lesson-vietnamese-market.jpg";
 
 export const lessonThumbnails: Record<string, string> = {
   Amharic: lessonAmharic,
@@ -72,29 +87,34 @@ export const lessonThumbnails: Record<string, string> = {
  * Key format: "Language|Title" (case-insensitive match on title keywords).
  */
 const lessonTitleThumbnails: Array<{ language: string; titleKeywords: string[]; image: string }> = [
+  // Amharic – each lesson gets a unique image
+  { language: "Amharic", titleKeywords: ["merkato", "haggling"], image: amharicMerkato },
+  { language: "Amharic", titleKeywords: ["kitchen", "ordering", "to-go", "menu"], image: amharicKitchen },
+  { language: "Amharic", titleKeywords: ["greeting", "elder", "respect"], image: lessonAmharic },
+
   // Arabic
   { language: "Arabic", titleKeywords: ["souk", "shopping"], image: arabicSoukLesson },
-  { language: "Arabic", titleKeywords: ["street food", "ordering"], image: osakaStreetFood },
-  { language: "Arabic", titleKeywords: ["greeting", "elder", "respect"], image: lessonArabic },
+  { language: "Arabic", titleKeywords: ["street food", "ordering"], image: lessonArabic },
+  { language: "Arabic", titleKeywords: ["greeting", "elder", "respect"], image: varansiTemples },
 
   // Chinese
   { language: "Chinese", titleKeywords: ["tea", "ordering tea"], image: chineseTeaLesson },
-  { language: "Chinese", titleKeywords: ["street food", "night market"], image: osakaStreetFood },
-  { language: "Chinese", titleKeywords: ["temple", "permission"], image: lessonChinese },
+  { language: "Chinese", titleKeywords: ["street food", "night market"], image: lessonChinese },
+  { language: "Chinese", titleKeywords: ["temple", "permission"], image: khmerTempleLesson },
 
   // English
   { language: "English", titleKeywords: ["hotel", "check-in"], image: englishHotelLesson },
   { language: "English", titleKeywords: ["pub", "drink"], image: lessonEnglish },
-  { language: "English", titleKeywords: ["street food"], image: osakaStreetFood },
+  { language: "English", titleKeywords: ["street food"], image: japaneseStreetFoodLesson },
 
   // French
   { language: "French", titleKeywords: ["café", "cafe", "greeting"], image: frenchCafeLesson },
   { language: "French", titleKeywords: ["market", "shopping"], image: parisCulture },
   { language: "French", titleKeywords: ["bistro", "dining"], image: lessonFrench },
 
-  // Greek
-  { language: "Greek", titleKeywords: ["boat", "beach"], image: lessonGreek },
-  { language: "Greek", titleKeywords: ["coffee", "kafeneio"], image: lessonGreek },
+  // Greek – unique images per lesson
+  { language: "Greek", titleKeywords: ["boat", "beach"], image: greekBoat },
+  { language: "Greek", titleKeywords: ["coffee", "kafeneio"], image: greekKafeneio },
   { language: "Greek", titleKeywords: ["taverna", "seaside"], image: lessonGreek },
 
   // Hebrew
@@ -110,7 +130,7 @@ const lessonTitleThumbnails: Array<{ language: string; titleKeywords: string[]; 
   // Indonesian
   { language: "Indonesian", titleKeywords: ["direction", "polite"], image: baliMonkeyForest },
   { language: "Indonesian", titleKeywords: ["bargain", "market", "pasar"], image: lessonIndonesian },
-  { language: "Indonesian", titleKeywords: ["warung", "ordering", "bungkus"], image: lessonIndonesian },
+  { language: "Indonesian", titleKeywords: ["warung", "ordering", "bungkus"], image: malayMamak },
 
   // Italian
   { language: "Italian", titleKeywords: ["gelato", "ordering"], image: italianNonnaCooking },
@@ -125,47 +145,47 @@ const lessonTitleThumbnails: Array<{ language: string; titleKeywords: string[]; 
   // Khmer
   { language: "Khmer", titleKeywords: ["temple", "etiquette", "entry"], image: khmerTempleLesson },
   { language: "Khmer", titleKeywords: ["greeting", "elder", "respect"], image: lessonKhmer },
-  { language: "Khmer", titleKeywords: ["lotus", "market", "buying"], image: lessonKhmer },
+  { language: "Khmer", titleKeywords: ["lotus", "market", "buying"], image: swahiliMarket },
 
-  // Korean
-  { language: "Korean", titleKeywords: ["street food", "gwangjang"], image: lessonKorean },
-  { language: "Korean", titleKeywords: ["dining", "family", "etiquette"], image: lessonKorean },
+  // Korean – unique images per lesson
+  { language: "Korean", titleKeywords: ["street food", "gwangjang"], image: koreanGwangjang },
+  { language: "Korean", titleKeywords: ["dining", "family", "etiquette"], image: koreanDining },
   { language: "Korean", titleKeywords: ["temple", "buddhist", "inquiry"], image: lessonKorean },
 
-  // Malay
+  // Malay – unique images per lesson
   { language: "Malay", titleKeywords: ["greeting", "elder", "respect"], image: lessonMalay },
-  { language: "Malay", titleKeywords: ["mamak", "ordering"], image: lessonMalay },
-  { language: "Malay", titleKeywords: ["pasar", "bargain", "malam"], image: lessonMalay },
+  { language: "Malay", titleKeywords: ["mamak", "ordering"], image: malayMamak },
+  { language: "Malay", titleKeywords: ["pasar", "bargain", "malam"], image: malayPasar },
 
   // Portuguese
   { language: "Portuguese", titleKeywords: ["beach", "praia"], image: lessonPortuguese },
-  { language: "Portuguese", titleKeywords: ["café", "cafe", "pastel"], image: portugueseCafeLesson },
-  { language: "Portuguese", titleKeywords: ["fado", "music"], image: portugueseCafeLesson },
+  { language: "Portuguese", titleKeywords: ["café", "cafe", "pastel", "mercearia"], image: portugueseCafeLesson },
+  { language: "Portuguese", titleKeywords: ["tasca", "ordering"], image: lessonFrench },
 
   // Spanish
   { language: "Spanish", titleKeywords: ["restaurant", "ordering"], image: lessonSpanish },
   { language: "Spanish", titleKeywords: ["direction", "asking"], image: barcelonaArchitecture },
   { language: "Spanish", titleKeywords: ["dance", "flamenco"], image: spanishDanceLesson },
 
-  // Swahili
-  { language: "Swahili", titleKeywords: ["market", "shopping"], image: lessonSwahili },
-  { language: "Swahili", titleKeywords: ["greeting"], image: lessonSwahili },
-  { language: "Swahili", titleKeywords: ["safari", "wildlife"], image: lessonSwahili },
+  // Swahili – unique images per lesson
+  { language: "Swahili", titleKeywords: ["market", "kariakoo", "negotiating"], image: swahiliMarket },
+  { language: "Swahili", titleKeywords: ["greeting", "elder"], image: lessonSwahili },
+  { language: "Swahili", titleKeywords: ["street food", "chipsi"], image: swahiliSafari },
 
   // Thai
   { language: "Thai", titleKeywords: ["pad thai", "ordering", "food"], image: thaiMarketLesson },
-  { language: "Thai", titleKeywords: ["temple", "wai", "greeting"], image: bangkokDestination },
-  { language: "Thai", titleKeywords: ["market", "floating"], image: thaiMarketLesson },
+  { language: "Thai", titleKeywords: ["temple", "wai", "greeting", "respect"], image: bangkokDestination },
+  { language: "Thai", titleKeywords: ["market", "floating", "bargain", "night"], image: malayPasar },
 
-  // Turkish
-  { language: "Turkish", titleKeywords: ["bazaar", "market", "haggling"], image: lessonTurkish },
-  { language: "Turkish", titleKeywords: ["tea", "çay", "ordering"], image: lessonTurkish },
-  { language: "Turkish", titleKeywords: ["greeting"], image: lessonTurkish },
+  // Turkish – unique images per lesson
+  { language: "Turkish", titleKeywords: ["bazaar", "market", "haggling", "rug"], image: turkishBazaar },
+  { language: "Turkish", titleKeywords: ["simit", "breakfast", "ordering"], image: turkishSimit },
+  { language: "Turkish", titleKeywords: ["visiting", "home", "dinner", "greeting"], image: lessonTurkish },
 
-  // Vietnamese
-  { language: "Vietnamese", titleKeywords: ["pho", "ordering", "food"], image: lessonVietnamese },
-  { language: "Vietnamese", titleKeywords: ["market", "shopping"], image: lessonVietnamese },
-  { language: "Vietnamese", titleKeywords: ["greeting", "xin chào"], image: lessonVietnamese },
+  // Vietnamese – unique images per lesson
+  { language: "Vietnamese", titleKeywords: ["pho", "ordering", "food"], image: vietnamesePho },
+  { language: "Vietnamese", titleKeywords: ["market", "ben thanh", "bargain"], image: vietnameseMarket },
+  { language: "Vietnamese", titleKeywords: ["greeting", "xin chào", "elder"], image: lessonVietnamese },
 ];
 
 /**
