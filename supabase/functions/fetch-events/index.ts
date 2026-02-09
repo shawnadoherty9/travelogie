@@ -195,15 +195,16 @@ async function fetchFoursquarePlaces(
     fields: 'fsq_id,name,geocodes,location,categories,description,rating,photos,hours,price,website',
   })
 
-  // Auto-detect key format: fsq3* = service key (Bearer), otherwise legacy
+  // Auto-detect key format: fsq3* = service key (new endpoint), otherwise legacy
   const isServiceKey = apiKey.startsWith('fsq3')
+  const baseUrl = isServiceKey ? 'https://places-api.foursquare.com' : 'https://api.foursquare.com/v3'
   const headers: Record<string, string> = {
     Authorization: isServiceKey ? `Bearer ${apiKey}` : apiKey,
     Accept: 'application/json',
   }
   if (isServiceKey) headers['X-Places-Api-Version'] = '2025-06-17'
 
-  const res = await fetch(`https://api.foursquare.com/v3/places/search?${params}`, { headers })
+  const res = await fetch(`${baseUrl}/places/search?${params}`, { headers })
 
   if (!res.ok) {
     console.error(`Foursquare search failed [${res.status}]`)
