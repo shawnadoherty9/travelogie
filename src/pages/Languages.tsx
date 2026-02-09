@@ -995,12 +995,15 @@ const Languages = () => {
                 {filteredLessons.map((lesson) => (
                   <Card key={lesson.id} className="hover:travel-shadow transition-all duration-300 overflow-hidden">
                     {/* Thumbnail */}
-                    <div className="relative h-40 overflow-hidden">
+                    <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary/30 to-accent/30">
                       <img
                         src={getLessonThumbnail(lesson.language)}
                         alt={`${lesson.language} lesson`}
                         className="w-full h-full object-cover"
                         loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
