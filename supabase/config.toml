@@ -67,3 +67,6 @@ verify_jwt = false
 
 [functions.overpass-places]
 verify_jwt = false
+
+[functions.fetch-events]
+verify_jwt = false
