@@ -58,6 +58,14 @@ import turkishBazaar from "@/assets/lessons/lesson-turkish-bazaar.jpg";
 import turkishSimit from "@/assets/lessons/lesson-turkish-simit.jpg";
 import vietnamesePho from "@/assets/lessons/lesson-vietnamese-pho.jpg";
 import vietnameseMarket from "@/assets/lessons/lesson-vietnamese-market.jpg";
+import portugueseTasca from "@/assets/lessons/lesson-portuguese-tasca.jpg";
+import arabicGreeting from "@/assets/lessons/lesson-arabic-greeting.jpg";
+import chineseTemple from "@/assets/lessons/lesson-chinese-temple.jpg";
+import englishStreetfood from "@/assets/lessons/lesson-english-streetfood.jpg";
+import indonesianWarung from "@/assets/lessons/lesson-indonesian-warung.jpg";
+import khmerLotus from "@/assets/lessons/lesson-khmer-lotus.jpg";
+import hebrewFriday from "@/assets/lessons/lesson-hebrew-friday.jpg";
+import thaiFloatingMarket from "@/assets/lessons/lesson-thai-floating-market.jpg";
 
 export const lessonThumbnails: Record<string, string> = {
   Amharic: lessonAmharic,
@@ -95,17 +103,17 @@ const lessonTitleThumbnails: Array<{ language: string; titleKeywords: string[]; 
   // Arabic
   { language: "Arabic", titleKeywords: ["souk", "shopping"], image: arabicSoukLesson },
   { language: "Arabic", titleKeywords: ["street food", "ordering"], image: lessonArabic },
-  { language: "Arabic", titleKeywords: ["greeting", "elder", "respect"], image: varansiTemples },
+  { language: "Arabic", titleKeywords: ["greeting", "elder", "respect"], image: arabicGreeting },
 
   // Chinese
   { language: "Chinese", titleKeywords: ["tea", "ordering tea"], image: chineseTeaLesson },
   { language: "Chinese", titleKeywords: ["street food", "night market"], image: lessonChinese },
-  { language: "Chinese", titleKeywords: ["temple", "permission"], image: khmerTempleLesson },
+  { language: "Chinese", titleKeywords: ["temple", "permission"], image: chineseTemple },
 
   // English
   { language: "English", titleKeywords: ["hotel", "check-in"], image: englishHotelLesson },
   { language: "English", titleKeywords: ["pub", "drink"], image: lessonEnglish },
-  { language: "English", titleKeywords: ["street food"], image: japaneseStreetFoodLesson },
+  { language: "English", titleKeywords: ["street food"], image: englishStreetfood },
 
   // French
   { language: "French", titleKeywords: ["café", "cafe", "greeting"], image: frenchCafeLesson },
@@ -120,7 +128,7 @@ const lessonTitleThumbnails: Array<{ language: string; titleKeywords: string[]; 
   // Hebrew
   { language: "Hebrew", titleKeywords: ["shuk", "tasting"], image: hebrewMarketLesson },
   { language: "Hebrew", titleKeywords: ["old city", "alley", "navigating"], image: lessonHebrew },
-  { language: "Hebrew", titleKeywords: ["friday", "rush"], image: lessonHebrew },
+  { language: "Hebrew", titleKeywords: ["friday", "rush"], image: hebrewFriday },
 
   // Hindi
   { language: "Hindi", titleKeywords: ["kumbh", "festival"], image: hindiKumbhMelaLesson },
@@ -130,7 +138,7 @@ const lessonTitleThumbnails: Array<{ language: string; titleKeywords: string[]; 
   // Indonesian
   { language: "Indonesian", titleKeywords: ["direction", "polite"], image: baliMonkeyForest },
   { language: "Indonesian", titleKeywords: ["bargain", "market", "pasar"], image: lessonIndonesian },
-  { language: "Indonesian", titleKeywords: ["warung", "ordering", "bungkus"], image: malayMamak },
+  { language: "Indonesian", titleKeywords: ["warung", "ordering", "bungkus"], image: indonesianWarung },
 
   // Italian
   { language: "Italian", titleKeywords: ["gelato", "ordering"], image: italianNonnaCooking },
@@ -145,7 +153,7 @@ const lessonTitleThumbnails: Array<{ language: string; titleKeywords: string[]; 
   // Khmer
   { language: "Khmer", titleKeywords: ["temple", "etiquette", "entry"], image: khmerTempleLesson },
   { language: "Khmer", titleKeywords: ["greeting", "elder", "respect"], image: lessonKhmer },
-  { language: "Khmer", titleKeywords: ["lotus", "market", "buying"], image: swahiliMarket },
+  { language: "Khmer", titleKeywords: ["lotus", "market", "buying"], image: khmerLotus },
 
   // Korean – unique images per lesson
   { language: "Korean", titleKeywords: ["street food", "gwangjang"], image: koreanGwangjang },
@@ -160,7 +168,7 @@ const lessonTitleThumbnails: Array<{ language: string; titleKeywords: string[]; 
   // Portuguese
   { language: "Portuguese", titleKeywords: ["beach", "praia"], image: lessonPortuguese },
   { language: "Portuguese", titleKeywords: ["café", "cafe", "pastel", "mercearia"], image: portugueseCafeLesson },
-  { language: "Portuguese", titleKeywords: ["tasca", "ordering"], image: lessonFrench },
+  { language: "Portuguese", titleKeywords: ["tasca", "ordering"], image: portugueseTasca },
 
   // Spanish
   { language: "Spanish", titleKeywords: ["restaurant", "ordering"], image: lessonSpanish },
@@ -175,7 +183,7 @@ const lessonTitleThumbnails: Array<{ language: string; titleKeywords: string[]; 
   // Thai
   { language: "Thai", titleKeywords: ["pad thai", "ordering", "food"], image: thaiMarketLesson },
   { language: "Thai", titleKeywords: ["temple", "wai", "greeting", "respect"], image: bangkokDestination },
-  { language: "Thai", titleKeywords: ["market", "floating", "bargain", "night"], image: malayPasar },
+  { language: "Thai", titleKeywords: ["market", "floating", "bargain", "night"], image: thaiFloatingMarket },
 
   // Turkish – unique images per lesson
   { language: "Turkish", titleKeywords: ["bazaar", "market", "haggling", "rug"], image: turkishBazaar },
