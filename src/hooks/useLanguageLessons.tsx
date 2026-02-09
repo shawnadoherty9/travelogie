@@ -75,7 +75,7 @@ export function useLanguageLessons() {
     level: lesson.level,
     duration: lesson.duration || "15 min",
     instructor: lesson.instructor_name || "Local Expert",
-    image: lesson.image_url || getLessonThumbnail(lesson.language),
+    image: lesson.image_url || getLessonThumbnail(lesson.language, lesson.title),
     vocabulary: lesson.vocabulary_items?.map(v => v.word) || [],
     phrases: [lesson.target_sentence],
     culturalNotes: lesson.cultural_note,

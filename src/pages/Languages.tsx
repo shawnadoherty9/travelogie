@@ -997,7 +997,7 @@ const Languages = () => {
                     {/* Thumbnail */}
                     <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary/30 to-accent/30">
                       <img
-                        src={getLessonThumbnail(lesson.language)}
+                        src={getLessonThumbnail(lesson.language, lesson.title)}
                         alt={`${lesson.language} lesson`}
                         className="w-full h-full object-cover"
                         loading="lazy"
