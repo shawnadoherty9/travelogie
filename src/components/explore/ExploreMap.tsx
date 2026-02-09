@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -76,7 +79,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
-  const markersLayer = useRef<L.LayerGroup | null>(null);
+  const markersLayer = useRef<L.MarkerClusterGroup | null>(null);
   const userMarker = useRef<L.Marker | null>(null);
   const isFittingBounds = useRef(false);
   const hasInitialFit = useRef(false);
@@ -174,7 +177,37 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       maxZoom: 19,
     }).addTo(map.current);
 
-    markersLayer.current = L.layerGroup().addTo(map.current);
+    markersLayer.current = L.markerClusterGroup({
+      maxClusterRadius: 50,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      iconCreateFunction: (cluster) => {
+        const count = cluster.getChildCount();
+        let size = 'small';
+        if (count >= 50) size = 'large';
+        else if (count >= 10) size = 'medium';
+        
+        return L.divIcon({
+          html: `<div style="
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+            width: ${size === 'large' ? 48 : size === 'medium' ? 40 : 32}px;
+            height: ${size === 'large' ? 48 : size === 'medium' ? 40 : 32}px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: ${size === 'large' ? 16 : size === 'medium' ? 14 : 12}px;
+          ">${count}</div>`,
+          className: 'custom-cluster-icon',
+          iconSize: L.point(size === 'large' ? 48 : size === 'medium' ? 40 : 32, size === 'large' ? 48 : size === 'medium' ? 40 : 32),
+        });
+      },
+    }).addTo(map.current);
 
     // Update bounding box on map move (debounced)
     let moveTimeout: NodeJS.Timeout;
