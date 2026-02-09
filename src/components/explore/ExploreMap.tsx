@@ -521,6 +521,14 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                   </div>
                 )}
 
+                {/* Venue */}
+                {selectedLocation.venue_name && (
+                  <div className="flex items-start gap-2 text-sm">
+                    <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
+                    <span className="font-medium">{selectedLocation.venue_name}</span>
+                  </div>
+                )}
+
                 {/* Address */}
                 {selectedLocation.address && (
                   <div className="flex items-start gap-2 text-sm">
