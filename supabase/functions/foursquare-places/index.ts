@@ -6,7 +6,20 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Support both old (v3) and new (places-api) Foursquare endpoints
+// Old API keys use: Authorization: <key> on api.foursquare.com/v3
+// New service keys use: Authorization: Bearer <key> on places-api.foursquare.com
 const FOURSQUARE_API_URL = 'https://api.foursquare.com/v3';
+
+function getFoursquareHeaders(apiKey: string) {
+  // If key starts with 'fsq3' it's a new service key, use Bearer
+  const isServiceKey = apiKey.startsWith('fsq3');
+  return {
+    'Authorization': isServiceKey ? `Bearer ${apiKey}` : apiKey,
+    'Accept': 'application/json',
+    ...(isServiceKey ? { 'X-Places-Api-Version': '2025-06-17' } : {}),
+  };
+}
 
 interface FoursquarePlace {
   fsq_id: string;
@@ -70,10 +83,7 @@ serve(async (req) => {
         const response = await fetch(
           `${FOURSQUARE_API_URL}/places/search?${searchParams}`,
           {
-            headers: {
-              'Authorization': FOURSQUARE_API_KEY,
-              'Accept': 'application/json',
-            },
+            headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
           }
         );
 
@@ -102,13 +112,13 @@ serve(async (req) => {
 
         const [placeRes, tipsRes, photosRes] = await Promise.all([
           fetch(`${FOURSQUARE_API_URL}/places/${fsq_id}?fields=fsq_id,name,geocodes,location,categories,description,rating,hours,price,website,tel,stats`, {
-            headers: { 'Authorization': FOURSQUARE_API_KEY, 'Accept': 'application/json' },
+            headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
           }),
           fetch(`${FOURSQUARE_API_URL}/places/${fsq_id}/tips?limit=10`, {
-            headers: { 'Authorization': FOURSQUARE_API_KEY, 'Accept': 'application/json' },
+            headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
           }),
           fetch(`${FOURSQUARE_API_URL}/places/${fsq_id}/photos?limit=5`, {
-            headers: { 'Authorization': FOURSQUARE_API_KEY, 'Accept': 'application/json' },
+            headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
           }),
         ]);
 
@@ -141,12 +151,7 @@ serve(async (req) => {
 
         const response = await fetch(
           `${FOURSQUARE_API_URL}/places/search?${searchParams}`,
-          {
-            headers: {
-              'Authorization': FOURSQUARE_API_KEY,
-              'Accept': 'application/json',
-            },
-          }
+          { headers: getFoursquareHeaders(FOURSQUARE_API_KEY) }
         );
 
         if (!response.ok) {
@@ -273,7 +278,7 @@ serve(async (req) => {
       case 'categories': {
         // Get Foursquare category taxonomy
         const response = await fetch(`${FOURSQUARE_API_URL}/places/categories`, {
-          headers: { 'Authorization': FOURSQUARE_API_KEY, 'Accept': 'application/json' },
+          headers: getFoursquareHeaders(FOURSQUARE_API_KEY),
         });
 
         const data = await response.json();
