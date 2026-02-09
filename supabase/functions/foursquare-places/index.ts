@@ -9,7 +9,7 @@ const corsHeaders = {
 // Detect key type and use correct base URL + auth headers
 function getFoursquareConfig(apiKey: string) {
   const isServiceKey = apiKey.startsWith('fsq3');
-  console.log(`Key is service key: ${isServiceKey}, building headers...`);
+  
   const headers: Record<string, string> = {
     'Accept': 'application/json',
   };
@@ -67,7 +67,7 @@ serve(async (req) => {
     }
 
     const { baseUrl, headers: fsqHeaders } = getFoursquareConfig(FOURSQUARE_API_KEY);
-    console.log(`Using Foursquare base URL: ${baseUrl}, key prefix: ${FOURSQUARE_API_KEY.substring(0, 8)}..., key length: ${FOURSQUARE_API_KEY.length}`);
+    console.log(`Foursquare API: baseUrl=${baseUrl}`);
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const { action, ...params } = await req.json();
@@ -84,9 +84,7 @@ serve(async (req) => {
         searchParams.set('limit', String(limit));
         searchParams.set('fields', 'fsq_id,name,geocodes,location,categories,description,rating,photos,hours,price,website,tel');
 
-        const fullUrl = `${baseUrl}/places/search?${searchParams}`;
-        console.log(`Fetching: ${fullUrl}`);
-        console.log(`Auth header: ${fsqHeaders['Authorization']?.substring(0, 20)}...`);
+        const response = await fetch(`${baseUrl}/places/search?${searchParams}`, { headers: fsqHeaders });
         const response = await fetch(fullUrl, { headers: fsqHeaders });
 
         if (!response.ok) {
