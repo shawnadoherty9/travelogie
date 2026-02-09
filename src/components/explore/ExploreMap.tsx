@@ -38,7 +38,7 @@ L.Icon.Default.mergeOptions({
 // Color scheme for different source types
 const SOURCE_COLORS: Record<LocationSourceType, string> = {
   activities: '#3B82F6',      // Blue
-  events: '#22C55E',          // Green
+  events: '#22C55E',          // Green (default)
   tour_operators: '#F97316',  // Orange
   user_suggestions: '#EF4444', // Red
   osm_places: '#8B5CF6',      // Purple (temples, monuments, heritage)
@@ -50,6 +50,21 @@ const SOURCE_ICONS: Record<LocationSourceType, string> = {
   tour_operators: '👤',
   user_suggestions: '💡',
   osm_places: '🏛️',
+};
+
+// Event category color coding
+const EVENT_CATEGORY_COLORS: Record<string, { color: string; icon: string; label: string }> = {
+  'a1b2c3d4-1111-4444-aaaa-111111111111': { color: '#EC4899', icon: '🎵', label: 'Music & Concerts' },
+  'a1b2c3d4-2222-4444-aaaa-222222222222': { color: '#8B5CF6', icon: '🎭', label: 'Theater & Performing Arts' },
+  'a1b2c3d4-3333-4444-aaaa-333333333333': { color: '#F59E0B', icon: '🎨', label: 'Art Galleries & Studios' },
+  'a1b2c3d4-4444-4444-aaaa-444444444444': { color: '#10B981', icon: '🌿', label: 'Outdoor & Nature' },
+  'a1b2c3d4-5555-4444-aaaa-555555555555': { color: '#06B6D4', icon: '🏄', label: 'Water Sports' },
+  'a1b2c3d4-6666-4444-aaaa-666666666666': { color: '#EF4444', icon: '⚽', label: 'Sports & Fitness' },
+  'd4656eb8-d1e7-4c8e-a764-4e27fdf57f93': { color: '#D97706', icon: '🏺', label: 'Cultural Heritage' },
+  '00bcffa8-1df9-4dd1-ac05-c77fdf46991c': { color: '#F97316', icon: '🍽️', label: 'Food & Culinary' },
+  '77729156-c09e-47b2-baa1-1d588e9dc97c': { color: '#EC4899', icon: '🎤', label: 'Entertainment' },
+  'd2e5321e-6271-4710-b43a-05ca0c28c08c': { color: '#F59E0B', icon: '🎨', label: 'Art & Crafts' },
+  'bf083496-0cac-4a2a-b046-62c4f33970c3': { color: '#059669', icon: '🧗', label: 'Adventure Sports' },
 };
 
 interface ExploreMapProps {
@@ -106,10 +121,19 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
     refetch,
   } = useExploreLocations();
 
-  // Create custom marker icon
-  const createMarkerIcon = (sourceType: LocationSourceType) => {
-    const color = SOURCE_COLORS[sourceType];
-    const icon = SOURCE_ICONS[sourceType];
+  // Create custom marker icon - events get category-specific colors
+  const createMarkerIcon = (location: ExploreLocation) => {
+    let color = SOURCE_COLORS[location.source_type];
+    let icon = SOURCE_ICONS[location.source_type];
+    
+    // If it's an event, use category-specific color
+    if (location.source_type === 'events' && location.category_id) {
+      const catConfig = EVENT_CATEGORY_COLORS[location.category_id];
+      if (catConfig) {
+        color = catConfig.color;
+        icon = catConfig.icon;
+      }
+    }
     
     return L.divIcon({
       className: 'custom-explore-marker',
@@ -248,7 +272,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
     locations.forEach((location) => {
       const marker = L.marker(
         [location.latitude, location.longitude],
-        { icon: createMarkerIcon(location.source_type) }
+        { icon: createMarkerIcon(location) }
       );
 
       marker.on('click', () => {
@@ -415,10 +439,12 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           )}
 
           {/* Map Legend */}
-          <Card className="absolute bottom-4 left-4 p-3 bg-card/95 backdrop-blur-sm z-10">
-            <div className="text-xs font-medium mb-2">Legend</div>
+          <Card className="absolute bottom-4 left-4 p-3 bg-card/95 backdrop-blur-sm z-10 max-h-[280px] overflow-y-auto">
+            <div className="text-xs font-medium mb-2">Map Legend</div>
             <div className="space-y-1">
-              {(Object.entries(SOURCE_COLORS) as [LocationSourceType, string][]).map(([type, color]) => (
+              {(Object.entries(SOURCE_COLORS) as [LocationSourceType, string][])
+                .filter(([type]) => type !== 'events')
+                .map(([type, color]) => (
                 <div key={type} className="flex items-center gap-2 text-xs">
                   <div 
                     className="w-3 h-3 rounded-full border-2 border-white shadow-sm" 
@@ -427,13 +453,25 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                   <span className="capitalize">{type.replace('_', ' ')}</span>
                 </div>
               ))}
-              {userLocation && (
-                <div className="flex items-center gap-2 text-xs pt-1 border-t border-border mt-1">
-                  <div className="w-3 h-3 rounded-full bg-indigo-500 border-2 border-white shadow-sm" />
-                  <span>Your location</span>
-                </div>
-              )}
             </div>
+            <div className="text-xs font-medium mt-2 mb-1 pt-1 border-t border-border">Events by Category</div>
+            <div className="space-y-1">
+              {Object.values(EVENT_CATEGORY_COLORS).map((cat) => (
+                <div key={cat.label} className="flex items-center gap-2 text-xs">
+                  <div 
+                    className="w-3 h-3 rounded-full border-2 border-white shadow-sm" 
+                    style={{ backgroundColor: cat.color }}
+                  />
+                  <span>{cat.icon} {cat.label}</span>
+                </div>
+              ))}
+            </div>
+            {userLocation && (
+              <div className="flex items-center gap-2 text-xs pt-1 border-t border-border mt-1">
+                <div className="w-3 h-3 rounded-full bg-indigo-500 border-2 border-white shadow-sm" />
+                <span>Your location</span>
+              </div>
+            )}
           </Card>
         </div>
       </div>
@@ -447,14 +485,20 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 <div className="flex items-start gap-3">
                   <div 
                     className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0"
-                    style={{ backgroundColor: SOURCE_COLORS[selectedLocation.source_type] }}
+                    style={{ backgroundColor: selectedLocation.source_type === 'events' && selectedLocation.category_id && EVENT_CATEGORY_COLORS[selectedLocation.category_id]
+                      ? EVENT_CATEGORY_COLORS[selectedLocation.category_id].color
+                      : SOURCE_COLORS[selectedLocation.source_type] }}
                   >
-                    {SOURCE_ICONS[selectedLocation.source_type]}
+                    {selectedLocation.source_type === 'events' && selectedLocation.category_id && EVENT_CATEGORY_COLORS[selectedLocation.category_id]
+                      ? EVENT_CATEGORY_COLORS[selectedLocation.category_id].icon
+                      : SOURCE_ICONS[selectedLocation.source_type]}
                   </div>
                   <div>
                     <SheetTitle className="text-left">{selectedLocation.name}</SheetTitle>
                     <Badge variant="secondary" className="mt-1">
-                      {selectedLocation.source_type.replace('_', ' ')}
+                      {selectedLocation.source_type === 'events' && selectedLocation.category_id && EVENT_CATEGORY_COLORS[selectedLocation.category_id]
+                        ? EVENT_CATEGORY_COLORS[selectedLocation.category_id].label
+                        : selectedLocation.source_type.replace('_', ' ')}
                     </Badge>
                   </div>
                 </div>
