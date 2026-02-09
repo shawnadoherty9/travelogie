@@ -40,6 +40,7 @@ interface DragDropLessonProps {
   targetPhonetic: string;
   targetTranslation: string;
   onComplete: () => void;
+  onMarkComplete?: () => void;
 }
 
 interface SortableItemProps {
@@ -95,6 +96,7 @@ export function DragDropLesson({
   targetPhonetic,
   targetTranslation,
   onComplete,
+  onMarkComplete,
 }: DragDropLessonProps) {
   const [items, setItems] = useState(vocabularyItems);
   const [userSentence, setUserSentence] = useState<VocabularyItem[]>([]);
@@ -323,7 +325,7 @@ export function DragDropLesson({
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-3 justify-center">
+        <div className="flex flex-wrap gap-3 justify-center">
           <Button
             onClick={checkAnswer}
             disabled={userSentence.length === 0}
@@ -338,6 +340,16 @@ export function DragDropLesson({
           >
             Reset
           </Button>
+          {onMarkComplete && (
+            <Button
+              onClick={onMarkComplete}
+              variant="secondary"
+              className="px-8"
+            >
+              <Check className="w-4 h-4 mr-1" />
+              Mark as Complete
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
