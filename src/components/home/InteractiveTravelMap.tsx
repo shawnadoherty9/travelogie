@@ -53,6 +53,7 @@ const InteractiveTravelMap = () => {
   const [tempMarker, setTempMarker] = useState<L.Marker | null>(null);
   const [suggestionMarkers, setSuggestionMarkers] = useState<L.Marker[]>([]);
   const [travelSuggestions, setTravelSuggestions] = useState<TravelSuggestion[]>([]);
+  const [resolvedPhotoUrls, setResolvedPhotoUrls] = useState<Record<string, string>>({});
   const [userUpvotes, setUserUpvotes] = useState<Set<string>>(new Set());
 
   // Load travel suggestions from database
