@@ -253,25 +253,44 @@ export const useExploreLocations = () => {
         if (suggestionsError) throw suggestionsError;
         
         if (data) {
-          allLocations.push(...data.map(item => ({
-            id: item.id,
-            name: item.title,
-            description: item.description,
-            short_description: null,
-            latitude: Number(item.latitude),
-            longitude: Number(item.longitude),
-            source_type: 'user_suggestions' as LocationSourceType,
-            category_id: null,
-            category_name: 'User Suggestion',
-            tags: item.tags,
-            price_from: null,
-            price_to: null,
-            currency: 'USD',
-            rating: null,
-            review_count: item.upvotes,
-            image_urls: item.photo_url ? [item.photo_url] : null,
-            address: null,
-          })));
+          // Resolve signed URLs for photos
+          const resolvedItems = await Promise.all(data.map(async (item) => {
+            let imageUrl: string | null = null;
+            if (item.photo_url) {
+              let photoPath = item.photo_url;
+              if (photoPath.startsWith('http')) {
+                const match = photoPath.match(/\/travel-photos\/(.+)$/);
+                if (match) photoPath = match[1];
+                else imageUrl = photoPath; // External URL
+              }
+              if (!imageUrl) {
+                const { data: signedData } = await supabase.storage
+                  .from('travel-photos')
+                  .createSignedUrl(photoPath, 86400);
+                imageUrl = signedData?.signedUrl || null;
+              }
+            }
+            return {
+              id: item.id,
+              name: item.title,
+              description: item.description,
+              short_description: null,
+              latitude: Number(item.latitude),
+              longitude: Number(item.longitude),
+              source_type: 'user_suggestions' as LocationSourceType,
+              category_id: null,
+              category_name: 'User Suggestion',
+              tags: item.tags,
+              price_from: null,
+              price_to: null,
+              currency: 'USD',
+              rating: null,
+              review_count: item.upvotes,
+              image_urls: imageUrl ? [imageUrl] : null,
+              address: null,
+            };
+          }));
+          allLocations.push(...resolvedItems);
         }
       }
 

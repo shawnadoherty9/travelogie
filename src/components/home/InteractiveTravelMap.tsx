@@ -53,6 +53,7 @@ const InteractiveTravelMap = () => {
   const [tempMarker, setTempMarker] = useState<L.Marker | null>(null);
   const [suggestionMarkers, setSuggestionMarkers] = useState<L.Marker[]>([]);
   const [travelSuggestions, setTravelSuggestions] = useState<TravelSuggestion[]>([]);
+  const [resolvedPhotoUrls, setResolvedPhotoUrls] = useState<Record<string, string>>({});
   const [userUpvotes, setUserUpvotes] = useState<Set<string>>(new Set());
 
   // Load travel suggestions from database
@@ -81,7 +82,20 @@ const InteractiveTravelMap = () => {
         return;
       }
 
-      setTravelSuggestions(data || []);
+      const suggestions = data || [];
+      setTravelSuggestions(suggestions);
+
+      // Resolve signed URLs for photos
+      const urlMap: Record<string, string> = {};
+      await Promise.all(
+        suggestions
+          .filter(s => s.photo_url)
+          .map(async (s) => {
+            const signedUrl = await getSignedPhotoUrl(s.photo_url!);
+            if (signedUrl) urlMap[s.id] = signedUrl;
+          })
+      );
+      setResolvedPhotoUrls(urlMap);
     } catch (error) {
       console.error('Error loading travel suggestions:', error);
     }
@@ -194,6 +208,24 @@ const InteractiveTravelMap = () => {
     setSuggestionMarkers(newMarkers);
   }, [travelSuggestions]);
 
+  const getSignedPhotoUrl = async (photoPath: string): Promise<string | null> => {
+    if (!photoPath) return null;
+    // If it's already a full URL (legacy data), extract the path
+    if (photoPath.startsWith('http')) {
+      const match = photoPath.match(/\/travel-photos\/(.+)$/);
+      if (!match) return photoPath; // External URL, return as-is
+      photoPath = match[1];
+    }
+    const { data, error } = await supabase.storage
+      .from('travel-photos')
+      .createSignedUrl(photoPath, 86400); // 24 hour expiry
+    if (error) {
+      console.error('Error creating signed URL:', error);
+      return null;
+    }
+    return data.signedUrl;
+  };
+
   const handlePhotoUpload = async (file: File): Promise<string | null> => {
     try {
       const fileExt = file.name.split('.').pop();
@@ -208,11 +240,8 @@ const InteractiveTravelMap = () => {
         return null;
       }
 
-      const { data } = supabase.storage
-        .from('travel-photos')
-        .getPublicUrl(fileName);
-
-      return data.publicUrl;
+      // Store just the file path, generate signed URLs on display
+      return fileName;
     } catch (error) {
       console.error('Error uploading photo:', error);
       return null;
@@ -511,10 +540,10 @@ const InteractiveTravelMap = () => {
               
               <div className="relative overflow-hidden rounded-lg">
                 {/* Postcard Header with geometric pattern */}
-                <div className={`${selectedSuggestion.photo_url ? 'h-48' : 'h-32'} bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 relative overflow-hidden`}>
-                  {selectedSuggestion.photo_url && (
+                <div className={`${resolvedPhotoUrls[selectedSuggestion.id] ? 'h-48' : 'h-32'} bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 relative overflow-hidden`}>
+                  {resolvedPhotoUrls[selectedSuggestion.id] && (
                     <img 
-                      src={selectedSuggestion.photo_url} 
+                      src={resolvedPhotoUrls[selectedSuggestion.id]} 
                       alt={selectedSuggestion.title}
                       className="absolute inset-0 w-full h-full object-cover"
                     />
@@ -543,7 +572,7 @@ const InteractiveTravelMap = () => {
                   </div>
                   
                   {/* Geometric art elements */}
-                  {!selectedSuggestion.photo_url && (
+                  {!resolvedPhotoUrls[selectedSuggestion.id] && (
                     <div className="absolute inset-0">
                       <div className="absolute top-2 left-4 w-16 h-16 border-2 border-white/30 rotate-45"></div>
                       <div className="absolute bottom-2 right-8 w-12 h-12 bg-white/20 rounded-full"></div>
