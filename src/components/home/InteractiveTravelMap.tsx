@@ -540,10 +540,10 @@ const InteractiveTravelMap = () => {
               
               <div className="relative overflow-hidden rounded-lg">
                 {/* Postcard Header with geometric pattern */}
-                <div className={`${selectedSuggestion.photo_url ? 'h-48' : 'h-32'} bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 relative overflow-hidden`}>
-                  {selectedSuggestion.photo_url && (
+                <div className={`${resolvedPhotoUrls[selectedSuggestion.id] ? 'h-48' : 'h-32'} bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 relative overflow-hidden`}>
+                  {resolvedPhotoUrls[selectedSuggestion.id] && (
                     <img 
-                      src={selectedSuggestion.photo_url} 
+                      src={resolvedPhotoUrls[selectedSuggestion.id]} 
                       alt={selectedSuggestion.title}
                       className="absolute inset-0 w-full h-full object-cover"
                     />
