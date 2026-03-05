@@ -82,7 +82,20 @@ const InteractiveTravelMap = () => {
         return;
       }
 
-      setTravelSuggestions(data || []);
+      const suggestions = data || [];
+      setTravelSuggestions(suggestions);
+
+      // Resolve signed URLs for photos
+      const urlMap: Record<string, string> = {};
+      await Promise.all(
+        suggestions
+          .filter(s => s.photo_url)
+          .map(async (s) => {
+            const signedUrl = await getSignedPhotoUrl(s.photo_url!);
+            if (signedUrl) urlMap[s.id] = signedUrl;
+          })
+      );
+      setResolvedPhotoUrls(urlMap);
     } catch (error) {
       console.error('Error loading travel suggestions:', error);
     }
