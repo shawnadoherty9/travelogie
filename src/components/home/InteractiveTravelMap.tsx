@@ -572,7 +572,7 @@ const InteractiveTravelMap = () => {
                   </div>
                   
                   {/* Geometric art elements */}
-                  {!selectedSuggestion.photo_url && (
+                  {!resolvedPhotoUrls[selectedSuggestion.id] && (
                     <div className="absolute inset-0">
                       <div className="absolute top-2 left-4 w-16 h-16 border-2 border-white/30 rotate-45"></div>
                       <div className="absolute bottom-2 right-8 w-12 h-12 bg-white/20 rounded-full"></div>
