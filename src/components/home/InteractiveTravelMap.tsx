@@ -194,6 +194,24 @@ const InteractiveTravelMap = () => {
     setSuggestionMarkers(newMarkers);
   }, [travelSuggestions]);
 
+  const getSignedPhotoUrl = async (photoPath: string): Promise<string | null> => {
+    if (!photoPath) return null;
+    // If it's already a full URL (legacy data), extract the path
+    if (photoPath.startsWith('http')) {
+      const match = photoPath.match(/\/travel-photos\/(.+)$/);
+      if (!match) return photoPath; // External URL, return as-is
+      photoPath = match[1];
+    }
+    const { data, error } = await supabase.storage
+      .from('travel-photos')
+      .createSignedUrl(photoPath, 86400); // 24 hour expiry
+    if (error) {
+      console.error('Error creating signed URL:', error);
+      return null;
+    }
+    return data.signedUrl;
+  };
+
   const handlePhotoUpload = async (file: File): Promise<string | null> => {
     try {
       const fileExt = file.name.split('.').pop();
@@ -208,11 +226,8 @@ const InteractiveTravelMap = () => {
         return null;
       }
 
-      const { data } = supabase.storage
-        .from('travel-photos')
-        .getPublicUrl(fileName);
-
-      return data.publicUrl;
+      // Store just the file path, generate signed URLs on display
+      return fileName;
     } catch (error) {
       console.error('Error uploading photo:', error);
       return null;
