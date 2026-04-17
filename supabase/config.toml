@@ -70,3 +70,6 @@ verify_jwt = false
 
 [functions.fetch-events]
 verify_jwt = false
+
+[functions.scrape-nyc-events]
+verify_jwt = false
