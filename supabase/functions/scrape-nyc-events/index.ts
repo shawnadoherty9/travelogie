@@ -13,6 +13,10 @@ const NYC_LNG = -74.006;
 const SOURCES = [
   { name: "Time Out NY", url: "https://www.timeout.com/newyork/things-to-do/things-to-do-in-new-york-this-week" },
   { name: "NYC Tourism", url: "https://www.nyctourism.com/events/" },
+  { name: "Luma NYC", url: "https://lu.ma/nyc" },
+  { name: "Luma NYC Tech", url: "https://lu.ma/nyc/tech" },
+  { name: "Luma NYC Music", url: "https://lu.ma/nyc/music" },
+  { name: "Luma NYC Food", url: "https://lu.ma/nyc/food" },
 ];
 
 interface ParsedEvent {
