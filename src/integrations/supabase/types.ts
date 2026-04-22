@@ -1536,6 +1536,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_registration_role: { Args: { p_role: string }; Returns: undefined }
       check_rate_limit: {
         Args: {
           p_endpoint: string
@@ -1674,6 +1675,7 @@ export type Database = {
         | "tour_operator"
         | "language_teacher"
         | "cultural_guide"
+        | "event_venue"
       user_type:
         | "traveler"
         | "tour_operator"
@@ -1814,6 +1816,7 @@ export const Constants = {
         "tour_operator",
         "language_teacher",
         "cultural_guide",
+        "event_venue",
       ],
       user_type: [
         "traveler",

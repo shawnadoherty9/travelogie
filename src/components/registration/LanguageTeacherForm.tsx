@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Upload, X, Plus, BookOpen, Video } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LanguageOffering {
   language: string;
@@ -21,6 +24,8 @@ interface LanguageOffering {
 
 const LanguageTeacherForm: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -112,42 +117,72 @@ const LanguageTeacherForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+
     if (!formData.firstName || !formData.lastName || !formData.birthdate) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive"
-      });
+      toast({ title: "Missing Information", description: "Please fill in all required fields.", variant: "destructive" });
       return;
     }
 
     if (languageOfferings.length === 0) {
-      toast({
-        title: "Language Required",
-        description: "Please add at least one language offering.",
-        variant: "destructive"
-      });
+      toast({ title: "Language Required", description: "Please add at least one language offering.", variant: "destructive" });
       return;
     }
 
     try {
-      console.log('Language Teacher form data:', {
-        ...formData,
-        languageOfferings,
-        spokenLanguages,
-        interests: [...interests, ...customInterests]
-      });
+      // Update profile
+      const { error: profileError } = await supabase.from('profiles').update({
+        user_type: 'language_teacher',
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        birthdate: formData.birthdate,
+        home_city: formData.homeCity,
+        bio: formData.bio,
+        interests,
+        custom_interests: customInterests,
+      }).eq('user_id', user.id);
+      if (profileError) throw profileError;
 
-      toast({
-        title: "Profile Created!",
-        description: "Welcome to Travelogie! Your language teacher profile has been created successfully.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create profile. Please try again.",
-        variant: "destructive"
-      });
+      // Insert spoken languages
+      if (spokenLanguages.length > 0) {
+        const { error: langError } = await supabase.from('user_languages').insert(
+          spokenLanguages.map(lang => ({
+            user_id: user.id,
+            language_code: lang.code,
+            language_name: lang.name,
+            fluency_level: lang.fluency,
+            is_primary: false,
+          }))
+        );
+        if (langError) throw langError;
+      }
+
+      // Create services from language offerings
+      for (const offering of languageOfferings) {
+        await supabase.from('services').insert({
+          user_id: user.id,
+          title: `${offering.language} Lessons`,
+          description: offering.description,
+          service_type: 'language_lesson',
+          duration_hours: 1,
+          price_per_hour: offering.pricePerHour,
+          is_online: offering.isOnline,
+          is_in_person: offering.isInPerson,
+          skill_level: offering.skillLevels.join(', '),
+        });
+      }
+
+      // Assign role
+      await supabase.rpc('assign_registration_role', { p_role: 'language_teacher' });
+
+      toast({ title: "Profile Created!", description: "Your language teacher profile has been created successfully." });
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast({ title: "Error", description: error.message || "Failed to create profile. Please try again.", variant: "destructive" });
     }
   };
 

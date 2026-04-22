@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Upload, X, Plus, MapPin, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface TourOffering {
   title: string;
@@ -21,6 +24,8 @@ interface TourOffering {
 
 const TourOperatorForm: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -105,42 +110,83 @@ const TourOperatorForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+
     if (!formData.firstName || !formData.lastName || !formData.birthdate) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive"
-      });
+      toast({ title: "Missing Information", description: "Please fill in all required fields.", variant: "destructive" });
       return;
     }
 
     if (tours.length === 0) {
-      toast({
-        title: "Tour Required",
-        description: "Please add at least one tour offering.",
-        variant: "destructive"
-      });
+      toast({ title: "Tour Required", description: "Please add at least one tour offering.", variant: "destructive" });
       return;
     }
 
     try {
-      console.log('Tour Operator form data:', {
-        ...formData,
-        tours,
-        languages,
-        interests: [...interests, ...customInterests]
-      });
+      // Update profile
+      const { error: profileError } = await supabase.from('profiles').update({
+        user_type: 'tour_operator',
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        birthdate: formData.birthdate,
+        home_city: formData.homeCity,
+        bio: formData.bio,
+        geographic_availability: formData.geographicAvailability,
+        interests,
+        custom_interests: customInterests,
+      }).eq('user_id', user.id);
+      if (profileError) throw profileError;
 
-      toast({
-        title: "Profile Created!",
-        description: "Welcome to Travelogie! Your tour operator profile has been created successfully.",
+      // Create tour operator profile
+      const { error: operatorError } = await supabase.from('tour_operators').insert({
+        user_id: user.id,
+        business_name: `${formData.firstName} ${formData.lastName}`,
+        description: formData.bio,
+        specialties: interests,
+        languages_spoken: languages.map(l => l.name),
+        cities_covered: formData.homeCity ? [formData.homeCity] : [],
       });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create profile. Please try again.",
-        variant: "destructive"
-      });
+      if (operatorError) throw operatorError;
+
+      // Insert languages
+      if (languages.length > 0) {
+        const { error: langError } = await supabase.from('user_languages').insert(
+          languages.map(lang => ({
+            user_id: user.id,
+            language_code: lang.code,
+            language_name: lang.name,
+            fluency_level: lang.fluency,
+            is_primary: false,
+          }))
+        );
+        if (langError) throw langError;
+      }
+
+      // Create services from tour offerings
+      for (const tour of tours) {
+        await supabase.from('services').insert({
+          user_id: user.id,
+          title: tour.title,
+          description: tour.description,
+          service_type: 'tour',
+          duration_hours: tour.duration,
+          price_per_hour: tour.price / tour.duration,
+          max_participants: tour.maxParticipants,
+          is_in_person: true,
+        });
+      }
+
+      // Assign role
+      await supabase.rpc('assign_registration_role', { p_role: 'tour_operator' });
+
+      toast({ title: "Profile Created!", description: "Your tour operator profile has been created successfully." });
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast({ title: "Error", description: error.message || "Failed to create profile. Please try again.", variant: "destructive" });
     }
   };
 

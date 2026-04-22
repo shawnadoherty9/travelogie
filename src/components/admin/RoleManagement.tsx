@@ -29,6 +29,7 @@ export const RoleManagement = () => {
     { value: 'tour_operator', label: 'Tour Operator' },
     { value: 'language_teacher', label: 'Language Teacher' },
     { value: 'cultural_guide', label: 'Cultural Guide' },
+    { value: 'event_venue', label: 'Event Venue' },
   ];
 
   const loadUserRoles = async () => {
