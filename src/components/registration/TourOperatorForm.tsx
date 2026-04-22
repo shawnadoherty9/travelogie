@@ -277,7 +277,7 @@ const TourOperatorForm: React.FC = () => {
                   id="birthdate"
                   type="date"
                   value={formData.birthdate}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); setFieldErrors(prev => { const { birthdate, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); clearFieldError(setFieldErrors, 'birthdate')(); }}
                   className={fieldErrors.birthdate ? 'border-destructive' : ''}
                 />
                 {fieldErrors.birthdate && <p className="text-sm text-destructive">{fieldErrors.birthdate}</p>}
@@ -321,7 +321,7 @@ const TourOperatorForm: React.FC = () => {
                       <Label>Tour Title *</Label>
                       <Input
                         value={currentTour.title}
-                        onChange={(e) => { setCurrentTour(prev => ({ ...prev, title: e.target.value })); setFieldErrors(prev => { const { tourTitle, ...rest } = prev; return rest; }); }}
+                        onChange={(e) => { setCurrentTour(prev => ({ ...prev, title: e.target.value })); clearFieldError(setFieldErrors, 'tourTitle')(); }}
                         placeholder="e.g., Historic Barcelona Walking Tour"
                         className={fieldErrors.tourTitle ? 'border-destructive' : ''}
                       />
@@ -346,7 +346,7 @@ const TourOperatorForm: React.FC = () => {
                     <Label>Description *</Label>
                     <Textarea
                       value={currentTour.description}
-                      onChange={(e) => { setCurrentTour(prev => ({ ...prev, description: e.target.value })); setFieldErrors(prev => { const { tourDescription, ...rest } = prev; return rest; }); }}
+                      onChange={(e) => { setCurrentTour(prev => ({ ...prev, description: e.target.value })); clearFieldError(setFieldErrors, 'tourDescription')(); }}
                       placeholder="Describe your tour experience..."
                       rows={3}
                       className={fieldErrors.tourDescription ? 'border-destructive' : ''}
