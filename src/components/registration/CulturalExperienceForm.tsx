@@ -28,6 +28,8 @@ interface CulturalExperience {
 
 const CulturalExperienceForm: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -136,42 +138,74 @@ const CulturalExperienceForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+
     if (!formData.firstName || !formData.lastName || !formData.birthdate) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive"
-      });
+      toast({ title: "Missing Information", description: "Please fill in all required fields.", variant: "destructive" });
       return;
     }
 
     if (experiences.length === 0) {
-      toast({
-        title: "Experience Required",
-        description: "Please add at least one cultural experience.",
-        variant: "destructive"
-      });
+      toast({ title: "Experience Required", description: "Please add at least one cultural experience.", variant: "destructive" });
       return;
     }
 
     try {
-      console.log('Cultural Experience form data:', {
-        ...formData,
-        experiences,
-        spokenLanguages,
-        interests: [...interests, ...customInterests]
-      });
+      // Update profile
+      const { error: profileError } = await supabase.from('profiles').update({
+        user_type: 'cultural_experience',
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        birthdate: formData.birthdate,
+        home_city: formData.homeCity,
+        bio: formData.bio,
+        interests,
+        custom_interests: customInterests,
+      }).eq('user_id', user.id);
+      if (profileError) throw profileError;
 
-      toast({
-        title: "Profile Created!",
-        description: "Welcome to Travelogie! Your cultural experience host profile has been created successfully.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create profile. Please try again.",
-        variant: "destructive"
-      });
+      // Insert spoken languages
+      if (spokenLanguages.length > 0) {
+        const { error: langError } = await supabase.from('user_languages').insert(
+          spokenLanguages.map(lang => ({
+            user_id: user.id,
+            language_code: lang.code,
+            language_name: lang.name,
+            fluency_level: lang.fluency,
+            is_primary: false,
+          }))
+        );
+        if (langError) throw langError;
+      }
+
+      // Create services from cultural experiences
+      for (const exp of experiences) {
+        await supabase.from('services').insert({
+          user_id: user.id,
+          title: exp.title,
+          description: exp.description,
+          service_type: 'cultural_experience',
+          duration_hours: exp.duration,
+          price_per_hour: exp.price / exp.duration,
+          max_participants: exp.maxParticipants,
+          is_online: exp.isOnline,
+          is_in_person: exp.isInPerson,
+          skill_level: exp.skillLevel,
+          equipment_needed: exp.materialsProvided,
+        });
+      }
+
+      // Assign role
+      await supabase.rpc('assign_registration_role', { p_role: 'cultural_guide' });
+
+      toast({ title: "Profile Created!", description: "Your cultural experience host profile has been created successfully." });
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast({ title: "Error", description: error.message || "Failed to create profile. Please try again.", variant: "destructive" });
     }
   };
 

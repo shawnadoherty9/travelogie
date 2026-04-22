@@ -25,6 +25,8 @@ interface VenueSpace {
 
 const EventVenueForm: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -145,42 +147,72 @@ const EventVenueForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+
     if (!formData.firstName || !formData.lastName || !formData.birthdate || !formData.venueName) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive"
-      });
+      toast({ title: "Missing Information", description: "Please fill in all required fields.", variant: "destructive" });
       return;
     }
 
     if (venueSpaces.length === 0) {
-      toast({
-        title: "Space Required",
-        description: "Please add at least one venue space.",
-        variant: "destructive"
-      });
+      toast({ title: "Space Required", description: "Please add at least one venue space.", variant: "destructive" });
       return;
     }
 
     try {
-      console.log('Event Venue form data:', {
-        ...formData,
-        venueSpaces,
-        spokenLanguages,
-        eventTypes: [...eventTypes, ...customEventTypes]
-      });
+      // Update profile
+      const { error: profileError } = await supabase.from('profiles').update({
+        user_type: 'event_venue',
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        birthdate: formData.birthdate,
+        home_city: formData.homeCity,
+        bio: formData.bio,
+        interests: eventTypes,
+        custom_interests: customEventTypes,
+      }).eq('user_id', user.id);
+      if (profileError) throw profileError;
 
-      toast({
-        title: "Profile Created!",
-        description: "Welcome to Travelogie! Your event venue profile has been created successfully.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create profile. Please try again.",
-        variant: "destructive"
-      });
+      // Insert spoken languages
+      if (spokenLanguages.length > 0) {
+        const { error: langError } = await supabase.from('user_languages').insert(
+          spokenLanguages.map(lang => ({
+            user_id: user.id,
+            language_code: lang.code,
+            language_name: lang.name,
+            fluency_level: lang.fluency,
+            is_primary: false,
+          }))
+        );
+        if (langError) throw langError;
+      }
+
+      // Create services from venue spaces
+      for (const space of venueSpaces) {
+        await supabase.from('services').insert({
+          user_id: user.id,
+          title: `${formData.venueName} - ${space.name}`,
+          description: space.description,
+          service_type: 'venue',
+          duration_hours: 1,
+          price_per_hour: space.pricePerHour,
+          max_participants: space.capacity,
+          is_in_person: true,
+          equipment_needed: space.amenities.join(', '),
+        });
+      }
+
+      // Assign role
+      await supabase.rpc('assign_registration_role', { p_role: 'event_venue' });
+
+      toast({ title: "Profile Created!", description: "Your event venue profile has been created successfully." });
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast({ title: "Error", description: error.message || "Failed to create profile. Please try again.", variant: "destructive" });
     }
   };
 
