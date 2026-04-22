@@ -291,7 +291,7 @@ const CulturalExperienceForm: React.FC = () => {
                   id="birthdate"
                   type="date"
                   value={formData.birthdate}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); setFieldErrors(prev => { const { birthdate, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); clearFieldError(setFieldErrors, 'birthdate')(); }}
                   className={fieldErrors.birthdate ? 'border-destructive' : ''}
                 />
                 {fieldErrors.birthdate && <p className="text-sm text-destructive">{fieldErrors.birthdate}</p>}
