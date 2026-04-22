@@ -85,3 +85,29 @@ export function clearFieldError(
       return rest;
     });
 }
+
+/**
+ * Hook that returns a helper to create onChange handlers that
+ * update form state and clear the corresponding field error in one call.
+ *
+ * Usage:
+ *   const handleChange = useFieldChange(setFormData, setFieldErrors);
+ *   <Input onChange={handleChange('firstName')} />
+ */
+export function useFieldChange<T extends Record<string, unknown>>(
+  setFormData: React.Dispatch<React.SetStateAction<T>>,
+  setFieldErrors: React.Dispatch<React.SetStateAction<FieldErrors>>,
+) {
+  return useCallback(
+    (field: keyof T & string) =>
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+        setFieldErrors((prev) => {
+          if (!(field in prev)) return prev;
+          const { [field]: _, ...rest } = prev;
+          return rest;
+        });
+      },
+    [setFormData, setFieldErrors],
+  );
+}
