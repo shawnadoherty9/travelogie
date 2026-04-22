@@ -12,6 +12,7 @@ import { Upload, X, Plus, BookOpen, Video } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, type FieldErrors } from "@/utils/registrationValidation";
 
 interface LanguageOffering {
   language: string;
@@ -51,8 +52,7 @@ const LanguageTeacherForm: React.FC = () => {
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const commonLanguages = [
     'English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 
@@ -92,24 +92,18 @@ const LanguageTeacherForm: React.FC = () => {
   };
 
   const addLanguageOffering = () => {
-    const offerErrors: Record<string, string> = {};
-    if (!currentOffering.language) offerErrors.offeringLanguage = 'Please select a language';
-    if (currentOffering.skillLevels.length === 0) offerErrors.offeringSkillLevels = 'Select at least one skill level';
+    const offerErrors = validateOfferingFields([
+      { key: 'offeringLanguage', value: currentOffering.language, label: 'Language' },
+      { key: 'offeringSkillLevels', value: currentOffering.skillLevels.length > 0 ? 'ok' : '', label: 'At least one skill level' },
+    ]);
     if (Object.keys(offerErrors).length > 0) {
       setFieldErrors(prev => ({ ...prev, ...offerErrors }));
       toast({ title: "Incomplete Offering", description: "Please select a language and at least one skill level.", variant: "destructive" });
       return;
     }
-    setFieldErrors(prev => { const { offeringLanguage, offeringSkillLevels, ...rest } = prev; return rest; });
+    setFieldErrors(prev => clearOfferingErrors(prev, ['offeringLanguage', 'offeringSkillLevels']));
     setLanguageOfferings(prev => [...prev, { ...currentOffering }]);
-    setCurrentOffering({
-      language: '',
-      skillLevels: [],
-      isOnline: true,
-      isInPerson: false,
-      pricePerHour: 25,
-      description: ''
-    });
+    setCurrentOffering({ language: '', skillLevels: [], isOnline: true, isInPerson: false, pricePerHour: 25, description: '' });
   };
 
   const removeLanguageOffering = (index: number) => {
@@ -125,19 +119,20 @@ const LanguageTeacherForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
     
     if (!user) {
       toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
       return;
     }
 
-    const errors: Record<string, string> = {};
-    if (!formData.firstName.trim()) errors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) errors.lastName = 'Last name is required';
-    if (!formData.birthdate) errors.birthdate = 'Birthdate is required';
-    if (languageOfferings.length === 0) errors.offerings = 'Please add at least one language offering';
-    
+    const errors: FieldErrors = {
+      ...validateRequiredFields([
+        { key: 'firstName', value: formData.firstName, label: 'First name' },
+        { key: 'lastName', value: formData.lastName, label: 'Last name' },
+        { key: 'birthdate', value: formData.birthdate, label: 'Birthdate' },
+      ]),
+      ...validateAtLeastOneOffering(languageOfferings, 'offerings', 'language offering'),
+    };
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
       toast({ title: "Missing Information", description: "Please fix the highlighted fields below.", variant: "destructive" });
@@ -252,7 +247,7 @@ const LanguageTeacherForm: React.FC = () => {
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); setFieldErrors(prev => { const { firstName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); clearFieldError(setFieldErrors, 'firstName')(); }}
                   className={fieldErrors.firstName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.firstName && <p className="text-sm text-destructive">{fieldErrors.firstName}</p>}
@@ -262,7 +257,7 @@ const LanguageTeacherForm: React.FC = () => {
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); setFieldErrors(prev => { const { lastName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); clearFieldError(setFieldErrors, 'lastName')(); }}
                   className={fieldErrors.lastName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.lastName && <p className="text-sm text-destructive">{fieldErrors.lastName}</p>}
