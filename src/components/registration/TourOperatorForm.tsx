@@ -112,7 +112,7 @@ const TourOperatorForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    
     
     if (!user) {
       toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
