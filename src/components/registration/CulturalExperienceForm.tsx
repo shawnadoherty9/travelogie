@@ -12,6 +12,7 @@ import { Upload, X, Plus, Palette, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, type FieldErrors } from "@/utils/registrationValidation";
 
 interface CulturalExperience {
   title: string;
@@ -59,8 +60,7 @@ const CulturalExperienceForm: React.FC = () => {
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const experienceCategories = [
     'Cooking & Cuisine',
@@ -109,29 +109,19 @@ const CulturalExperienceForm: React.FC = () => {
   };
 
   const addExperience = () => {
-    const expErrors: Record<string, string> = {};
-    if (!currentExperience.title.trim()) expErrors.expTitle = 'Experience title is required';
-    if (!currentExperience.description.trim()) expErrors.expDescription = 'Experience description is required';
-    if (!currentExperience.category) expErrors.expCategory = 'Please select a category';
+    const expErrors = validateOfferingFields([
+      { key: 'expTitle', value: currentExperience.title, label: 'Experience title' },
+      { key: 'expDescription', value: currentExperience.description, label: 'Experience description' },
+      { key: 'expCategory', value: currentExperience.category, label: 'Category' },
+    ]);
     if (Object.keys(expErrors).length > 0) {
       setFieldErrors(prev => ({ ...prev, ...expErrors }));
       toast({ title: "Incomplete Experience", description: "Please fill in the title, description, and category.", variant: "destructive" });
       return;
     }
-    setFieldErrors(prev => { const { expTitle, expDescription, expCategory, ...rest } = prev; return rest; });
+    setFieldErrors(prev => clearOfferingErrors(prev, ['expTitle', 'expDescription', 'expCategory']));
     setExperiences(prev => [...prev, { ...currentExperience }]);
-    setCurrentExperience({
-      title: '',
-      description: '',
-      category: '',
-      duration: 2,
-      price: 40,
-      maxParticipants: 6,
-      isOnline: false,
-      isInPerson: true,
-      skillLevel: 'beginner',
-      materialsProvided: ''
-    });
+    setCurrentExperience({ title: '', description: '', category: '', duration: 2, price: 40, maxParticipants: 6, isOnline: false, isInPerson: true, skillLevel: 'beginner', materialsProvided: '' });
   };
 
   const removeExperience = (index: number) => {
@@ -147,19 +137,20 @@ const CulturalExperienceForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
     
     if (!user) {
       toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
       return;
     }
 
-    const errors: Record<string, string> = {};
-    if (!formData.firstName.trim()) errors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) errors.lastName = 'Last name is required';
-    if (!formData.birthdate) errors.birthdate = 'Birthdate is required';
-    if (experiences.length === 0) errors.experiences = 'Please add at least one cultural experience';
-    
+    const errors: FieldErrors = {
+      ...validateRequiredFields([
+        { key: 'firstName', value: formData.firstName, label: 'First name' },
+        { key: 'lastName', value: formData.lastName, label: 'Last name' },
+        { key: 'birthdate', value: formData.birthdate, label: 'Birthdate' },
+      ]),
+      ...validateAtLeastOneOffering(experiences, 'experiences', 'cultural experience'),
+    };
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
       toast({ title: "Missing Information", description: "Please fix the highlighted fields below.", variant: "destructive" });
@@ -276,7 +267,7 @@ const CulturalExperienceForm: React.FC = () => {
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); setFieldErrors(prev => { const { firstName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); clearFieldError(setFieldErrors, 'firstName')(); }}
                   className={fieldErrors.firstName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.firstName && <p className="text-sm text-destructive">{fieldErrors.firstName}</p>}
@@ -286,7 +277,7 @@ const CulturalExperienceForm: React.FC = () => {
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); setFieldErrors(prev => { const { lastName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); clearFieldError(setFieldErrors, 'lastName')(); }}
                   className={fieldErrors.lastName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.lastName && <p className="text-sm text-destructive">{fieldErrors.lastName}</p>}
@@ -300,7 +291,7 @@ const CulturalExperienceForm: React.FC = () => {
                   id="birthdate"
                   type="date"
                   value={formData.birthdate}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); setFieldErrors(prev => { const { birthdate, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); clearFieldError(setFieldErrors, 'birthdate')(); }}
                   className={fieldErrors.birthdate ? 'border-destructive' : ''}
                 />
                 {fieldErrors.birthdate && <p className="text-sm text-destructive">{fieldErrors.birthdate}</p>}

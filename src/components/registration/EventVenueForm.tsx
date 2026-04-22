@@ -12,6 +12,7 @@ import { Upload, X, Plus, Calendar, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, type FieldErrors } from "@/utils/registrationValidation";
 
 interface VenueSpace {
   name: string;
@@ -56,8 +57,7 @@ const EventVenueForm: React.FC = () => {
   const [eventTypes, setEventTypes] = useState<string[]>([]);
   const [customEventTypes, setCustomEventTypes] = useState<string[]>([]);
   const [newCustomEventType, setNewCustomEventType] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const spaceTypes = [
     'Conference Room',
@@ -121,26 +121,19 @@ const EventVenueForm: React.FC = () => {
   };
 
   const addVenueSpace = () => {
-    const spaceErrors: Record<string, string> = {};
-    if (!currentSpace.name.trim()) spaceErrors.spaceName = 'Space name is required';
-    if (!currentSpace.description.trim()) spaceErrors.spaceDescription = 'Space description is required';
-    if (!currentSpace.spaceType) spaceErrors.spaceType = 'Please select a space type';
+    const spaceErrors = validateOfferingFields([
+      { key: 'spaceName', value: currentSpace.name, label: 'Space name' },
+      { key: 'spaceDescription', value: currentSpace.description, label: 'Space description' },
+      { key: 'spaceType', value: currentSpace.spaceType, label: 'Space type' },
+    ]);
     if (Object.keys(spaceErrors).length > 0) {
       setFieldErrors(prev => ({ ...prev, ...spaceErrors }));
       toast({ title: "Incomplete Space", description: "Please fill in the space name, description, and type.", variant: "destructive" });
       return;
     }
-    setFieldErrors(prev => { const { spaceName, spaceDescription, spaceType, ...rest } = prev; return rest; });
+    setFieldErrors(prev => clearOfferingErrors(prev, ['spaceName', 'spaceDescription', 'spaceType']));
     setVenueSpaces(prev => [...prev, { ...currentSpace }]);
-    setCurrentSpace({
-      name: '',
-      description: '',
-      capacity: 50,
-      amenities: [],
-      pricePerHour: 100,
-      pricePerDay: 800,
-      spaceType: ''
-    });
+    setCurrentSpace({ name: '', description: '', capacity: 50, amenities: [], pricePerHour: 100, pricePerDay: 800, spaceType: '' });
   };
 
   const removeVenueSpace = (index: number) => {
@@ -156,20 +149,21 @@ const EventVenueForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
     
     if (!user) {
       toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
       return;
     }
 
-    const errors: Record<string, string> = {};
-    if (!formData.firstName.trim()) errors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) errors.lastName = 'Last name is required';
-    if (!formData.birthdate) errors.birthdate = 'Birthdate is required';
-    if (!formData.venueName.trim()) errors.venueName = 'Venue name is required';
-    if (venueSpaces.length === 0) errors.spaces = 'Please add at least one venue space';
-    
+    const errors: FieldErrors = {
+      ...validateRequiredFields([
+        { key: 'firstName', value: formData.firstName, label: 'First name' },
+        { key: 'lastName', value: formData.lastName, label: 'Last name' },
+        { key: 'birthdate', value: formData.birthdate, label: 'Birthdate' },
+        { key: 'venueName', value: formData.venueName, label: 'Venue name' },
+      ]),
+      ...validateAtLeastOneOffering(venueSpaces, 'spaces', 'venue space'),
+    };
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
       toast({ title: "Missing Information", description: "Please fix the highlighted fields below.", variant: "destructive" });
@@ -284,7 +278,7 @@ const EventVenueForm: React.FC = () => {
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); setFieldErrors(prev => { const { firstName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); clearFieldError(setFieldErrors, 'firstName')(); }}
                   className={fieldErrors.firstName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.firstName && <p className="text-sm text-destructive">{fieldErrors.firstName}</p>}
@@ -294,7 +288,7 @@ const EventVenueForm: React.FC = () => {
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); setFieldErrors(prev => { const { lastName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); clearFieldError(setFieldErrors, 'lastName')(); }}
                   className={fieldErrors.lastName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.lastName && <p className="text-sm text-destructive">{fieldErrors.lastName}</p>}
@@ -308,7 +302,7 @@ const EventVenueForm: React.FC = () => {
                   id="birthdate"
                   type="date"
                   value={formData.birthdate}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); setFieldErrors(prev => { const { birthdate, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); clearFieldError(setFieldErrors, 'birthdate')(); }}
                   className={fieldErrors.birthdate ? 'border-destructive' : ''}
                 />
                 {fieldErrors.birthdate && <p className="text-sm text-destructive">{fieldErrors.birthdate}</p>}
@@ -334,7 +328,7 @@ const EventVenueForm: React.FC = () => {
                   <Input
                     id="venueName"
                     value={formData.venueName}
-                    onChange={(e) => { setFormData(prev => ({ ...prev, venueName: e.target.value })); setFieldErrors(prev => { const { venueName, ...rest } = prev; return rest; }); }}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, venueName: e.target.value })); clearFieldError(setFieldErrors, 'venueName')(); }}
                     placeholder="e.g., Cultural Arts Center"
                     className={fieldErrors.venueName ? 'border-destructive' : ''}
                   />
