@@ -50,6 +50,8 @@ const TourOperatorForm: React.FC = () => {
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
 
   const tourTypes = [
     { value: 'walking', label: 'Walking Tour' },
@@ -83,17 +85,24 @@ const TourOperatorForm: React.FC = () => {
   };
 
   const addTour = () => {
-    if (currentTour.title && currentTour.description) {
-      setTours(prev => [...prev, { ...currentTour }]);
-      setCurrentTour({
-        title: '',
-        description: '',
-        duration: 2,
-        price: 50,
-        maxParticipants: 8,
-        type: 'walking'
-      });
+    const tourErrors: Record<string, string> = {};
+    if (!currentTour.title.trim()) tourErrors.tourTitle = 'Tour title is required';
+    if (!currentTour.description.trim()) tourErrors.tourDescription = 'Tour description is required';
+    if (Object.keys(tourErrors).length > 0) {
+      setFieldErrors(prev => ({ ...prev, ...tourErrors }));
+      toast({ title: "Incomplete Tour", description: "Please fill in the tour title and description.", variant: "destructive" });
+      return;
     }
+    setFieldErrors(prev => { const { tourTitle, tourDescription, ...rest } = prev; return rest; });
+    setTours(prev => [...prev, { ...currentTour }]);
+    setCurrentTour({
+      title: '',
+      description: '',
+      duration: 2,
+      price: 50,
+      maxParticipants: 8,
+      type: 'walking'
+    });
   };
 
   const removeTour = (index: number) => {
@@ -109,19 +118,22 @@ const TourOperatorForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitted(true);
     
     if (!user) {
       toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
       return;
     }
 
-    if (!formData.firstName || !formData.lastName || !formData.birthdate) {
-      toast({ title: "Missing Information", description: "Please fill in all required fields.", variant: "destructive" });
-      return;
-    }
-
-    if (tours.length === 0) {
-      toast({ title: "Tour Required", description: "Please add at least one tour offering.", variant: "destructive" });
+    const errors: Record<string, string> = {};
+    if (!formData.firstName.trim()) errors.firstName = 'First name is required';
+    if (!formData.lastName.trim()) errors.lastName = 'Last name is required';
+    if (!formData.birthdate) errors.birthdate = 'Birthdate is required';
+    if (tours.length === 0) errors.tours = 'Please add at least one tour offering';
+    
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      toast({ title: "Missing Information", description: "Please fix the highlighted fields below.", variant: "destructive" });
       return;
     }
 
@@ -244,18 +256,20 @@ const TourOperatorForm: React.FC = () => {
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                  required
+                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); setFieldErrors(prev => { const { firstName, ...rest } = prev; return rest; }); }}
+                  className={fieldErrors.firstName ? 'border-destructive' : ''}
                 />
+                {fieldErrors.firstName && <p className="text-sm text-destructive">{fieldErrors.firstName}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name *</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                  required
+                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); setFieldErrors(prev => { const { lastName, ...rest } = prev; return rest; }); }}
+                  className={fieldErrors.lastName ? 'border-destructive' : ''}
                 />
+                {fieldErrors.lastName && <p className="text-sm text-destructive">{fieldErrors.lastName}</p>}
               </div>
             </div>
 
@@ -266,9 +280,10 @@ const TourOperatorForm: React.FC = () => {
                   id="birthdate"
                   type="date"
                   value={formData.birthdate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, birthdate: e.target.value }))}
-                  required
+                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); setFieldErrors(prev => { const { birthdate, ...rest } = prev; return rest; }); }}
+                  className={fieldErrors.birthdate ? 'border-destructive' : ''}
                 />
+                {fieldErrors.birthdate && <p className="text-sm text-destructive">{fieldErrors.birthdate}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="homeCity">Home City</Label>
@@ -296,6 +311,7 @@ const TourOperatorForm: React.FC = () => {
             {/* Tour Offerings */}
             <div className="space-y-4">
               <Label className="text-lg">Tour Offerings *</Label>
+              {fieldErrors.tours && <p className="text-sm text-destructive">{fieldErrors.tours}</p>}
               
               {/* Add New Tour */}
               <Card className="border-dashed">
@@ -305,12 +321,14 @@ const TourOperatorForm: React.FC = () => {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Tour Title</Label>
+                      <Label>Tour Title *</Label>
                       <Input
                         value={currentTour.title}
-                        onChange={(e) => setCurrentTour(prev => ({ ...prev, title: e.target.value }))}
+                        onChange={(e) => { setCurrentTour(prev => ({ ...prev, title: e.target.value })); setFieldErrors(prev => { const { tourTitle, ...rest } = prev; return rest; }); }}
                         placeholder="e.g., Historic Barcelona Walking Tour"
+                        className={fieldErrors.tourTitle ? 'border-destructive' : ''}
                       />
+                      {fieldErrors.tourTitle && <p className="text-sm text-destructive">{fieldErrors.tourTitle}</p>}
                     </div>
                     <div className="space-y-2">
                       <Label>Tour Type</Label>
@@ -328,13 +346,15 @@ const TourOperatorForm: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Description</Label>
+                    <Label>Description *</Label>
                     <Textarea
                       value={currentTour.description}
-                      onChange={(e) => setCurrentTour(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) => { setCurrentTour(prev => ({ ...prev, description: e.target.value })); setFieldErrors(prev => { const { tourDescription, ...rest } = prev; return rest; }); }}
                       placeholder="Describe your tour experience..."
                       rows={3}
+                      className={fieldErrors.tourDescription ? 'border-destructive' : ''}
                     />
+                    {fieldErrors.tourDescription && <p className="text-sm text-destructive">{fieldErrors.tourDescription}</p>}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

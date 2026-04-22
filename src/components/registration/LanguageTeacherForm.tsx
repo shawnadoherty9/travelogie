@@ -51,6 +51,8 @@ const LanguageTeacherForm: React.FC = () => {
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
 
   const commonLanguages = [
     'English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 
@@ -90,17 +92,24 @@ const LanguageTeacherForm: React.FC = () => {
   };
 
   const addLanguageOffering = () => {
-    if (currentOffering.language && currentOffering.skillLevels.length > 0) {
-      setLanguageOfferings(prev => [...prev, { ...currentOffering }]);
-      setCurrentOffering({
-        language: '',
-        skillLevels: [],
-        isOnline: true,
-        isInPerson: false,
-        pricePerHour: 25,
-        description: ''
-      });
+    const offerErrors: Record<string, string> = {};
+    if (!currentOffering.language) offerErrors.offeringLanguage = 'Please select a language';
+    if (currentOffering.skillLevels.length === 0) offerErrors.offeringSkillLevels = 'Select at least one skill level';
+    if (Object.keys(offerErrors).length > 0) {
+      setFieldErrors(prev => ({ ...prev, ...offerErrors }));
+      toast({ title: "Incomplete Offering", description: "Please select a language and at least one skill level.", variant: "destructive" });
+      return;
     }
+    setFieldErrors(prev => { const { offeringLanguage, offeringSkillLevels, ...rest } = prev; return rest; });
+    setLanguageOfferings(prev => [...prev, { ...currentOffering }]);
+    setCurrentOffering({
+      language: '',
+      skillLevels: [],
+      isOnline: true,
+      isInPerson: false,
+      pricePerHour: 25,
+      description: ''
+    });
   };
 
   const removeLanguageOffering = (index: number) => {
@@ -116,19 +125,22 @@ const LanguageTeacherForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitted(true);
     
     if (!user) {
       toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
       return;
     }
 
-    if (!formData.firstName || !formData.lastName || !formData.birthdate) {
-      toast({ title: "Missing Information", description: "Please fill in all required fields.", variant: "destructive" });
-      return;
-    }
-
-    if (languageOfferings.length === 0) {
-      toast({ title: "Language Required", description: "Please add at least one language offering.", variant: "destructive" });
+    const errors: Record<string, string> = {};
+    if (!formData.firstName.trim()) errors.firstName = 'First name is required';
+    if (!formData.lastName.trim()) errors.lastName = 'Last name is required';
+    if (!formData.birthdate) errors.birthdate = 'Birthdate is required';
+    if (languageOfferings.length === 0) errors.offerings = 'Please add at least one language offering';
+    
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      toast({ title: "Missing Information", description: "Please fix the highlighted fields below.", variant: "destructive" });
       return;
     }
 
@@ -240,18 +252,20 @@ const LanguageTeacherForm: React.FC = () => {
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                  required
+                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); setFieldErrors(prev => { const { firstName, ...rest } = prev; return rest; }); }}
+                  className={fieldErrors.firstName ? 'border-destructive' : ''}
                 />
+                {fieldErrors.firstName && <p className="text-sm text-destructive">{fieldErrors.firstName}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name *</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                  required
+                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); setFieldErrors(prev => { const { lastName, ...rest } = prev; return rest; }); }}
+                  className={fieldErrors.lastName ? 'border-destructive' : ''}
                 />
+                {fieldErrors.lastName && <p className="text-sm text-destructive">{fieldErrors.lastName}</p>}
               </div>
             </div>
 
@@ -262,9 +276,10 @@ const LanguageTeacherForm: React.FC = () => {
                   id="birthdate"
                   type="date"
                   value={formData.birthdate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, birthdate: e.target.value }))}
-                  required
+                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); setFieldErrors(prev => { const { birthdate, ...rest } = prev; return rest; }); }}
+                  className={fieldErrors.birthdate ? 'border-destructive' : ''}
                 />
+                {fieldErrors.birthdate && <p className="text-sm text-destructive">{fieldErrors.birthdate}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="homeCity">Home City</Label>
@@ -305,6 +320,7 @@ const LanguageTeacherForm: React.FC = () => {
             {/* Language Offerings */}
             <div className="space-y-4">
               <Label className="text-lg">Language Lessons Offered *</Label>
+              {fieldErrors.offerings && <p className="text-sm text-destructive">{fieldErrors.offerings}</p>}
               
               {/* Add New Language Offering */}
               <Card className="border-dashed">
