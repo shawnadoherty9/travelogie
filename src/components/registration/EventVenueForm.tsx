@@ -278,7 +278,7 @@ const EventVenueForm: React.FC = () => {
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); setFieldErrors(prev => { const { firstName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); clearFieldError(setFieldErrors, 'firstName')(); }}
                   className={fieldErrors.firstName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.firstName && <p className="text-sm text-destructive">{fieldErrors.firstName}</p>}
@@ -288,7 +288,7 @@ const EventVenueForm: React.FC = () => {
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); setFieldErrors(prev => { const { lastName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); clearFieldError(setFieldErrors, 'lastName')(); }}
                   className={fieldErrors.lastName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.lastName && <p className="text-sm text-destructive">{fieldErrors.lastName}</p>}
@@ -302,7 +302,7 @@ const EventVenueForm: React.FC = () => {
                   id="birthdate"
                   type="date"
                   value={formData.birthdate}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); setFieldErrors(prev => { const { birthdate, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, birthdate: e.target.value })); clearFieldError(setFieldErrors, 'birthdate')(); }}
                   className={fieldErrors.birthdate ? 'border-destructive' : ''}
                 />
                 {fieldErrors.birthdate && <p className="text-sm text-destructive">{fieldErrors.birthdate}</p>}
@@ -328,7 +328,7 @@ const EventVenueForm: React.FC = () => {
                   <Input
                     id="venueName"
                     value={formData.venueName}
-                    onChange={(e) => { setFormData(prev => ({ ...prev, venueName: e.target.value })); setFieldErrors(prev => { const { venueName, ...rest } = prev; return rest; }); }}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, venueName: e.target.value })); clearFieldError(setFieldErrors, 'venueName')(); }}
                     placeholder="e.g., Cultural Arts Center"
                     className={fieldErrors.venueName ? 'border-destructive' : ''}
                   />
