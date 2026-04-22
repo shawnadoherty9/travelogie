@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
+/**
  * Shared validation helpers for non-traveler registration forms.
  */
 
