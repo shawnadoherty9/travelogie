@@ -12,6 +12,7 @@ import { Upload, X, Plus, MapPin, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, type FieldErrors } from "@/utils/registrationValidation";
 
 interface TourOffering {
   title: string;
@@ -50,8 +51,7 @@ const TourOperatorForm: React.FC = () => {
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const tourTypes = [
     { value: 'walking', label: 'Walking Tour' },
@@ -85,24 +85,18 @@ const TourOperatorForm: React.FC = () => {
   };
 
   const addTour = () => {
-    const tourErrors: Record<string, string> = {};
-    if (!currentTour.title.trim()) tourErrors.tourTitle = 'Tour title is required';
-    if (!currentTour.description.trim()) tourErrors.tourDescription = 'Tour description is required';
+    const tourErrors = validateOfferingFields([
+      { key: 'tourTitle', value: currentTour.title, label: 'Tour title' },
+      { key: 'tourDescription', value: currentTour.description, label: 'Tour description' },
+    ]);
     if (Object.keys(tourErrors).length > 0) {
       setFieldErrors(prev => ({ ...prev, ...tourErrors }));
       toast({ title: "Incomplete Tour", description: "Please fill in the tour title and description.", variant: "destructive" });
       return;
     }
-    setFieldErrors(prev => { const { tourTitle, tourDescription, ...rest } = prev; return rest; });
+    setFieldErrors(prev => clearOfferingErrors(prev, ['tourTitle', 'tourDescription']));
     setTours(prev => [...prev, { ...currentTour }]);
-    setCurrentTour({
-      title: '',
-      description: '',
-      duration: 2,
-      price: 50,
-      maxParticipants: 8,
-      type: 'walking'
-    });
+    setCurrentTour({ title: '', description: '', duration: 2, price: 50, maxParticipants: 8, type: 'walking' });
   };
 
   const removeTour = (index: number) => {
@@ -125,11 +119,14 @@ const TourOperatorForm: React.FC = () => {
       return;
     }
 
-    const errors: Record<string, string> = {};
-    if (!formData.firstName.trim()) errors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) errors.lastName = 'Last name is required';
-    if (!formData.birthdate) errors.birthdate = 'Birthdate is required';
-    if (tours.length === 0) errors.tours = 'Please add at least one tour offering';
+    const errors: FieldErrors = {
+      ...validateRequiredFields([
+        { key: 'firstName', value: formData.firstName, label: 'First name' },
+        { key: 'lastName', value: formData.lastName, label: 'Last name' },
+        { key: 'birthdate', value: formData.birthdate, label: 'Birthdate' },
+      ]),
+      ...validateAtLeastOneOffering(tours, 'tours', 'tour offering'),
+    };
     
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
@@ -256,7 +253,7 @@ const TourOperatorForm: React.FC = () => {
                 <Input
                   id="firstName"
                   value={formData.firstName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); setFieldErrors(prev => { const { firstName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, firstName: e.target.value })); clearFieldError(setFieldErrors, 'firstName')(); }}
                   className={fieldErrors.firstName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.firstName && <p className="text-sm text-destructive">{fieldErrors.firstName}</p>}
@@ -266,7 +263,7 @@ const TourOperatorForm: React.FC = () => {
                 <Input
                   id="lastName"
                   value={formData.lastName}
-                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); setFieldErrors(prev => { const { lastName, ...rest } = prev; return rest; }); }}
+                  onChange={(e) => { setFormData(prev => ({ ...prev, lastName: e.target.value })); clearFieldError(setFieldErrors, 'lastName')(); }}
                   className={fieldErrors.lastName ? 'border-destructive' : ''}
                 />
                 {fieldErrors.lastName && <p className="text-sm text-destructive">{fieldErrors.lastName}</p>}
