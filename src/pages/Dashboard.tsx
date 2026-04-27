@@ -34,6 +34,7 @@ import { CompactPassportRewards } from '@/components/dashboard/CompactPassportRe
 import { CompactCalendar } from '@/components/dashboard/CompactCalendar';
 import { CompactUpcomingTrips } from '@/components/dashboard/CompactUpcomingTrips';
 import { FileUpload } from '@/components/ui/file-upload';
+import { RoleDashboards } from '@/components/dashboard/roles/RoleDashboards';
 
 interface Profile {
   id: string;
@@ -302,8 +303,9 @@ const Dashboard = () => {
 
           {/* Main Content */}
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList>
+            <TabsList className="flex flex-wrap h-auto">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="roles">My Roles</TabsTrigger>
               <TabsTrigger value="calendar">Calendar</TabsTrigger>
               <TabsTrigger value="trips">My Trips</TabsTrigger>
               <TabsTrigger value="map">Places Visited</TabsTrigger>
@@ -311,6 +313,10 @@ const Dashboard = () => {
               <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
               <TabsTrigger value="profile">Profile</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="roles">
+              <RoleDashboards />
+            </TabsContent>
 
             <TabsContent value="overview" className="space-y-6">
               {/* Quick Actions */}
