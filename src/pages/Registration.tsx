@@ -34,7 +34,7 @@ const Registration = () => {
           user_type: registrationData.userType,
           first_name: registrationData.firstName,
           last_name: registrationData.lastName,
-          birthdate: registrationData.birthdate,
+          birthdate: registrationData.birthdate ? registrationData.birthdate.toISOString().split('T')[0] : null,
           home_city: registrationData.homeCity,
           bio: registrationData.bio,
           upcoming_travel: registrationData.upcomingTravel,
