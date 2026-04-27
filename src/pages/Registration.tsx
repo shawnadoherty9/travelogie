@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import UserTypeSelection from "@/components/registration/UserTypeSelection";
-import TravelerRegistration from "@/components/registration/TravelerRegistration";
+import TravelerRegistration, { type TravelerRegistrationData } from "@/components/registration/TravelerRegistration";
 import TourOperatorForm from "@/components/registration/TourOperatorForm";
 import LanguageTeacherForm from "@/components/registration/LanguageTeacherForm";
 import CulturalExperienceForm from "@/components/registration/CulturalExperienceForm";
@@ -20,7 +20,7 @@ const Registration = () => {
     setSelectedUserType(type);
   };
 
-  const handleRegistrationComplete = async (registrationData: any) => {
+  const handleRegistrationComplete = async (registrationData: TravelerRegistrationData) => {
     if (!user) {
       toast.error("You must be logged in to complete registration");
       return;
@@ -39,7 +39,7 @@ const Registration = () => {
           bio: registrationData.bio,
           upcoming_travel: registrationData.upcomingTravel,
           interests: registrationData.interests,
-          custom_interests: registrationData.customInterests ? registrationData.customInterests.split(',').map((s: string) => s.trim()) : [],
+          custom_interests: registrationData.customInterests ? registrationData.customInterests.split(',').map((s) => s.trim()) : [],
           social_media_links: registrationData.socialMedia,
           profile_image_url: registrationData.profileImageUrl
         })
@@ -49,7 +49,7 @@ const Registration = () => {
 
       // Insert languages
       if (registrationData.languages && registrationData.languages.length > 0) {
-        const languageInserts = registrationData.languages.map((lang: any) => ({
+        const languageInserts = registrationData.languages.map((lang) => ({
           user_id: user.id,
           language_code: lang.code,
           language_name: lang.name,
