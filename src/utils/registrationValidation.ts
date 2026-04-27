@@ -111,3 +111,18 @@ export function useFieldChange<T extends Record<string, unknown>>(
     [setFormData, setFieldErrors],
   );
 }
+
+/**
+ * Extracts a human-readable error message from unknown errors,
+ * including Zod validation errors which carry an `errors` array.
+ */
+export function getErrorMessage(error: unknown, fallback = 'Something went wrong'): string {
+  if (typeof error === 'string') return error;
+  if (error && typeof error === 'object') {
+    const maybeZod = error as { errors?: Array<{ message?: string }>; message?: string };
+    const zodMsg = maybeZod.errors?.[0]?.message;
+    if (zodMsg) return zodMsg;
+    if (typeof maybeZod.message === 'string') return maybeZod.message;
+  }
+  return fallback;
+}
