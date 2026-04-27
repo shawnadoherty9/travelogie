@@ -37,7 +37,7 @@ const TravelerForm: React.FC = () => {
   });
 
   const [languages, setLanguages] = useState<Language[]>([]);
-  const [newLanguage, setNewLanguage] = useState({ code: '', name: '', fluency: 'beginner' as const });
+  const [newLanguage, setNewLanguage] = useState<{ code: string; name: string; fluency: Language['fluency'] }>({ code: '', name: '', fluency: 'beginner' });
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
