@@ -12,7 +12,7 @@ import { Upload, X, Plus, MapPin, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, type FieldErrors } from "@/utils/registrationValidation";
+import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, type FieldErrors } from "@/utils/registrationValidation";
 
 interface TourOffering {
   title: string;
@@ -194,9 +194,9 @@ const TourOperatorForm: React.FC = () => {
 
       toast({ title: "Profile Created!", description: "Your tour operator profile has been created successfully." });
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Registration error:', error);
-      toast({ title: "Error", description: error.message || "Failed to create profile. Please try again.", variant: "destructive" });
+      toast({ title: "Error", description: getErrorMessage(error, "Failed to create profile. Please try again."), variant: "destructive" });
     }
   };
 
@@ -330,7 +330,7 @@ const TourOperatorForm: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <Label>Tour Type</Label>
-                      <Select value={currentTour.type} onValueChange={(value: any) => setCurrentTour(prev => ({ ...prev, type: value }))}>
+                      <Select value={currentTour.type} onValueChange={(value) => setCurrentTour(prev => ({ ...prev, type: value as TourOffering['type'] }))}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>

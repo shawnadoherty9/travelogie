@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, X, Plus, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { travelerFormSchema, languageSchema, customInterestSchema, sanitizeTextInput } from "@/utils/validation";
+import { getErrorMessage } from "@/utils/registrationValidation";
 
 interface Language {
   code: string;
@@ -36,7 +37,7 @@ const TravelerForm: React.FC = () => {
   });
 
   const [languages, setLanguages] = useState<Language[]>([]);
-  const [newLanguage, setNewLanguage] = useState({ code: '', name: '', fluency: 'beginner' as const });
+  const [newLanguage, setNewLanguage] = useState<{ code: string; name: string; fluency: Language['fluency'] }>({ code: '', name: '', fluency: 'beginner' });
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
@@ -86,10 +87,10 @@ const TravelerForm: React.FC = () => {
         setCustomInterests(prev => [...prev, validated]);
         setNewCustomInterest('');
       }
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Invalid Interest",
-        description: error.errors?.[0]?.message || "Please enter a valid interest",
+        description: getErrorMessage(error, "Please enter a valid interest"),
         variant: "destructive"
       });
     }
@@ -119,10 +120,10 @@ const TravelerForm: React.FC = () => {
       };
       setLanguages(prev => [...prev, language]);
       setNewLanguage({ code: '', name: '', fluency: 'beginner' });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Invalid Language",
-        description: error.errors?.[0]?.message || "Please enter valid language details",
+        description: getErrorMessage(error, "Please enter valid language details"),
         variant: "destructive"
       });
     }
@@ -186,10 +187,10 @@ const TravelerForm: React.FC = () => {
         title: "Profile Created!",
         description: "Welcome to Travelogie! Your traveler profile has been created successfully.",
       });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Validation Error",
-        description: error.errors?.[0]?.message || "Please check your input and try again.",
+        description: getErrorMessage(error, "Please check your input and try again."),
         variant: "destructive"
       });
     }
@@ -349,7 +350,7 @@ const TravelerForm: React.FC = () => {
                     ))}
                   </SelectContent>
                 </Select>
-                <Select value={newLanguage.fluency} onValueChange={(value: any) => setNewLanguage(prev => ({ ...prev, fluency: value }))}>
+                <Select value={newLanguage.fluency} onValueChange={(value) => setNewLanguage(prev => ({ ...prev, fluency: value as Language['fluency'] }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Fluency" />
                   </SelectTrigger>

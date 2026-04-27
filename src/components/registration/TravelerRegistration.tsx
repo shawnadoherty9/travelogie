@@ -13,8 +13,23 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { CalendarIcon, X } from "lucide-react";
 import { format } from "date-fns";
 
+export interface TravelerRegistrationData {
+  userType: 'traveler';
+  firstName: string;
+  lastName: string;
+  birthdate: Date | undefined;
+  homeCity: string;
+  bio: string;
+  upcomingTravel: string;
+  languages: Array<{ code: string; name: string; fluency: string; isPrimary: boolean }>;
+  interests: string[];
+  customInterests: string;
+  socialMedia: Record<string, string>;
+  profileImageUrl: string;
+}
+
 interface TravelerRegistrationProps {
-  onComplete: (data: any) => void;
+  onComplete: (data: TravelerRegistrationData) => void;
   onBack: () => void;
 }
 

@@ -12,7 +12,7 @@ import { Upload, X, Plus, Palette, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, type FieldErrors } from "@/utils/registrationValidation";
+import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, type FieldErrors } from "@/utils/registrationValidation";
 
 interface CulturalExperience {
   title: string;
@@ -208,9 +208,9 @@ const CulturalExperienceForm: React.FC = () => {
 
       toast({ title: "Profile Created!", description: "Your cultural experience host profile has been created successfully." });
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Registration error:', error);
-      toast({ title: "Error", description: error.message || "Failed to create profile. Please try again.", variant: "destructive" });
+      toast({ title: "Error", description: getErrorMessage(error, "Failed to create profile. Please try again."), variant: "destructive" });
     }
   };
 
@@ -409,7 +409,7 @@ const CulturalExperienceForm: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <Label>Skill Level</Label>
-                      <Select value={currentExperience.skillLevel} onValueChange={(value: any) => setCurrentExperience(prev => ({ ...prev, skillLevel: value }))}>
+                      <Select value={currentExperience.skillLevel} onValueChange={(value) => setCurrentExperience(prev => ({ ...prev, skillLevel: value }))}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
