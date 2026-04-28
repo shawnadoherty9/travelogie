@@ -5,14 +5,13 @@ import TourOperatorForm from './TourOperatorForm';
 import LanguageTeacherForm from './LanguageTeacherForm';
 import CulturalExperienceForm from './CulturalExperienceForm';
 import EventVenueForm from './EventVenueForm';
-
-type UserType = 'traveler' | 'tour_operator' | 'language_teacher' | 'cultural_experience' | 'event_venue';
+import type { UserType } from '@/types/registration';
 
 const RegistrationFlow: React.FC = () => {
   const [selectedType, setSelectedType] = useState<UserType | null>(null);
 
-  const handleSelectType = (type: string) => {
-    setSelectedType(type as UserType);
+  const handleSelectType = (type: UserType): void => {
+    setSelectedType(type);
   };
 
   const renderForm = () => {
