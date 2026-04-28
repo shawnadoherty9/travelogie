@@ -1,0 +1,55 @@
+name: Registration Flow CI
+
+# Guards the registration flow against new TypeScript or ESLint regressions.
+# Runs a full project type-check (so cross-file type breakages are caught)
+# plus an ESLint pass scoped to the registration flow.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+concurrency:
+  group: registration-flow-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck-and-lint:
+    name: Type-check & Lint (registration flow)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Full project type-check. The registration flow imports shared modules
+      # (hooks, utils, supabase types) so a scoped tsc would miss real breakage.
+      - name: TypeScript build (tsc --noEmit)
+        run: npx tsc -p tsconfig.app.json --noEmit
+
+      # Scoped ESLint — fails on any warning or error in registration code,
+      # including the shared types module, validation utility, and tests.
+      - name: ESLint (registration flow)
+        run: |
+          npx eslint \
+            --max-warnings=0 \
+            src/components/registration \
+            src/pages/Registration.tsx \
+            src/utils/registrationValidation.ts \
+            src/utils/registrationValidation.test.ts \
+            src/types/registration.ts
+
+      # Run the registration validation unit tests so logic regressions
+      # also fail the build.
+      - name: Unit tests (registration validation)
+        run: npx vitest run src/utils/registrationValidation.test.ts
