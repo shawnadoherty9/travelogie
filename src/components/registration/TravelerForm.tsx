@@ -12,32 +12,34 @@ import { useToast } from "@/hooks/use-toast";
 import { travelerFormSchema, languageSchema, customInterestSchema, sanitizeTextInput } from "@/utils/validation";
 import { getErrorMessage, toRegistrationError } from "@/utils/registrationValidation";
 
-interface Language {
-  code: string;
-  name: string;
-  fluency: 'beginner' | 'intermediate' | 'advanced' | 'native';
-  isPrimary: boolean;
-}
+import type {
+  Language,
+  SocialMedia,
+  TravelerFormProps,
+  TravelerFormData,
+} from "@/types/registration";
 
-interface SocialMedia {
-  platform: string;
-  username: string;
-}
+type TravelerProfileFields = Pick<
+  TravelerFormData,
+  'firstName' | 'lastName' | 'birthdate' | 'homeCity' | 'upcomingTravel' | 'bio' | 'profileImage'
+>;
 
-const TravelerForm: React.FC = () => {
+type NewLanguageDraft = Pick<Language, 'code' | 'name' | 'fluency'>;
+
+const TravelerForm = ({ onComplete, onCancel: _onCancel }: TravelerFormProps = {}) => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<TravelerProfileFields>({
     firstName: '',
     lastName: '',
     birthdate: '',
     homeCity: '',
     upcomingTravel: '',
     bio: '',
-    profileImage: null as File | null
+    profileImage: null,
   });
 
   const [languages, setLanguages] = useState<Language[]>([]);
-  const [newLanguage, setNewLanguage] = useState<{ code: string; name: string; fluency: Language['fluency'] }>({ code: '', name: '', fluency: 'beginner' });
+  const [newLanguage, setNewLanguage] = useState<NewLanguageDraft>({ code: '', name: '', fluency: 'beginner' });
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
@@ -174,14 +176,24 @@ const TravelerForm: React.FC = () => {
         bio: validatedData.bio ? sanitizeTextInput(validatedData.bio, 2000) : '',
       };
 
-      // Submit to backend
-      console.log('Traveler form data:', {
-        ...sanitizedData,
+      const completed: TravelerFormData = {
+        firstName: sanitizedData.firstName,
+        lastName: sanitizedData.lastName,
+        birthdate: sanitizedData.birthdate,
+        homeCity: sanitizedData.homeCity,
+        upcomingTravel: sanitizedData.upcomingTravel,
+        bio: sanitizedData.bio,
+        profileImage: formData.profileImage,
         languages,
-        interests: [...interests, ...customInterests],
+        interests,
+        customInterests,
         socialMedia,
-        dreamDestinations
-      });
+        dreamDestinations,
+      };
+
+      // Submit to backend
+      console.log('Traveler form data:', completed);
+      onComplete?.(completed);
 
       toast({
         title: "Profile Created!",

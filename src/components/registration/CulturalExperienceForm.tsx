@@ -14,32 +14,30 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, toRegistrationError, type FieldErrors } from "@/utils/registrationValidation";
 
-interface CulturalExperience {
-  title: string;
-  description: string;
-  category: string;
-  duration: number;
-  price: number;
-  maxParticipants: number;
-  isOnline: boolean;
-  isInPerson: boolean;
-  skillLevel: string;
-  materialsProvided: string;
-}
+import type {
+  CulturalExperience,
+  CulturalExperienceFormProps,
+  CulturalExperienceFormData,
+} from "@/types/registration";
 
-const CulturalExperienceForm: React.FC = () => {
+type CulturalExperienceProfileFields = Pick<
+  CulturalExperienceFormData,
+  'firstName' | 'lastName' | 'birthdate' | 'homeCity' | 'bio' | 'profileImage' | 'culturalBackground' | 'experienceYears'
+>;
+
+const CulturalExperienceForm = ({ onComplete: _onComplete, onCancel: _onCancel }: CulturalExperienceFormProps = {}) => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CulturalExperienceProfileFields>({
     firstName: '',
     lastName: '',
     birthdate: '',
     homeCity: '',
     bio: '',
-    profileImage: null as File | null,
+    profileImage: null,
     culturalBackground: '',
-    experienceYears: ''
+    experienceYears: '',
   });
 
   const [experiences, setExperiences] = useState<CulturalExperience[]>([]);

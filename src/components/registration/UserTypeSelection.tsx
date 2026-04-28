@@ -1,13 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plane, MapPin, Languages, Users, Calendar } from "lucide-react";
+import { Plane, MapPin, Languages, Users, Calendar, type LucideIcon } from "lucide-react";
+import type { UserType, UserTypeSelectionProps } from "@/types/registration";
 
-interface UserTypeSelectionProps {
-  onSelectType: (type: string) => void;
+interface UserTypeOption {
+  type: UserType;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  features: string[];
 }
 
 const UserTypeSelection = ({ onSelectType }: UserTypeSelectionProps) => {
-  const userTypes = [
+  const userTypes: UserTypeOption[] = [
     {
       type: 'traveler',
       title: 'Traveler',

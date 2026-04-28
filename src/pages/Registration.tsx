@@ -11,13 +11,14 @@ import CulturalExperienceForm from "@/components/registration/CulturalExperience
 import EventVenueForm from "@/components/registration/EventVenueForm";
 import Header from "@/components/layout/Header";
 import { toRegistrationError } from "@/utils/registrationValidation";
+import type { UserType } from "@/types/registration";
 
 const Registration = () => {
-  const [selectedUserType, setSelectedUserType] = useState<string | null>(null);
+  const [selectedUserType, setSelectedUserType] = useState<UserType | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleUserTypeSelection = (type: string) => {
+  const handleUserTypeSelection = (type: UserType): void => {
     setSelectedUserType(type);
   };
 
