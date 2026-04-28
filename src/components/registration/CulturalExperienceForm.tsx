@@ -12,7 +12,7 @@ import { Upload, X, Plus, Palette, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, type FieldErrors } from "@/utils/registrationValidation";
+import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, toRegistrationError, type FieldErrors } from "@/utils/registrationValidation";
 
 interface CulturalExperience {
   title: string;
@@ -208,9 +208,14 @@ const CulturalExperienceForm: React.FC = () => {
 
       toast({ title: "Profile Created!", description: "Your cultural experience host profile has been created successfully." });
       navigate('/dashboard');
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast({ title: "Error", description: getErrorMessage(error, "Failed to create profile. Please try again."), variant: "destructive" });
+    } catch (error: unknown) {
+      const normalized = toRegistrationError(error, "Failed to create profile. Please try again.");
+      console.error('Registration error:', normalized);
+      toast({
+        title: normalized.kind === 'validation' ? "Validation Error" : "Error",
+        description: normalized.message,
+        variant: "destructive"
+      });
     }
   };
 

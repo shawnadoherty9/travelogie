@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, X, Plus, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { travelerFormSchema, languageSchema, customInterestSchema, sanitizeTextInput } from "@/utils/validation";
-import { getErrorMessage } from "@/utils/registrationValidation";
+import { getErrorMessage, toRegistrationError } from "@/utils/registrationValidation";
 
 interface Language {
   code: string;
@@ -87,7 +87,7 @@ const TravelerForm: React.FC = () => {
         setCustomInterests(prev => [...prev, validated]);
         setNewCustomInterest('');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       toast({
         title: "Invalid Interest",
         description: getErrorMessage(error, "Please enter a valid interest"),
@@ -120,7 +120,7 @@ const TravelerForm: React.FC = () => {
       };
       setLanguages(prev => [...prev, language]);
       setNewLanguage({ code: '', name: '', fluency: 'beginner' });
-    } catch (error) {
+    } catch (error: unknown) {
       toast({
         title: "Invalid Language",
         description: getErrorMessage(error, "Please enter valid language details"),
@@ -187,10 +187,11 @@ const TravelerForm: React.FC = () => {
         title: "Profile Created!",
         description: "Welcome to Travelogie! Your traveler profile has been created successfully.",
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      const normalized = toRegistrationError(error, "Please check your input and try again.");
       toast({
-        title: "Validation Error",
-        description: getErrorMessage(error, "Please check your input and try again."),
+        title: normalized.kind === 'validation' ? "Validation Error" : "Error",
+        description: normalized.message,
         variant: "destructive"
       });
     }
