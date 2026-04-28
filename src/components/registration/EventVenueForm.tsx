@@ -219,9 +219,14 @@ const EventVenueForm: React.FC = () => {
 
       toast({ title: "Profile Created!", description: "Your event venue profile has been created successfully." });
       navigate('/dashboard');
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast({ title: "Error", description: getErrorMessage(error, "Failed to create profile. Please try again."), variant: "destructive" });
+    } catch (error: unknown) {
+      const normalized = toRegistrationError(error, "Failed to create profile. Please try again.");
+      console.error('Registration error:', normalized);
+      toast({
+        title: normalized.kind === 'validation' ? "Validation Error" : "Error",
+        description: normalized.message,
+        variant: "destructive"
+      });
     }
   };
 

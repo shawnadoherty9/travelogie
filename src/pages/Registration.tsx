@@ -66,9 +66,10 @@ const Registration = () => {
 
       toast.success("Registration completed successfully!");
       navigate("/dashboard");
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast.error("Failed to complete registration. Please try again.");
+    } catch (error: unknown) {
+      const normalized = toRegistrationError(error, 'Failed to complete registration. Please try again.');
+      console.error('Registration error:', normalized);
+      toast.error(normalized.message);
     }
   };
 
