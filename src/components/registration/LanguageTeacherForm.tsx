@@ -12,7 +12,7 @@ import { Upload, X, Plus, BookOpen, Video } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, type FieldErrors } from "@/utils/registrationValidation";
+import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, toRegistrationError, type FieldErrors } from "@/utils/registrationValidation";
 
 interface LanguageOffering {
   language: string;

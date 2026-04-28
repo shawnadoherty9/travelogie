@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, X, Plus, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { travelerFormSchema, languageSchema, customInterestSchema, sanitizeTextInput } from "@/utils/validation";
-import { getErrorMessage } from "@/utils/registrationValidation";
+import { getErrorMessage, toRegistrationError } from "@/utils/registrationValidation";
 
 interface Language {
   code: string;

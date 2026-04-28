@@ -10,6 +10,7 @@ import LanguageTeacherForm from "@/components/registration/LanguageTeacherForm";
 import CulturalExperienceForm from "@/components/registration/CulturalExperienceForm";
 import EventVenueForm from "@/components/registration/EventVenueForm";
 import Header from "@/components/layout/Header";
+import { toRegistrationError } from "@/utils/registrationValidation";
 
 const Registration = () => {
   const [selectedUserType, setSelectedUserType] = useState<string | null>(null);
