@@ -14,27 +14,29 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, toRegistrationError, type FieldErrors } from "@/utils/registrationValidation";
 
-interface TourOffering {
-  title: string;
-  description: string;
-  duration: number;
-  price: number;
-  maxParticipants: number;
-  type: 'walking' | 'driving' | 'cycling' | 'boat' | 'cultural' | 'food' | 'adventure' | 'custom';
-}
+import type {
+  TourOffering,
+  TourOperatorFormProps,
+  TourOperatorFormData,
+} from "@/types/registration";
 
-const TourOperatorForm: React.FC = () => {
+type TourOperatorProfileFields = Pick<
+  TourOperatorFormData,
+  'firstName' | 'lastName' | 'birthdate' | 'homeCity' | 'geographicAvailability' | 'bio' | 'profileImage'
+>;
+
+const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: TourOperatorFormProps = {}) => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<TourOperatorProfileFields>({
     firstName: '',
     lastName: '',
     birthdate: '',
     homeCity: '',
     geographicAvailability: '',
     bio: '',
-    profileImage: null as File | null
+    profileImage: null,
   });
 
   const [tours, setTours] = useState<TourOffering[]>([]);

@@ -14,28 +14,30 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, toRegistrationError, type FieldErrors } from "@/utils/registrationValidation";
 
-interface LanguageOffering {
-  language: string;
-  skillLevels: string[];
-  isOnline: boolean;
-  isInPerson: boolean;
-  pricePerHour: number;
-  description: string;
-}
+import type {
+  LanguageOffering,
+  LanguageTeacherFormProps,
+  LanguageTeacherFormData,
+} from "@/types/registration";
 
-const LanguageTeacherForm: React.FC = () => {
+type LanguageTeacherProfileFields = Pick<
+  LanguageTeacherFormData,
+  'firstName' | 'lastName' | 'birthdate' | 'homeCity' | 'bio' | 'profileImage' | 'teachingExperience' | 'certifications'
+>;
+
+const LanguageTeacherForm = ({ onComplete: _onComplete, onCancel: _onCancel }: LanguageTeacherFormProps = {}) => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LanguageTeacherProfileFields>({
     firstName: '',
     lastName: '',
     birthdate: '',
     homeCity: '',
     bio: '',
-    profileImage: null as File | null,
+    profileImage: null,
     teachingExperience: '',
-    certifications: ''
+    certifications: '',
   });
 
   const [languageOfferings, setLanguageOfferings] = useState<LanguageOffering[]>([]);
