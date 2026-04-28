@@ -14,21 +14,22 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { validateRequiredFields, validateAtLeastOneOffering, validateOfferingFields, clearOfferingErrors, clearFieldError, useFieldChange, getErrorMessage, toRegistrationError, type FieldErrors } from "@/utils/registrationValidation";
 
-interface VenueSpace {
-  name: string;
-  description: string;
-  capacity: number;
-  amenities: string[];
-  pricePerHour: number;
-  pricePerDay: number;
-  spaceType: string;
-}
+import type {
+  VenueSpace,
+  EventVenueFormProps,
+  EventVenueFormData,
+} from "@/types/registration";
 
-const EventVenueForm: React.FC = () => {
+type EventVenueProfileFields = Pick<
+  EventVenueFormData,
+  'firstName' | 'lastName' | 'birthdate' | 'homeCity' | 'venueName' | 'venueAddress' | 'venueDescription' | 'bio' | 'profileImage' | 'businessLicense' | 'insuranceDetails'
+>;
+
+const EventVenueForm = ({ onComplete: _onComplete, onCancel: _onCancel }: EventVenueFormProps = {}) => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EventVenueProfileFields>({
     firstName: '',
     lastName: '',
     birthdate: '',
@@ -37,9 +38,9 @@ const EventVenueForm: React.FC = () => {
     venueAddress: '',
     venueDescription: '',
     bio: '',
-    profileImage: null as File | null,
+    profileImage: null,
     businessLicense: '',
-    insuranceDetails: ''
+    insuranceDetails: '',
   });
 
   const [venueSpaces, setVenueSpaces] = useState<VenueSpace[]>([]);
