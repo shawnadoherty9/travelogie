@@ -176,14 +176,24 @@ const TravelerForm = ({ onComplete, onCancel: _onCancel }: TravelerFormProps = {
         bio: validatedData.bio ? sanitizeTextInput(validatedData.bio, 2000) : '',
       };
 
-      // Submit to backend
-      console.log('Traveler form data:', {
-        ...sanitizedData,
+      const completed: TravelerFormData = {
+        firstName: sanitizedData.firstName,
+        lastName: sanitizedData.lastName,
+        birthdate: sanitizedData.birthdate,
+        homeCity: sanitizedData.homeCity,
+        upcomingTravel: sanitizedData.upcomingTravel,
+        bio: sanitizedData.bio,
+        profileImage: formData.profileImage,
         languages,
-        interests: [...interests, ...customInterests],
+        interests,
+        customInterests,
         socialMedia,
-        dreamDestinations
-      });
+        dreamDestinations,
+      };
+
+      // Submit to backend
+      console.log('Traveler form data:', completed);
+      onComplete?.(completed);
 
       toast({
         title: "Profile Created!",
