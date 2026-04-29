@@ -49,7 +49,10 @@ jobs:
             src/utils/registrationValidation.test.ts \
             src/types/registration.ts
 
-      # Run the registration validation unit tests so logic regressions
-      # also fail the build.
-      - name: Unit tests (registration validation)
-        run: npx vitest run src/utils/registrationValidation.test.ts
+      # Run the registration validation unit tests AND the per-form e2e
+      # validation tests so logic and UI regressions both fail the build.
+      - name: Unit & e2e tests (registration flow)
+        run: |
+          npx vitest run \
+            src/utils/registrationValidation.test.ts \
+            "src/components/registration/*.e2e.test.tsx"
