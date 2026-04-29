@@ -55,6 +55,6 @@ if (typeof window !== "undefined" && !window.HTMLElement.prototype.hasPointerCap
   window.HTMLElement.prototype.hasPointerCapture = () => false;
   window.HTMLElement.prototype.releasePointerCapture = () => {};
   window.HTMLElement.prototype.setPointerCapture = () => {};
-  // @ts-expect-error -- jsdom does not implement scrollIntoView
-  window.HTMLElement.prototype.scrollIntoView = () => {};
+  (window.HTMLElement.prototype as unknown as { scrollIntoView: () => void }).scrollIntoView =
+    () => {};
 }
