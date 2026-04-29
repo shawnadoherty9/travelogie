@@ -3,6 +3,15 @@ name: Registration Flow CI
 # Guards the registration flow against new TypeScript or ESLint regressions.
 # Runs a full project type-check (so cross-file type breakages are caught)
 # plus an ESLint pass scoped to the registration flow.
+#
+# Caching strategy (to keep CI fast on every push):
+#   1. npm cache  — actions/setup-node with `cache: npm` keyed on package-lock.json
+#      restores the global ~/.npm download cache so `npm ci` skips network fetches.
+#   2. node_modules — cached separately keyed on the lockfile so we can skip the
+#      install step entirely on cache hits.
+#   3. Build artifacts — TypeScript incremental build info, ESLint results, and
+#      Vitest's transform cache are persisted across runs and keyed on source
+#      file hashes so unchanged files are re-validated near-instantly.
 
 on:
   push:
@@ -23,26 +32,60 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js (with npm download cache)
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
+      # Cache the resolved node_modules directory so we can skip `npm ci`
+      # entirely when package-lock.json hasn't changed.
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-node20-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-node20-
+
       - name: Install dependencies
-        run: npm ci
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      # Cache build artifacts: TypeScript .tsbuildinfo (incremental), ESLint
+      # cache file, and Vitest's on-disk transform cache. Keyed on source +
+      # config hashes so any change invalidates the appropriate slice; falls
+      # back to the most recent cache for the same lockfile.
+      - name: Cache build artifacts (tsc / eslint / vitest)
+        uses: actions/cache@v4
+        with:
+          path: |
+            .tsbuildinfo
+            node_modules/.cache/.eslintcache
+            node_modules/.vite
+            node_modules/.vitest
+          key: build-artifacts-${{ runner.os }}-node20-${{ hashFiles('package-lock.json', 'tsconfig*.json', 'eslint.config.js', 'vitest.config.ts', 'src/**/*.ts', 'src/**/*.tsx') }}
+          restore-keys: |
+            build-artifacts-${{ runner.os }}-node20-${{ hashFiles('package-lock.json') }}-
+            build-artifacts-${{ runner.os }}-node20-
 
       # Full project type-check. The registration flow imports shared modules
       # (hooks, utils, supabase types) so a scoped tsc would miss real breakage.
-      - name: TypeScript build (tsc --noEmit)
-        run: npx tsc -p tsconfig.app.json --noEmit
+      # `--incremental` writes .tsbuildinfo; subsequent runs only re-check
+      # changed files and their dependents.
+      - name: TypeScript build (tsc --noEmit, incremental)
+        run: npx tsc -p tsconfig.app.json --noEmit --incremental --tsBuildInfoFile .tsbuildinfo
 
-      # Scoped ESLint — fails on any warning or error in registration code,
-      # including the shared types module, validation utility, and tests.
+      # Scoped ESLint — fails on any warning or error in registration code.
+      # `--cache` reuses results for unchanged files across runs.
       - name: ESLint (registration flow)
         run: |
           npx eslint \
             --max-warnings=0 \
+            --cache \
+            --cache-location node_modules/.cache/.eslintcache \
+            --cache-strategy content \
             src/components/registration \
             src/pages/Registration.tsx \
             src/utils/registrationValidation.ts \
@@ -51,6 +94,7 @@ jobs:
 
       # Run the registration validation unit tests AND the per-form e2e
       # validation tests so logic and UI regressions both fail the build.
+      # Vitest reuses its transform cache under node_modules/.vite.
       - name: Unit & e2e tests (registration flow)
         run: |
           npx vitest run \
