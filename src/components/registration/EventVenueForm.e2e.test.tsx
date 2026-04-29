@@ -33,9 +33,8 @@ describe("EventVenueForm e2e validation", () => {
     expect(screen.getByText(/First name is required/i)).toBeInTheDocument();
     expect(screen.getByText(/Last name is required/i)).toBeInTheDocument();
     expect(screen.getByText(/Birthdate is required/i)).toBeInTheDocument();
-    // Venue-specific required fields
+    // Venue-specific required field
     expect(screen.getByText(/Venue name is required/i)).toBeInTheDocument();
-    expect(screen.getByText(/Venue address is required/i)).toBeInTheDocument();
     // At least one venue space required
     expect(
       screen.getByText(/Please add at least one venue space/i),

@@ -35,9 +35,9 @@ describe("CulturalExperienceForm e2e validation", () => {
     expect(screen.getByText(/First name is required/i)).toBeInTheDocument();
     expect(screen.getByText(/Last name is required/i)).toBeInTheDocument();
     expect(screen.getByText(/Birthdate is required/i)).toBeInTheDocument();
-    // At least one experience required (label uses "experience")
+    // At least one cultural experience required
     expect(
-      screen.getByText(/Please add at least one experience/i),
+      screen.getByText(/Please add at least one cultural experience/i),
     ).toBeInTheDocument();
 
     const destructiveCall = toastMock.mock.calls.find(
