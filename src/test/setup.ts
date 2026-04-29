@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
 // matchMedia polyfill (required by some Radix UI components in jsdom)
 if (typeof window !== "undefined" && !window.matchMedia) {
@@ -18,26 +19,42 @@ if (typeof window !== "undefined" && !window.matchMedia) {
 }
 
 // ResizeObserver polyfill (Radix UI Checkbox / Select rely on it)
-if (typeof globalThis.ResizeObserver === "undefined") {
-  class ResizeObserverMock {
-    observe(): void {}
-    unobserve(): void {}
-    disconnect(): void {}
-  }
-  // @ts-expect-error -- assigning a minimal mock for jsdom
-  globalThis.ResizeObserver = ResizeObserverMock;
+class ResizeObserverMock {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+// Assign on both window and globalThis so module-scope references resolve.
+(globalThis as unknown as { ResizeObserver: typeof ResizeObserverMock }).ResizeObserver =
+  ResizeObserverMock;
+if (typeof window !== "undefined") {
+  (window as unknown as { ResizeObserver: typeof ResizeObserverMock }).ResizeObserver =
+    ResizeObserverMock;
 }
 
-// IntersectionObserver polyfill (used by some scroll/visibility components)
-if (typeof globalThis.IntersectionObserver === "undefined") {
-  class IntersectionObserverMock {
-    observe(): void {}
-    unobserve(): void {}
-    disconnect(): void {}
-    takeRecords(): [] {
-      return [];
-    }
-  }
-  // @ts-expect-error -- assigning a minimal mock for jsdom
-  globalThis.IntersectionObserver = IntersectionObserverMock;
+// IntersectionObserver polyfill
+class IntersectionObserverMock {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+  takeRecords = vi.fn(() => []);
+  root = null;
+  rootMargin = "";
+  thresholds = [];
+}
+(globalThis as unknown as { IntersectionObserver: typeof IntersectionObserverMock }).IntersectionObserver =
+  IntersectionObserverMock;
+if (typeof window !== "undefined") {
+  (window as unknown as { IntersectionObserver: typeof IntersectionObserverMock }).IntersectionObserver =
+    IntersectionObserverMock;
+}
+
+// PointerEvent / hasPointerCapture stubs (Radix Select uses pointer capture APIs
+// that jsdom does not implement).
+if (typeof window !== "undefined" && !window.HTMLElement.prototype.hasPointerCapture) {
+  window.HTMLElement.prototype.hasPointerCapture = () => false;
+  window.HTMLElement.prototype.releasePointerCapture = () => {};
+  window.HTMLElement.prototype.setPointerCapture = () => {};
+  // @ts-expect-error -- jsdom does not implement scrollIntoView
+  window.HTMLElement.prototype.scrollIntoView = () => {};
 }
