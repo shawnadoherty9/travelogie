@@ -74,8 +74,64 @@ jobs:
       # (hooks, utils, supabase types) so a scoped tsc would miss real breakage.
       # `--incremental` writes .tsbuildinfo; subsequent runs only re-check
       # changed files and their dependents.
-      - name: TypeScript build (tsc --noEmit, incremental)
-        run: npx tsc -p tsconfig.app.json --noEmit --incremental --tsBuildInfoFile .tsbuildinfo
+      #
+      # Diagnostics are printed in a compact `file:line:col - error TSxxxx: msg`
+      # format (no pretty frames), then re-emitted as GitHub Actions
+      # `::error file=...,line=...,col=...::` annotations so failing files and
+      # lines surface inline in the PR Files-changed view and the run summary.
+      - name: TypeScript build (tsc --noEmit, incremental, compact diagnostics)
+        run: |
+          set +e
+          npx tsc \
+            -p tsconfig.app.json \
+            --noEmit \
+            --incremental \
+            --tsBuildInfoFile .tsbuildinfo \
+            --pretty false \
+            --noErrorTruncation \
+            | tee tsc-output.log
+          tsc_exit=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$tsc_exit" -ne 0 ]; then
+            echo ""
+            echo "::group::TypeScript errors (annotated)"
+            # Parse `path/to/file.ts(LINE,COL): error TSxxxx: message`
+            # and emit GitHub workflow annotations so they appear inline.
+            awk -F'[(),]' '
+              /: error TS[0-9]+:/ {
+                # Reconstruct message after the first "): "
+                idx = index($0, "): ");
+                msg = substr($0, idx + 3);
+                file = $1;
+                line = $2;
+                col = $3;
+                printf "::error file=%s,line=%s,col=%s::%s\n", file, line, col, msg;
+              }
+            ' tsc-output.log
+
+            error_count=$(grep -cE ': error TS[0-9]+:' tsc-output.log || true)
+            file_count=$(grep -oE '^[^(]+\(' tsc-output.log | sort -u | wc -l | tr -d ' ')
+            echo "::endgroup::"
+
+            {
+              echo "### ❌ TypeScript failed"
+              echo ""
+              echo "- **${error_count}** error(s) across **${file_count}** file(s)"
+              echo ""
+              echo "<details><summary>Compact diagnostics</summary>"
+              echo ""
+              echo '```'
+              grep -E ': error TS[0-9]+:' tsc-output.log || true
+              echo '```'
+              echo "</details>"
+            } >> "$GITHUB_STEP_SUMMARY"
+
+            exit "$tsc_exit"
+          fi
+
+          echo "✅ TypeScript: no errors"
+
 
       # Scoped ESLint — fails on any warning or error in registration code.
       # `--cache` reuses results for unchanged files across runs.
