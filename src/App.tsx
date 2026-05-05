@@ -18,6 +18,7 @@ import Tours from "./pages/Tours";
 import Languages from "./pages/Languages";
 import Destinations from "./pages/Destinations";
 import CityGuide from "./pages/CityGuide";
+import VideoSession from "./pages/VideoSession";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,14 @@ const App = () => {
               <Route path="/languages" element={<Languages />} />
               <Route path="/destinations" element={<Destinations />} />
               <Route path="/destinations/:cityId" element={<CityGuide />} />
+              <Route
+                path="/session/:type/:bookingId"
+                element={
+                  <ProtectedRoute>
+                    <VideoSession />
+                  </ProtectedRoute>
+                }
+              />
               <Route 
                 path="/admin" 
                 element={
