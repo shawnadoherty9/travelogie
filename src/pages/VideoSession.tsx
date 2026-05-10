@@ -71,11 +71,13 @@ export default function VideoSession() {
 
   const handleDisconnected = useCallback(
     async (reason?: DisconnectReason) => {
+      // This livekit-client version doesn't expose a TOKEN_EXPIRED reason —
+      // expired/invalid JWTs surface as JOIN_FAILURE, SIGNAL_CLOSE, or
+      // STATE_MISMATCH. Treat any of these as a likely token problem.
       const tokenProblem =
-        reason === DisconnectReason.TOKEN_EXPIRED ||
-        // Server may also surface auth issues with these reasons after expiry
+        reason === DisconnectReason.JOIN_FAILURE ||
         reason === DisconnectReason.SIGNAL_CLOSE ||
-        reason === DisconnectReason.JOIN_FAILURE;
+        reason === DisconnectReason.STATE_MISMATCH;
 
       if (tokenProblem && refreshAttemptsRef.current < 1) {
         refreshAttemptsRef.current += 1;
