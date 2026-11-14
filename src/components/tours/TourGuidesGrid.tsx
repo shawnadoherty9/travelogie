@@ -45,9 +45,9 @@ export const TourGuidesGrid = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-          {guides.map((guide) => (
+          {guides.map((guide, idx) => (
             <Card 
-              key={guide.id} 
+              key={`${guide.id}-${idx}`} 
               className="group hover:travel-shadow transition-all duration-300 hover:scale-[1.02] overflow-hidden"
             >
               <div className="relative">
