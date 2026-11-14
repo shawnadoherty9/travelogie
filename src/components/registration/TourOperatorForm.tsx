@@ -412,6 +412,13 @@ const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: Tour
                     </div>
                   </div>
 
+                  <VideoUpload
+                    id="tour-video"
+                    label="Tour Promo Video (optional)"
+                    file={currentTour.videoFile ?? null}
+                    onChange={(f) => setCurrentTour(prev => ({ ...prev, videoFile: f }))}
+                  />
+
                   <Button type="button" onClick={addTour} className="w-full">
                     Add Tour
                   </Button>

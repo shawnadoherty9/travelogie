@@ -25,6 +25,7 @@ export interface TourOperator {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  intro_video_url?: string | null;
 }
 
 export interface TourOperatorContact {
