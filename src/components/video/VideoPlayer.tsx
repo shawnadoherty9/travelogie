@@ -39,7 +39,9 @@ export const VideoPlayer = ({ path, className }: { path: string; className?: str
           playsInline
           preload="metadata"
           controlsList="nodownload"
-          className="w-full h-full object-cover"
+          // iOS Safari: these attributes keep playback inline
+          webkit-playsinline="true"
+          className="w-full h-full object-contain bg-foreground"
         />
       )}
     </div>

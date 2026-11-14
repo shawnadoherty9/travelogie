@@ -17,3 +17,14 @@ describe('video rules', () => {
     expect(validateVideoDuration(150)).toMatch(/2 minutes/);
   });
 });
+
+import { resolveVideoType, validateVideoFile as vf } from './videoValidation';
+describe('iPhone files with no type', () => {
+  it('accepts a .MOV with empty type', () => {
+    expect(resolveVideoType({ type: '', name: 'IMG_1234.MOV' })).toBe('video/quicktime');
+    expect(vf({ type: '', name: 'IMG_1234.MOV', size: 1000 })).toBeNull();
+  });
+  it('rejects an unknown extension with empty type', () => {
+    expect(vf({ type: '', name: 'clip.avi', size: 1000 })).not.toBeNull();
+  });
+});
