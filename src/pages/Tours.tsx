@@ -232,7 +232,7 @@ const Tours = () => {
                 Discover activities, events, and experiences near you or plan your next adventure
               </p>
             </div>
-            <ExploreMap className="h-[700px]" />
+            <ExploreMap className="lg:h-[700px]" />
           </div>
         </section>
         
