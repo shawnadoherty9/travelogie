@@ -368,9 +368,9 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 
   return (
     <div className={`relative ${className}`}>
-      <div className="flex gap-4 h-full">
+      <div className="flex flex-col lg:flex-row gap-4 h-full">
         {/* Filters Sidebar */}
-        <div className="w-80 shrink-0">
+        <div className="w-full lg:w-80 lg:shrink-0">
           <ExploreMapFilters
             filters={filters}
             categories={categories}
@@ -386,7 +386,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
         </div>
 
         {/* Map Container */}
-        <div className="flex-1 relative rounded-lg overflow-hidden border border-border">
+        <div className="h-[420px] lg:h-auto lg:flex-1 min-w-0 relative rounded-lg overflow-hidden border border-border">
           <div ref={mapContainer} className="w-full h-full" />
 
           {/* Go to City dropdown */}
@@ -421,7 +421,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 }
               }
             }}>
-              <SelectTrigger className="w-[180px] bg-card border-border shadow-lg">
+              <SelectTrigger className="w-[140px] sm:w-[180px] bg-card border-border shadow-lg">
                 <Navigation2 className="w-4 h-4 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="Go to City" />
               </SelectTrigger>
@@ -454,7 +454,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           )}
 
           {/* Map Legend */}
-          <Card className="absolute bottom-4 left-4 p-3 bg-card/95 backdrop-blur-sm z-10 max-h-[280px] overflow-y-auto">
+          <Card className="hidden sm:block absolute bottom-4 left-4 p-3 bg-card/95 backdrop-blur-sm z-10 max-h-[280px] overflow-y-auto">
             <div className="text-xs font-medium mb-2">Map Legend</div>
             <div className="space-y-1">
               {(Object.entries(SOURCE_COLORS) as [LocationSourceType, string][])

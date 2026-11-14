@@ -1129,7 +1129,7 @@ const Languages = () => {
                               ))}
                             </div>
                           </div>
-                          <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm min-w-0">
                             <div>
                               <Label className="text-xs font-semibold">Rate</Label>
                               <p className="text-travel-sunset font-semibold">{instructor.hourlyRate}/hr</p>
