@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Briefcase, ShieldCheck, Star } from 'lucide-react';
 import { CompletionChecklist, ChecklistStep } from './CompletionChecklist';
+import { OperatorIntroVideoEditor } from '@/components/video/OperatorIntroVideoEditor';
 import type { TourOperatorRow } from '@/hooks/useRoleDashboardData';
 
 interface Props {
@@ -16,6 +17,7 @@ export const TourOperatorDashboard = ({ operator }: Props) => {
     { key: 'specialties', label: 'Add specialties', done: (operator?.specialties?.length ?? 0) > 0 },
     { key: 'languages', label: 'List languages spoken', done: (operator?.languages_spoken?.length ?? 0) > 0 },
     { key: 'rate', label: 'Set hourly or daily rate', done: !!(operator?.hourly_rate || operator?.daily_rate) },
+    { key: 'video', label: 'Add an intro video', done: !!operator?.intro_video_url },
     { key: 'photo', label: 'Upload a profile photo', done: !!operator?.profile_image_url },
     { key: 'gallery', label: 'Add gallery photos', done: (operator?.gallery_urls?.length ?? 0) >= 3 },
     { key: 'cert', label: 'Add certifications', done: (operator?.certifications?.length ?? 0) > 0 },
@@ -54,6 +56,8 @@ export const TourOperatorDashboard = ({ operator }: Props) => {
                 </div>
               </CardContent>
             </Card>
+
+            <OperatorIntroVideoEditor operatorId={operator.id} initialPath={operator.intro_video_url ?? null} />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
