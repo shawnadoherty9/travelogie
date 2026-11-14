@@ -8,6 +8,7 @@ import { AttractionsGrid } from "@/components/tours/AttractionsGrid";
 import { ActivitiesGrid } from "@/components/tours/ActivitiesGrid";
 import { useTours } from "@/hooks/useTours";
 import { useTourOperators } from "@/hooks/useTourOperators";
+import { LocalTourVideos } from "@/components/tours/LocalTourVideos";
 import { GuideIntroVideos } from "@/components/tours/GuideIntroVideos";
 import { PersonalizedTourWorkflow } from "@/components/tours/PersonalizedTourWorkflow";
 import { getTourGuidesByCity } from "@/data/tourGuides";
@@ -260,6 +261,8 @@ const Tours = () => {
           guides={tourOperators}
           onContactGuide={handleContactTourOperator}
         />
+
+        <LocalTourVideos />
 
         <GuideIntroVideos operators={dbTourOperators} />
 
