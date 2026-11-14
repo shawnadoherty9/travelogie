@@ -5,8 +5,7 @@ name: Registration Flow CI
 # plus an ESLint pass scoped to the registration flow.
 #
 # Caching strategy (to keep CI fast on every push):
-#   1. npm cache  — actions/setup-node with `cache: npm` keyed on package-lock.json
-#      restores the global ~/.npm download cache so `npm ci` skips network fetches.
+#   1. Dependencies are installed with bun from bun.lock (the lockfile Lovable maintains).
 #   2. node_modules — cached separately keyed on the lockfile so we can skip the
 #      install step entirely on cache hits.
 #   3. Build artifacts — TypeScript incremental build info, ESLint results, and
@@ -32,11 +31,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (with npm download cache)
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       # Cache the resolved node_modules directory so we can skip `npm ci`
       # entirely when package-lock.json hasn't changed.
@@ -45,13 +46,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ runner.os }}-node20-${{ hashFiles('package-lock.json') }}
+          key: node-modules-${{ runner.os }}-node20-${{ hashFiles('bun.lock') }}
           restore-keys: |
             node-modules-${{ runner.os }}-node20-
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: npm ci --prefer-offline --no-audit --no-fund
+        run: bun install --frozen-lockfile
 
       # Cache build artifacts: TypeScript .tsbuildinfo (incremental), ESLint
       # cache file, and Vitest's on-disk transform cache. Keyed on source +
@@ -65,9 +66,9 @@ jobs:
             node_modules/.cache/.eslintcache
             node_modules/.vite
             node_modules/.vitest
-          key: build-artifacts-${{ runner.os }}-node20-${{ hashFiles('package-lock.json', 'tsconfig*.json', 'eslint.config.js', 'vitest.config.ts', 'src/**/*.ts', 'src/**/*.tsx') }}
+          key: build-artifacts-${{ runner.os }}-node20-${{ hashFiles('bun.lock', 'tsconfig*.json', 'eslint.config.js', 'vitest.config.ts', 'src/**/*.ts', 'src/**/*.tsx') }}
           restore-keys: |
-            build-artifacts-${{ runner.os }}-node20-${{ hashFiles('package-lock.json') }}-
+            build-artifacts-${{ runner.os }}-node20-${{ hashFiles('bun.lock') }}-
             build-artifacts-${{ runner.os }}-node20-
 
       # Full project type-check. The registration flow imports shared modules
