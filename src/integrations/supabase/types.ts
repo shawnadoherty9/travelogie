@@ -972,6 +972,7 @@ export type Database = {
           title: string
           updated_at: string
           user_id: string
+          video_url: string | null
         }
         Insert: {
           cancellation_policy?: string | null
@@ -993,6 +994,7 @@ export type Database = {
           title: string
           updated_at?: string
           user_id: string
+          video_url?: string | null
         }
         Update: {
           cancellation_policy?: string | null
@@ -1014,6 +1016,7 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+          video_url?: string | null
         }
         Relationships: []
       }
@@ -1232,6 +1235,7 @@ export type Database = {
           hourly_rate: number | null
           id: string
           insurance_verified: boolean | null
+          intro_video_url: string | null
           is_active: boolean
           languages_spoken: string[] | null
           profile_image_url: string | null
@@ -1259,6 +1263,7 @@ export type Database = {
           hourly_rate?: number | null
           id?: string
           insurance_verified?: boolean | null
+          intro_video_url?: string | null
           is_active?: boolean
           languages_spoken?: string[] | null
           profile_image_url?: string | null
@@ -1286,6 +1291,7 @@ export type Database = {
           hourly_rate?: number | null
           id?: string
           insurance_verified?: boolean | null
+          intro_video_url?: string | null
           is_active?: boolean
           languages_spoken?: string[] | null
           profile_image_url?: string | null
@@ -1605,6 +1611,7 @@ export type Database = {
           hourly_rate: number
           id: string
           insurance_verified: boolean
+          intro_video_url: string
           is_active: boolean
           languages_spoken: string[]
           profile_image_url: string
