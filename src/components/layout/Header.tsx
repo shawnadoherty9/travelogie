@@ -46,7 +46,7 @@ const Header = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden lg:flex items-center space-x-8">
           <Link to="/destinations" className="text-foreground hover:text-travel-ocean transition-colors">
             Destinations
           </Link>
@@ -106,14 +106,14 @@ const Header = () => {
           )}
           
           {/* Mobile Menu Toggle */}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <Menu className="w-5 h-5" />
           </Button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {isMenuOpen && <div className="md:hidden bg-background border-b border-border">
+      {isMenuOpen && <div className="lg:hidden bg-background border-b border-border">
           <nav className="container mx-auto px-4 py-4 space-y-3">
             <Link to="/destinations" className="block py-2 text-foreground hover:text-travel-ocean">
               Destinations

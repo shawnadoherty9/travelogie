@@ -390,7 +390,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           <div ref={mapContainer} className="w-full h-full" />
 
           {/* Go to City dropdown */}
-          <div className="absolute top-4 right-4 z-20">
+          <div className="absolute top-4 right-4 z-[1000]">
             <Select onValueChange={async (value) => {
               const city = QUICK_CITIES.find(c => c.name === value);
               if (city && map.current) {
@@ -447,14 +447,14 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 
           {/* Zoom hint for heritage sites */}
           {needsZoomForHeritage && !isNearMeMode && (
-            <div className="absolute top-16 sm:top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-card/95 backdrop-blur-sm border border-border rounded-full px-4 py-2 shadow-lg text-sm text-muted-foreground whitespace-nowrap max-w-[calc(100%-2rem)] overflow-hidden">
+            <div className="absolute top-16 xl:top-4 left-1/2 -translate-x-1/2 z-[999] flex items-center gap-2 bg-card/95 backdrop-blur-sm border border-border rounded-full px-4 py-2 shadow-lg text-sm text-muted-foreground whitespace-nowrap max-w-[calc(100%-2rem)] overflow-hidden">
               <ZoomIn className="w-4 h-4 text-[#8B5CF6]" />
               <span>Zoom in to discover <span className="font-medium text-[#8B5CF6]">🏛️ Heritage Sites</span></span>
             </div>
           )}
 
           {/* Map Legend */}
-          <Card className="hidden sm:block absolute bottom-4 left-4 p-3 bg-card/95 backdrop-blur-sm z-10 max-h-[280px] overflow-y-auto">
+          <Card className="hidden lg:block absolute bottom-4 left-4 p-3 bg-card/95 backdrop-blur-sm z-[999] max-h-[280px] overflow-y-auto">
             <div className="text-xs font-medium mb-2">Map Legend</div>
             <div className="space-y-1">
               {(Object.entries(SOURCE_COLORS) as [LocationSourceType, string][])
