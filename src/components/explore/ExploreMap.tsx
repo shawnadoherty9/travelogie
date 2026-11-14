@@ -454,7 +454,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           )}
 
           {/* Map Legend */}
-          <Card className="hidden lg:block absolute bottom-4 left-4 p-3 bg-card/95 backdrop-blur-sm z-[999] max-h-[280px] overflow-y-auto">
+          <Card className="hidden xl:block absolute bottom-4 left-4 p-3 bg-card/95 backdrop-blur-sm z-[999] max-h-[280px] overflow-y-auto">
             <div className="text-xs font-medium mb-2">Map Legend</div>
             <div className="space-y-1">
               {(Object.entries(SOURCE_COLORS) as [LocationSourceType, string][])
