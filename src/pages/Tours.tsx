@@ -8,6 +8,7 @@ import { AttractionsGrid } from "@/components/tours/AttractionsGrid";
 import { ActivitiesGrid } from "@/components/tours/ActivitiesGrid";
 import { useTours } from "@/hooks/useTours";
 import { useTourOperators } from "@/hooks/useTourOperators";
+import { GuideIntroVideos } from "@/components/tours/GuideIntroVideos";
 import { PersonalizedTourWorkflow } from "@/components/tours/PersonalizedTourWorkflow";
 import { getTourGuidesByCity } from "@/data/tourGuides";
 import { useLanguageLessons } from "@/hooks/useLanguageLessons";
@@ -259,6 +260,8 @@ const Tours = () => {
           guides={tourOperators}
           onContactGuide={handleContactTourOperator}
         />
+
+        <GuideIntroVideos operators={dbTourOperators} />
 
         <LanguageInstructorsSection
           instructors={languageInstructors}

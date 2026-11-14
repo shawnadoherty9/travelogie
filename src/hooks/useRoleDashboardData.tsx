@@ -28,6 +28,7 @@ export interface TourOperatorRow {
   insurance_verified: boolean;
   background_checked: boolean;
   is_active: boolean;
+  intro_video_url?: string | null;
 }
 
 export interface ServiceRow {

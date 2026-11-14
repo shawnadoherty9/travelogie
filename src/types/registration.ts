@@ -68,6 +68,7 @@ export interface TourOffering {
   price: number;
   maxParticipants: number;
   type: TourType;
+  videoFile?: File | null;
 }
 
 export interface LanguageOffering {
