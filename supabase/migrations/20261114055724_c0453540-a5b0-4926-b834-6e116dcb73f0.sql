@@ -1,0 +1,10 @@
+REVOKE EXECUTE ON FUNCTION public.check_rate_limit(text, text, integer, integer) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.check_rate_limit(text, text, integer, integer) TO service_role;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.validate_lesson_recording() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.make_admin(text) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.assign_registration_role(text) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.get_user_posts_with_location() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.get_tour_operator_contact(uuid) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.get_booking_payment_status(uuid) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.get_tour_booking_payment_status(uuid) FROM PUBLIC, anon;
