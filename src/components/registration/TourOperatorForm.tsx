@@ -19,6 +19,8 @@ import type {
   TourOperatorFormProps,
   TourOperatorFormData,
 } from "@/types/registration";
+import { VideoUpload } from "@/components/video/VideoUpload";
+import { uploadVideo } from "@/utils/videoUpload";
 
 type TourOperatorProfileFields = Pick<
   TourOperatorFormData,
@@ -53,6 +55,8 @@ const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: Tour
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterests, setCustomInterests] = useState<string[]>([]);
   const [newCustomInterest, setNewCustomInterest] = useState('');
+  const [introVideo, setIntroVideo] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const handleChange = useFieldChange(setFormData, setFieldErrors);
 
@@ -99,7 +103,7 @@ const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: Tour
     }
     setFieldErrors(prev => clearOfferingErrors(prev, ['tourTitle', 'tourDescription']));
     setTours(prev => [...prev, { ...currentTour }]);
-    setCurrentTour({ title: '', description: '', duration: 2, price: 50, maxParticipants: 8, type: 'walking' });
+    setCurrentTour({ title: '', description: '', duration: 2, price: 50, maxParticipants: 8, type: 'walking', videoFile: null });
   };
 
   const removeTour = (index: number) => {
@@ -137,7 +141,9 @@ const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: Tour
       return;
     }
 
+    setSubmitting(true);
     try {
+      const introVideoPath = introVideo ? await uploadVideo(user.id, 'intro', introVideo) : null;
       // Update profile
       const { error: profileError } = await supabase.from('profiles').update({
         user_type: 'tour_operator',
@@ -160,6 +166,7 @@ const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: Tour
         specialties: interests,
         languages_spoken: languages.map(l => l.name),
         cities_covered: formData.homeCity ? [formData.homeCity] : [],
+        intro_video_url: introVideoPath,
       });
       if (operatorError) throw operatorError;
 
@@ -179,7 +186,9 @@ const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: Tour
 
       // Create services from tour offerings
       for (const tour of tours) {
+        const videoPath = tour.videoFile ? await uploadVideo(user.id, 'tours', tour.videoFile) : null;
         await supabase.from('services').insert({
+          video_url: videoPath,
           user_id: user.id,
           title: tour.title,
           description: tour.description,
@@ -204,6 +213,8 @@ const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: Tour
         description: normalized.message,
         variant: "destructive"
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -253,6 +264,14 @@ const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: Tour
                 </div>
               </div>
             </div>
+
+            <VideoUpload
+              id="intro-video"
+              label="Introduce Yourself (optional video)"
+              hint="Say hello to travelers. MP4, MOV or WebM, up to 2 minutes and 50 MB."
+              file={introVideo}
+              onChange={setIntroVideo}
+            />
 
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -584,8 +603,8 @@ const TourOperatorForm = ({ onComplete: _onComplete, onCancel: _onCancel }: Tour
               />
             </div>
 
-            <Button type="submit" className="w-full" size="lg">
-              Create Tour Operator Profile
+            <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+              {submitting ? 'Uploading and saving…' : 'Create Tour Operator Profile'}
             </Button>
           </form>
         </CardContent>
