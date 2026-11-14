@@ -447,7 +447,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 
           {/* Zoom hint for heritage sites */}
           {needsZoomForHeritage && !isNearMeMode && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-card/95 backdrop-blur-sm border border-border rounded-full px-4 py-2 shadow-lg text-sm text-muted-foreground">
+            <div className="absolute top-16 sm:top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-card/95 backdrop-blur-sm border border-border rounded-full px-4 py-2 shadow-lg text-sm text-muted-foreground whitespace-nowrap max-w-[calc(100%-2rem)] overflow-hidden">
               <ZoomIn className="w-4 h-4 text-[#8B5CF6]" />
               <span>Zoom in to discover <span className="font-medium text-[#8B5CF6]">🏛️ Heritage Sites</span></span>
             </div>
